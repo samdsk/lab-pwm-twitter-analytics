@@ -1,0 +1,36 @@
+.my-con{
+    position:absolute;
+    top:-400px;    
+    width: auto;
+    height: 400px;
+    background-color: aqua;
+    z-index:3; 
+    margin: auto;
+    overflow: hidden;
+}
+
+
+.bg{
+    position: absolute;
+    width: auto;
+    bottom:10px;
+    background: linear-gradient(90deg, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%);    
+    left:-1em;
+    z-index: 6;
+    padding: 1em;
+    opacity: 90%;
+}
+
+.carousel-control-next,
+.carousel-control-prev /*, .carousel-indicators */ {
+    filter: invert(100%);
+}
+
+#myCarousel{
+    border-bottom: 1px solid black;
+    padding:20px;
+}
+
+.carousel-item {
+    padding: 1em;
+}

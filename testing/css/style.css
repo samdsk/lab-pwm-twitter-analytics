@@ -1,0 +1,41 @@
+header{
+    background-color: #2b235a;
+    color: #75b4e3;
+    
+}
+
+.nav-container{
+    display: flex;    
+    justify-content:space-between;
+    
+}
+
+.site-title a{
+    color:#75b4e3;
+    text-decoration: none;
+}
+
+.site-title a:hover,a:focus{
+    color:#75b4e3
+}
+nav ul{
+    list-style-type: none;
+    display: flex;
+    /*border: #75b4e3 solid 1px;*/
+}
+
+nav li{    
+    margin-left:1rem;
+}
+
+nav a{
+    color: white;
+    font-size: 1rem;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+nav a:hover{
+    color:blueviolet;
+
+}
