@@ -1,13 +1,16 @@
 header{
-    background-color: #2b235a;
+    background-color: #201a42;
     color: #75b4e3;
-    
+    padding: 0.5em;
+    position: fixed;
+    top: 0;
+    z-index: 20;
+    width: 100%;
 }
 
-.nav-container{
+.header-container{    
     display: flex;    
     justify-content:space-between;
-    
 }
 
 .site-title a{
@@ -18,9 +21,18 @@ header{
 .site-title a:hover,a:focus{
     color:#75b4e3
 }
+
+.site-title p{
+    position: relative;
+    margin:0;
+    top:-10px;    
+}
+
 nav ul{
     list-style-type: none;
     display: flex;
+    margin-top: 0;
+    margin-bottom:0.5rem ;
     /*border: #75b4e3 solid 1px;*/
 }
 
@@ -38,4 +50,55 @@ nav a{
 nav a:hover{
     color:blueviolet;
 
+}
+
+.hidden{
+    display: none;
+}
+
+.icon-set .btn{
+    position: relative;
+    top: -5px;
+}
+
+.btn-white{
+    color:white;
+}
+
+.btn-white:hover{
+    color:#75b4e3;
+}
+
+.icon-set{
+    text-align: right;
+}
+
+.form-control{
+    width: auto;
+}
+.img-con{
+    position: relative;
+    
+}
+
+.img-con img{    
+    width: 100%;    
+}
+
+.bg{
+    position: relative;
+}
+
+@media screen and (max-width: 780px) {
+    nav{
+        display: none;
+    }
+
+    .btn-menu{
+        display: inline-block;
+    }
+
+    .icon-set{
+        margin-top: 0.75rem;
+    }
 }

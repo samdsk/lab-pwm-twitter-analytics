@@ -1,5 +1,15 @@
-var foo = function mi(km) {return 0.6 * km}
+$('document').ready(function (){
+    $("#search-btn").click(function(){        
+        $("#search-form").toggle()
+    });
 
-foo = foo(56)
+    $("#dark-btn").click(function(){
+        $(this).hide();
+        $("#ligth-btn").show()
+    });
 
-console.log(foo)
+    $("#ligth-btn").click(function(){
+        $(this).hide();
+        $("#dark-btn").show()
+    });
+});

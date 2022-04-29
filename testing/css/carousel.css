@@ -10,17 +10,19 @@
 
 /* Carousel base class */
 .carousel {
+  margin-top: 4.5rem;
   margin-bottom: 4rem;
 }
 /* Since positioning the image, we need to help out the caption */
 .carousel-caption {
+  position: absolute;
   bottom: 3rem;
   z-index: 10;
 }
 
 /* Declare heights because of positioning of img element */
-.carousel-item {
-  height: 32rem;
+.carousel-item {  
+  height: 52rem;
 }
 .carousel-item > img {
   position: absolute;
