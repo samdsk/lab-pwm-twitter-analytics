@@ -1,3 +1,11 @@
+.hidden{
+    display: none;
+}
+
+/* =============================
+    HEADER - NAV
+============================= */
+
 header{
     background-color: #201a42;
     color: #75b4e3;
@@ -31,13 +39,14 @@ header{
 nav ul{
     list-style-type: none;
     display: flex;
+    position: relative;
     margin-top: 0;
-    margin-bottom:0.5rem ;
-    /*border: #75b4e3 solid 1px;*/
+    margin-bottom:0.5rem;    
 }
 
 nav li{    
     margin-left:1rem;
+    padding-bottom: 1px;
 }
 
 nav a{
@@ -49,11 +58,12 @@ nav a{
 
 nav a:hover{
     color:blueviolet;
+    border-bottom: #75b4e3 solid 1px;
 
 }
 
-.hidden{
-    display: none;
+nav .active{
+    border-bottom: #75b4e3 solid 1px;
 }
 
 .icon-set .btn{
@@ -77,11 +87,18 @@ nav a:hover{
     width: auto;
 }
 
+/* =============================
+    MAIN
+============================= */
+
+/* Carousel */
 #weather-carousel, body{
     background-color: black;
 }
 
-
+/* =============================
+    Media Queries
+============================= */
 @media screen and (max-width: 780px) {
     nav{
         display: none;
