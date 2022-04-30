@@ -12,10 +12,12 @@
 .carousel {
   margin-top: 4.5rem;
   margin-bottom: 4rem;
+  color:black;
 }
 /* Since positioning the image, we need to help out the caption */
 .carousel-caption {
   position: absolute;
+  top: 0;
   bottom: 3rem;
   z-index: 10;
 }
@@ -32,6 +34,10 @@
   height: 32rem;
 }
 
+.carousel-control-next,
+.carousel-control-prev /*, .carousel-indicators */ {
+    filter: invert(100%);
+}
 
 /* MARKETING CONTENT
 -------------------------------------------------- */

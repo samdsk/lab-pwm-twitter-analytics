@@ -76,18 +76,11 @@ nav a:hover{
 .form-control{
     width: auto;
 }
-.img-con{
-    position: relative;
-    
+
+#weather-carousel, body{
+    background-color: black;
 }
 
-.img-con img{    
-    width: 100%;    
-}
-
-.bg{
-    position: relative;
-}
 
 @media screen and (max-width: 780px) {
     nav{

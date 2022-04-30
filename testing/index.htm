@@ -1,15 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset='utf-8'>
-    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <title>Meteo</title>
-    <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <link rel='stylesheet' type='text/css' media='screen' href='css/bootstrap.min.css'>
-    <link rel='stylesheet' type='text/css' media='screen' href='css/carousel.css'>
-    <link rel='stylesheet' type='text/css' media='screen' href='css/style.css'>
-    
-</head>
+  <title>Meteo</title> 
+  <meta charset='utf-8'>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge'>      
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel='stylesheet' type='text/css' media='screen' href='css/bootstrap.min.css'>  
+  <link rel='stylesheet' type='text/css' media='screen' href='css/style.css'>
+  </head>
 <body>
     <header>
         <div class="container header-container">
@@ -57,45 +56,35 @@
         </div>
     </header>
     <main>
-      <div id="myCarousel" class="carousel slide" data-bs-ride="carousel">
+      <div id="weather-carousel" class="carousel slide" data-bs-ride="carousel" data-interval="2000">
         <div class="carousel-indicators">
-          <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="0" class="" aria-label="Slide 1"></button>
-          <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="1" aria-label="Slide 2" class="active" aria-current="true"></button>
-          <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="2" aria-label="Slide 3" class=""></button>
-          <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="3" aria-label="Slide 4" class=""></button>
+          <button type="button" data-bs-target="#weather-carousel" data-bs-slide-to="0" class="" aria-label="Slide 1"></button>
+          <button type="button" data-bs-target="#weather-carousel" data-bs-slide-to="1" aria-label="Slide 2" class="active" aria-current="true"></button>
+          <button type="button" data-bs-target="#weather-carousel" data-bs-slide-to="2" aria-label="Slide 0" class=""></button>
         </div>
-        <div class="carousel-inner">
+        <div class="carousel-inner container" role="listbox">
           <div class="carousel-item active">
-            <svg class="bd-placeholder-img" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false">
-              <rect width="100%" height="100%" fill="#31255a"></rect>
-            </svg>
-            
-              <div class="carousel-caption text-start">
-                <div class="img-con">
-                    <img src="img/new-york.jpg"/>
-                </div>
-                <div class="bg">
-                    <h1>Milano</h1>
-                    <p>Some representative placeholder content for the first slide of the carousel.</p>
-                    <p><a class="btn btn-lg btn-primary" href="#">Sign up today</a></p>
-                  </div>
-              </div>
-            
+            <div class="img"><img class="d-block img-fluid" src="img/milano.jpg" alt="First slide"></div>
+            <div class="carousel-caption d-none d-md-block">
+              <h3>Milano</h3>
+              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempore nihil praesentium architecto saepe error repellendus illum nemo quia in nam tenetur qui, possimus similique vitae velit numquam veniam excepturi non.</p>
+            </div>
           </div>
-
-    
-          
-          
+          <div class="carousel-item">
+            <div class="img"><img class="d-block img-fluid" src="img/colombo.jpg" alt="Second slide"></div>
+          </div>
+          <div class="carousel-item">
+            <div class="img"><img class="d-block img-fluid" src="img/moscow.jpg" alt="Third slide"></div>
+          </div>
         </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Previous</span>
+        <button class="carousel-control-prev" type="button" data-bs-target="#weather-carousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>          
         </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#myCarousel" data-bs-slide="next">
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Next</span>
+        <button class="carousel-control-next" type="button" data-bs-target="#weather-carousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>          
         </button>
-    </div>
+      </div>
+      <!--
       <div class="container">
           <div class="container">
               <div class="row">
@@ -120,14 +109,15 @@
               </div>
           </div>
       </div>
+    -->
     </main>
     <footer>
         <div class="container">
             <p>this is the footer</p>
         </div>
     </footer>
-    <script type="text/javascript" src='js/bootstrap.min.js'></script>
     <script type="text/javascript" src="js/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src='js/bootstrap.min.js'></script>    
     <script type="text/javascript" src='js/script.js'></script>
 </body>
 </html>
