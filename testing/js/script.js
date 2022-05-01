@@ -6,10 +6,12 @@ $('document').ready(function (){
     $("#dark-btn").click(function(){
         $(this).hide();
         $("#ligth-btn").show()
+        $("body").attr("data-theme","dark")
     });
 
     $("#ligth-btn").click(function(){
         $(this).hide();
         $("#dark-btn").show()
+        $("body").attr("data-theme","light")
     });
 });

@@ -8,6 +8,12 @@
     display: none;
 }
 
+[data-theme="dark"]{
+    --site-title-color : #2ee2a6;
+    --site-subtext-color : #dce375;
+    --header-background-color:  #202022;
+}
+
 /* =============================
     HEADER - NAV - ICON-SET
 ============================= */
@@ -28,13 +34,9 @@ header{
     min-width: 350px;
 }
 
-.site-title a{
-    color:#75b4e3;
+.site-title a,a:hover,a:focus{
+    color:var(--site-title-color);
     text-decoration: none;
-}
-
-.site-title a:hover,a:focus{
-    color:#75b4e3
 }
 
 .site-title a > *{
