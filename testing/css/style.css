@@ -1,16 +1,21 @@
+:root{
+    --site-title-color : #75b4e3;
+    --site-subtext-color : #ae75e3;
+    --header-background-color:  #201a42;
+}
+
 .hidden{
     display: none;
 }
 
 /* =============================
-    HEADER - NAV
+    HEADER - NAV - ICON-SET
 ============================= */
 
 header{
-    background-color: #201a42;
-    color: #75b4e3;
-    padding: 0.5em;
-    position: fixed;
+    background-color: var(--header-background-color);
+    color: var(--site-title-color);    
+    position: sticky;
     top: 0;
     z-index: 20;
     width: 100%;
@@ -18,7 +23,9 @@ header{
 
 .header-container{    
     display: flex;    
+    position: relative;
     justify-content:space-between;
+    min-width: 350px;
 }
 
 .site-title a{
@@ -30,18 +37,52 @@ header{
     color:#75b4e3
 }
 
-.site-title p{
-    position: relative;
-    margin:0;
-    top:-10px;    
+.site-title a > *{
+    display: inline-block;
 }
+
+.weather-icon:hover{
+    color: yellow;
+}
+
+.site-title p{    
+    margin:0;
+    font-size: 0.8em;
+    text-align: center;
+    color: var(--site-subtext-color);
+}
+
+/*site-nav-settings*/
+
+/*
+.nav-settings{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0;
+}
+*/
+.icon-set{
+    text-align: right;
+    padding: 0;
+}
+
+.icon-set > *{
+    display: inline-block;
+}
+
+.nav-container{
+    position: relative;
+}
+
 
 nav ul{
     list-style-type: none;
     display: flex;
-    position: relative;
+    justify-content: flex-end;    
     margin-top: 0;
-    margin-bottom:0.5rem;    
+    margin-bottom:0.5rem;
+    
 }
 
 nav li{    
@@ -54,6 +95,7 @@ nav a{
     font-size: 1rem;
     font-weight: 500;
     text-decoration: none;
+    
 }
 
 nav a:hover{
@@ -66,9 +108,14 @@ nav .active{
     border-bottom: #75b4e3 solid 1px;
 }
 
-.icon-set .btn{
+.nav-container .btn{
     position: relative;
     top: -5px;
+}
+
+.menu-container{
+    display: flex;
+    justify-content: flex-end;
 }
 
 .btn-white{
@@ -77,10 +124,6 @@ nav .active{
 
 .btn-white:hover{
     color:#75b4e3;
-}
-
-.icon-set{
-    text-align: right;
 }
 
 .form-control{
@@ -99,16 +142,39 @@ nav .active{
 /* =============================
     Media Queries
 ============================= */
-@media screen and (max-width: 780px) {
+@media screen and (max-width: 750px) {
+    .nav-container{
+        min-width: 150px;
+    }
     nav{
-        display: none;
+        position: absolute;
+        top: 2em;
+        left: 0;
+        right: 0;
+        background-color: #201a42 ;
+        opacity: 0.9;
+        border-radius: 0.5em;
+    }
+
+    nav ul{
+        display: block;
+        text-align: center;
+        padding: 0;
+    }
+
+    nav ul li{
+        margin: 0;        
+        padding: 0.5em;
     }
 
     .btn-menu{
-        display: inline-block;
+        display: block;
+        position: relative;
+        float: right;
     }
 
     .icon-set{
         margin-top: 0.75rem;
     }
+
 }
