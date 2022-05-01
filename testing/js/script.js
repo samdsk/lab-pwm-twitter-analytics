@@ -14,4 +14,8 @@ $('document').ready(function (){
         $("#dark-btn").show()
         $("body").attr("data-theme","light")
     });
+
+    $("#menu-btn").click(() =>{
+        $("#navigation").toggle()
+    })
 });

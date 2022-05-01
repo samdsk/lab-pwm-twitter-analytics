@@ -1,7 +1,8 @@
 :root{
     --site-title-color : #75b4e3;
     --site-subtext-color : #ae75e3;
-    --header-background-color:  #201a42;
+    --header-bg-color:  #201a42;
+    --carousel-bg-color: #291a35;
 }
 
 .hidden{
@@ -11,7 +12,8 @@
 [data-theme="dark"]{
     --site-title-color : #2ee2a6;
     --site-subtext-color : #dce375;
-    --header-background-color:  #202022;
+    --header-bg-color:  #202022;
+    --carousel-bg-color: #333;
 }
 
 /* =============================
@@ -19,7 +21,7 @@
 ============================= */
 
 header{
-    background-color: var(--header-background-color);
+    background-color: var(--header-bg-color);
     color: var(--site-title-color);    
     position: sticky;
     top: 0;
@@ -137,8 +139,8 @@ nav .active{
 ============================= */
 
 /* Carousel */
-#weather-carousel, body{
-    background-color: black;
+#weather-carousel{
+    background-color:var(--carousel-bg-color);
 }
 
 /* =============================
@@ -147,6 +149,9 @@ nav .active{
 @media screen and (max-width: 750px) {
     .nav-container{
         min-width: 150px;
+    }
+    #navigation{
+        display: none;
     }
     nav{
         position: absolute;
