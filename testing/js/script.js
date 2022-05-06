@@ -18,6 +18,8 @@ $('document').ready(function (){
     $("#menu-btn").click(() =>{
         $("#navigation").toggle()
     })
+
+    weather()
 });
 
 
@@ -27,9 +29,9 @@ Array.from(city_tags).forEach(e => {
     cities.push(e.innerHTML)
 });
 
-console.log(cities);
+//console.log(cities);
 
-getW(cities);
+//getW(cities);
 
 function getW(cities){
     let apikey = "860343fcf564f99b3fb00f9536403ad7";
@@ -39,10 +41,10 @@ function getW(cities){
         var reply = await
          fetch(query+apikey,{method:"GET"});
         var jsonObj = await reply.json();
-        console.log(jsonObj.main.temp)
+        console.log(jsonObj)
         
         var temp = document.getElementById("weather-carousel").getElementsByClassName("weather-data")
-        console.log(temp)
+        //console.log(temp)
         for (let iterator of temp) {
             
             if(iterator.getElementsByTagName("h3")[0].innerText==city){
@@ -56,4 +58,30 @@ function getW(cities){
         
     });
     
+}
+
+function weather(){
+    let node = $('#weather-carousel .weather-data');
+    let cities = [];
+    let apikey = "860343fcf564f99b3fb00f9536403ad7";
+    node.each(function(i,e){
+        let city = $(e).find(".city-name").html();
+        console.log(e)
+        let query = "https://api.openweathermap.org/data/2.5/weather?q="+city+",ITA&units=metric&appid=";
+        $.get(query+apikey,function(data){
+            //console.log($(e).find(".weather-data-ul"))
+
+            
+            $(e).find(".weather-data-ul").append(
+                '<li><p>'
+                +data.main.temp+
+                '°</p><img src="http://openweathermap.org/img/wn/'+data.weather[0].icon+'@2x.png"/></li>'
+            )
+        })
+
+    });
+    
+    
+
+
 }
