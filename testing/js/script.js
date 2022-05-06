@@ -20,7 +20,7 @@ $('document').ready(function (){
     })
 
     //weather()
-    geo()
+    
 });
 
 
@@ -82,7 +82,7 @@ function weather(){
 
     });
 }
-
+geo()
 function geo(){
     document.addEventListener('DOMContentLoaded',() =>{
         navigator.geolocation.getCurrentPosition(pos => {
