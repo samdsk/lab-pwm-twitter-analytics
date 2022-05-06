@@ -73,9 +73,9 @@ function weather(){
 
             
             $(e).find(".weather-data-ul").append(
-                '<li><p>'
+                '<li>'
                 +data.main.temp+
-                '°</p><img src="http://openweathermap.org/img/wn/'+data.weather[0].icon+'@2x.png"/></li>'
+                '°</li><li><img src="http://openweathermap.org/img/wn/'+data.weather[0].icon+'@2x.png"/></li>'
             )
         })
 

@@ -58,14 +58,6 @@ header{
 
 /*site-nav-settings*/
 
-/*
-.nav-settings{
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    padding: 0;
-}
-*/
 .icon-set{
     text-align: right;
     padding: 0;
@@ -143,6 +135,19 @@ nav .active{
     background-color:var(--carousel-bg-color);
 }
 
+.weather-data{
+    background-color: #201a42;
+    opacity: 0.8;
+    
+}
+.weather-data-ul{
+    list-style: none;
+    display: block
+}
+
+.weather-data-ul li{
+    display: inline-block
+}
 /* =============================
     Media Queries
 ============================= */
