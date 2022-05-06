@@ -1,5 +1,5 @@
 $('document').ready(function (){
-    $("#search-btn").click(function(){        
+    $("#search-btn").click(function(){
         $("#search-form").toggle()
     });
 
@@ -19,7 +19,8 @@ $('document').ready(function (){
         $("#navigation").toggle()
     })
 
-    weather()
+    //weather()
+    geo()
 });
 
 
@@ -80,8 +81,13 @@ function weather(){
         })
 
     });
-    
-    
+}
 
-
+function geo(){
+    document.addEventListener('DOMContentLoaded',() =>{
+        navigator.geolocation.getCurrentPosition(pos => {
+            const {lat,lon} = pos.coords;
+            console.log(lat,lon)
+        })
+    })
 }
