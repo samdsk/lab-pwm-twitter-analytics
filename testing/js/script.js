@@ -86,8 +86,9 @@ geo()
 function geo(){
     document.addEventListener('DOMContentLoaded',() =>{
         navigator.geolocation.getCurrentPosition(pos => {
-            const {lat,lon} = pos.coords;
-            console.log(lat,lon)
+            const {latitude,longitude} = pos.coords;
+
+            console.log(latitude,longitude)
         })
     })
 }
