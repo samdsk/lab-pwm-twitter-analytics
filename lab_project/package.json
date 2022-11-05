@@ -1,0 +1,23 @@
+{
+  "name": "twitter_analytics",
+  "version": "0.0.1",
+  "description": "pwm-project-2022",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/samdsk/lab-pwm.git"
+  },
+  "keywords": [
+    "twitter",
+    "analytics"
+  ],
+  "author": "Sameera Kaluwaduge",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/samdsk/lab-pwm/issues"
+  },
+  "homepage": "https://github.com/samdsk/lab-pwm#readme"
+}
