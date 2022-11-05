@@ -1,0 +1,32 @@
+header{
+    background-color:white ;
+}
+
+
+footer{
+    background-color:white ;
+    border-color: #aaaaaa;
+}
+
+main form{    
+    width: 50% !important;
+    
+}
+
+footer div.col {
+    background-color:white ;
+}
+
+
+@media screen and (max-width: 1000px){
+    main form {
+        width: 70% !important;
+    }
+}
+
+@media screen and (max-width: 750px){
+    main form {
+        width: 100% !important;
+    }
+}
+
