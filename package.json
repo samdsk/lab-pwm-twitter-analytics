@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/samdsk/lab-pwm/issues"
   },
-  "homepage": "https://github.com/samdsk/lab-pwm#readme"
+  "homepage": "https://github.com/samdsk/lab-pwm#readme",
+  "dependencies": {
+    "bootstrap-icons": "^1.9.1"
+  }
 }
