@@ -4,7 +4,7 @@
   "description": "pwm-project-2022",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "devStart": "nodemon server.js"
   },
   "repository": {
     "type": "git",
@@ -22,6 +22,13 @@
   "homepage": "https://github.com/samdsk/lab-pwm#readme",
   "dependencies": {
     "bootstrap-icons": "^1.9.1",
-    "pg": "^8.8.0"
+    "dotenv": "^16.0.3",
+    "ejs": "^3.1.8",
+    "express": "^4.18.2",
+    "pg": "^8.8.0",
+    "twitter-api-v2": "^1.12.9"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
   }
 }
