@@ -16,7 +16,17 @@ main form{
 footer div.col {
     background-color:white ;
 }
+#dashboard .row {
+    background-color: antiquewhite;
+}
 
+#dashboard .left{
+    background-color: #aaaaaa;
+} 
+
+#dashboard .right{
+    background-color: #555555;
+} 
 
 @media screen and (max-width: 1000px){
     main form {

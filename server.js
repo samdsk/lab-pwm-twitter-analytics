@@ -21,5 +21,9 @@ app.get('/about',function(req,res){
 })
 
 
+app.get('/dashboard',function(req,res){
+    res.render('pages/dashboard')
+})
+
 app.listen(3000)
 
