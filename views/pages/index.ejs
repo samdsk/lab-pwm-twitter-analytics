@@ -8,16 +8,21 @@
     <%- include('../partials/header') %>
 
     <main class="container mt-5 mb-5">
-        <p class="container-fluid text-center">Welcome to <span class="text-danger">placeholder</span> <br> This is a Twitter analytics application which let you have insights about a list of public profiles</p>
+        <p class="container-fluid text-center">
+            Welcome to <span class="text-danger">placeholder</span> 
+            <br> 
+            This is a Twitter analytics application which let you have insights about a list of public profiles
+        </p>
         
-        <form id="sign-in" class="container-sm p-3">
+        <form id="sign-in" class="container-sm p-3 needs-validation" novalidate>
             <h4 class="text-star">Sign in</h4>
             <div class="form-floating mb-3">
-                <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+                <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" required>
                 <label for="floatingInput">Email address</label>
+                <div class="invalid-feedback">Please choose a valid email.</div>
             </div>
             <div class="form-floating mb-3">
-                <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+                <input type="password" class="form-control" id="floatingPassword" placeholder="Password" required>
                 <label for="floatingPassword">Password</label>
             </div>
             <div class="form-check mb-3">
@@ -38,7 +43,7 @@
                         <line x1="0" y1="0" x2="300" y2="0" stroke="#aaaaaa" />
                     </svg>
                 </div>
-                <p class="">Don't have an account? <a href="#">Sign up for free</a></p>
+                <p class="">Don't have an account? <a href="/signup">Sign up for free</a></p>
                 
             </div>
         </form>
@@ -46,6 +51,5 @@
     <!--footer-->
     <%- include('../partials/footer') %>
 </body>
-<script type="javascript" src="js/jquery-3.6.1.min.js"></script>
-<script type="javascript" src="js/bootstrap.min.js"></script>
+<%- include('../partials/scripts') %>
 </html>
