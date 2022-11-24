@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/samdsk/lab-pwm#readme",
   "dependencies": {
+    "bcrypt": "^5.1.0",
     "bootstrap-icons": "^1.9.1",
     "dotenv": "^16.0.3",
     "ejs": "^3.1.8",
