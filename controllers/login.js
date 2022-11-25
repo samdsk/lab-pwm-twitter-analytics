@@ -1,5 +1,5 @@
 const Auth = require('../models/Auth')
-const Person = require('../models/Person')
+const Person = require('../models/User')
 
 
 const login = async (req,res) => {
