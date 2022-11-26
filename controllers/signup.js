@@ -12,16 +12,17 @@ const createUser = async (req,res) => {
 
 
     
-    const user = Auth.findOne({email:req.body.signup_email})
+    const user = Auth.findOne({email:req.body.signup_email},(err,auth)=>{return "auth._id"})
+    console.log(user)
+    // if(user != null) return res.status(400).send("User already exists!")
+    // if(req.body.signup_password_2 != req.body.signup_password) return res.status(400).send("Passwords don't match")
 
-    if(user != null) return res.status(400).send("User already exists!")
-    if(req.body.signup_password_2 != req.body.signup_password) return res.status(400).send("Passwords don't match")
+    // const password = await bcrypt.hash(req.body.signup_password,10)
+    // const id = new mongoose.Types.ObjectId()    
 
-    const password = await bcrypt.hash(req.body.signup_password,10)
-    const id = new mongoose.Types.ObjectId()
-    
-    Auth.create({_id:id,email:req.body.signup_email,password : password})
-    User.create({_id:id,name:req.body.signup_name})
+    // Auth.create({_id:id,email:req.body.signup_email,password : password})
+    // User.create({_id:id,name:req.body.signup_name})
+
     res.status(200).send('Ok')
 
 }
