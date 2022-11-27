@@ -1,8 +1,12 @@
 const mongoose = require('mongoose')
 
 const AuthSchema = new mongoose.Schema({
-    _id:mongoose.Schema.Types.ObjectId,
-    email: String,
+    _id:{type:mongoose.Schema.Types.ObjectId},
+    email: {
+        type:String,
+        unique:true,
+        required:true
+    },
     password: String
 })
 

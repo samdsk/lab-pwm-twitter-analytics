@@ -19,6 +19,7 @@ node_modules/
 
 # ignore env 
 .env
+credentials.txt
 
 # ignore log files and databases
 *.log
