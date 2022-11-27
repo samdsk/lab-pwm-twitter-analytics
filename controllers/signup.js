@@ -12,7 +12,9 @@ const createUser = async (req,res) => {
 
 
     
-    const user = Auth.findOne({email:req.body.signup_email},(err,auth)=>{return "auth._id"})
+    Auth.findOne({email:req.body.signup_email},(err,auth)=>{
+        console.log(user)
+    })
     console.log(user)
     // if(user != null) return res.status(400).send("User already exists!")
     // if(req.body.signup_password_2 != req.body.signup_password) return res.status(400).send("Passwords don't match")
