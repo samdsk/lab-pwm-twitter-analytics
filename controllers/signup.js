@@ -9,7 +9,7 @@ const createUser = async (req,res,next) => {
     const params_check = required_params(["signup_email","signup_password","signup_name","signup_terms"],req)
     
     if(!params_check) return next(createError(400,"Missing fields"))
-    
+
     Auth.findOne({email:req.body.signup_email}, async (err,auth)=>{
         
         if(auth != null) return next(createError(400,"User already exists!"))
@@ -22,9 +22,8 @@ const createUser = async (req,res,next) => {
 
         res.status(200).send('Ok')
     })
-
     
-
+    res.json(req.body)
 }
 
 const signupPage = async (req,res) => {

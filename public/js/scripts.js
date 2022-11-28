@@ -18,3 +18,48 @@
         }, false)
       })
   })()
+
+$(document).ready(function(){
+
+
+
+  const setUser = () =>{
+    try{
+      const user = localStorage.getItem('user')
+      const token = localStorage.getItem('token')
+      if(user!=null && token != null ){
+        $('#user a').append(user)
+        $('#user').removeClass('d-none')
+      }   
+    }catch(err){
+      console.log(err)
+    } 
+  }
+  
+  setUser()
+
+
+
+  $('.dashboard').click((event)=>{
+    event.preventDefault()
+    //if(localStorage.getItem('token')==null) return 
+    $.ajax({
+      url:'/dashboard',
+      headers:{'Authorization':'Bear '+localStorage.getItem('token') },
+      success: (data)=>{
+        window.location.href = "/dashboard";
+      }
+    })
+  })
+
+  $('#login').click((event)=>{
+    event.preventDefault()
+    $.post("/login",$('#sign-in').serialize(),(data)=>{
+      localStorage.setItem('token',data.token)
+      localStorage.setItem('user',data.user)
+      setUser()
+      console.log(data)
+    })
+  })
+
+})
