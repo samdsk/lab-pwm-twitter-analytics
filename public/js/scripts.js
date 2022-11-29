@@ -36,30 +36,30 @@ $(document).ready(function(){
     } 
   }
   
-  setUser()
+  //setUser()
 
 
 
-  $('.dashboard').click((event)=>{
-    event.preventDefault()
-    //if(localStorage.getItem('token')==null) return 
-    $.ajax({
-      url:'/dashboard',
-      headers:{'Authorization':'Bear '+localStorage.getItem('token') },
-      success: (data)=>{
-        window.location.href = "/dashboard";
-      }
-    })
-  })
+  // $('.dashboard').click((event)=>{
+  //   event.preventDefault()
+  //   //if(localStorage.getItem('token')==null) return 
+  //   $.ajax({
+  //     url:'/dashboard',
+  //     headers:{'Authorization':'Bear '+localStorage.getItem('token') },
+  //     success: (data)=>{
+  //       window.location.href = "/dashboard";
+  //     }
+  //   })
+  // })
 
-  $('#login').click((event)=>{
-    event.preventDefault()
-    $.post("/login",$('#sign-in').serialize(),(data)=>{
-      localStorage.setItem('token',data.token)
-      localStorage.setItem('user',data.user)
-      setUser()
-      console.log(data)
-    })
-  })
+  // $('#login').click((event)=>{
+  //   event.preventDefault()
+  //   $.post("/login",$('#sign-in').serialize(),(data,status,xhr)=>{      
+  //     if(xhr.status == 200){
+  //       window.location.href = '/dashboard'
+  //     }
+  //     console.log('no token received')
+  //   })
+  // })
 
 })
