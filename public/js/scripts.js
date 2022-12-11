@@ -25,19 +25,22 @@ $(document).ready(function(){
 
   const setUser = () =>{
     try{
-      const user = localStorage.getItem('user')
-      const token = localStorage.getItem('token')
-      if(user!=null && token != null ){
-        $('#user a').append(user)
-        $('#user').removeClass('d-none')
-      }   
+      const getCookieValue = (name) => {      
+        document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || ('')
+      }      
     }catch(err){
       console.log(err)
     } 
   }
   
-  //setUser()
-
+  //setUser()  
+  const errors = new URLSearchParams(document.location.search)
+  if(!errors.entries().next().done){
+    $('#errors').removeClass("d-none")
+    errors.forEach((v,k)=>{
+      $('#errors').append('<p class="mb-0">'+k+" - "+v+"</p>")
+    })
+  }
 
 
   // $('.dashboard').click((event)=>{

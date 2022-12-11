@@ -1,11 +1,13 @@
 <header class="container">        
     <nav class="navbar justify-content-end">
         <ul class="nav ml-auto">
+            <li class="nav-item"><a class="nav-link" href="/"></a></li>
             <li id="user" class="nav-item d-none"><a class="nav-link dashboard" href="/dashboard">Welcome </a></li>
             <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
             <li class="nav-item"><a class="nav-link" href="/signup">Sign up</a></li>
-            <!-- <li class="nav-item"><a class="nav-link" href="/dashboard">Dashboard</a></li> -->
+            <li class="nav-item"><a class="nav-link" href="/dashboard">Dashboard</a></li>
             <li class="nav-item"><a class="nav-link" href="/about">About</a></li>
+            <li class="nav-item <% if(!(locals.logout && locals.logout === 'true')){%> <%='d-none'%> <%}%>"><a class="nav-link" href="/logout">Logout</a></li>
             <li class="nav-item"><a class="nav-link" href="#">Dark-Theme</a></li>
         </ul>
     </nav>

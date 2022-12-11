@@ -46,8 +46,7 @@ app.use('/',express_session({
         httpOnly:true,
         secure:false,
         sameSite:true,
-        path:'/',
-        maxAge:1000 * 60 * 60
+        path:'/'
     },
     store: new MongoStore({
         url: db_url
@@ -73,6 +72,7 @@ app.use('/signup',signup)
 app.use('/login',login)
 
 app.get('/logout',(req,res)=>{
+    res.clearCookie('logout')    
     req.session.destroy()
     res.redirect('/')
 })
@@ -80,7 +80,7 @@ app.get('/logout',(req,res)=>{
 app.use(not_found)
 app.use(error_handler)
 
-//conecting to db and starting the server
+// connecting to db and starting the server
 const start = async (connection_url) => {
     try{
         await db_connect(connection_url)

@@ -28,6 +28,7 @@
                 <label for="signup-password-2">Repeat Password</label>
                 <div class="valid-feedback">Looks good!</div>
             </div>
+            <div id="errors" class="alert alert-danger d-none"></div>
             <div class="form-check mb-3 has-validation">
                 <input class="form-check-input" id="signup-terms" type="checkbox" name="signup_terms" required>
                 <label class="form-check-label" for="signup-terms">I agree to all statements in</label>
@@ -47,9 +48,8 @@
                         <line x1="0" y1="0" x2="300" y2="0" stroke="#aaaaaa" />
                     </svg>
                 </div>
-                <p class="">You have an account? <a href="/">Login</a></p>
-                
-            </div>
+                <p class="">You have an account? <a href="/">Login</a></p>                
+            </div>            
         </form>
     </main>
     <%- include('../partials/footer') %> 

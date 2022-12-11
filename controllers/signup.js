@@ -8,11 +8,11 @@ const {createError} = require('../errors/customError')
 const createUser = async (req,res,next) => {
     const params_check = required_params(["signup_email","signup_password","signup_name","signup_terms"],req)
     
-    if(!params_check) return next(createError(400,"Missing fields"))
+    if(!params_check) return res.redirect("signup/?error=Missing fields")    
 
     Auth.findOne({email:req.body.signup_email}, async (err,auth)=>{
         
-        if(auth != null) return next(createError(400,"User already exists!"))
+        if(auth != null) return res.redirect("signup/?error=User already exists!")
 
         const password = await bcrypt.hash(req.body.signup_password,10)
         const id = new mongoose.Types.ObjectId()    
