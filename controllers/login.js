@@ -4,7 +4,7 @@ const {createError} = require('../errors/customError')
 const jwt = require('jsonwebtoken')
 const User = require('../models/User')
 
-const SessionDuration = 200000
+const SessionDuration = 1000 * 60 * 60 * 60
 
 const login = async (req,res,next) => {
     const {login_email, login_password, login_remember } = req.body
@@ -16,16 +16,15 @@ const login = async (req,res,next) => {
             
             if(!check) return res.redirect("/?error=Credentials are not valid")
 
-            const token = jwt.sign({email:login_email},process.env.Server_Secret,{expiresIn:"20s"}) 
+            //const token = jwt.sign({email:login_email},process.env.Server_Secret,{expiresIn:"20s"}) 
 
-            const username = await User.findOne({_id:auth._id})
-            res.cookie('logout','true',{maxAge : SessionDuration})
+            const username = await User.findOne({_id:auth._id}).populate('_id')           
             req.session.username = username.name
-        // ! session maxage
+            req.session.email = username._id.email
+            // ! session maxage
             if(login_remember === "on") req.session.cookie.maxAge = SessionDuration
 
-            // ?token='+token
-            res.redirect('/dashboard')
+            res.redirect('/dashboard/profile')
             
         }).catch((err)=>{console.log(err)})
     })

@@ -6,18 +6,17 @@
     <main class="container mt-5 mb-5" id="dashboard">
         <noscript>Sorry, your browser does not support JavaScript!</noscript>
         <div class="row">
-            <div class="col-3 left">
-                <ul>
-                    <li><a>Profile</a></li>
-                    <li><a>History</a></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                </ul>
-            </div>
-            <div class="col right">
-                <h2>data</h2>
+            <%- include('../partials/dashboard.ejs') %>
+
+            <div class="col right border p-3">
+                <h3>History</h3>
+                <div>
+                    <form>
+                        <label>Last searches</label>
+                        <span></span>
+                    </form>
+                </div>
+                
             </div>
         </div>
     </main>

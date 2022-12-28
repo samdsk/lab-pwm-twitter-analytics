@@ -21,19 +21,6 @@
 
 $(document).ready(function(){
 
-
-
-  const setUser = () =>{
-    try{
-      const getCookieValue = (name) => {      
-        document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || ('')
-      }      
-    }catch(err){
-      console.log(err)
-    } 
-  }
-  
-  //setUser()  
   const errors = new URLSearchParams(document.location.search)
   if(!errors.entries().next().done){
     $('#errors').removeClass("d-none")
@@ -42,6 +29,14 @@ $(document).ready(function(){
     })
   }
 
+  $('#profile').click((event)=>{
+    event.preventDefault()
+    $.get("/profile",(data)=>{
+      console.log(data)
+    })
+  })
+
+})
 
   // $('.dashboard').click((event)=>{
   //   event.preventDefault()
@@ -64,5 +59,3 @@ $(document).ready(function(){
   //     console.log('no token received')
   //   })
   // })
-
-})

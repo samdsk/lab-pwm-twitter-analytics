@@ -65,8 +65,9 @@ app.get('/about',function(req,res){
     res.render('pages/about')
 })
 
-app.use(/^\/dashboard.*/,auth_session,dashboard)
-//app.use(,(req,res)=>{
+// app.use(/^\/dashboard.*/,auth_session,dashboard)
+app.use('/dashboard',auth_session,dashboard)
+
 
 app.use('/signup',signup)
 app.use('/login',login)

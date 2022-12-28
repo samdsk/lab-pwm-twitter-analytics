@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%- include('../partials/head') %> 
+<body>
+    <%- include('../partials/header') %> 
+    <main class="container mt-5 mb-5" id="dashboard">
+        <noscript>Sorry, your browser does not support JavaScript!</noscript>
+        <div class="row">
+            <%- include('../partials/dashboard.ejs') %>
+
+            <div class="col right border p-3">
+                <h3>New Search</h3>
+                <form class="form-controll needs-validation d-inline" action="/twitter" method="POST">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="handler" name="handler" placeholder="@handler" required>                        
+                        <button class="btn btn-outline-primary " type="submit"><i class="bi bi-search"></i></button>                        
+                    </div>
+                    <div class="invalid-feedback">Please choose a valid twitter handler.</div>                    
+                </form>
+                
+            </div>
+        </div>
+    </main>
+    <%- include('../partials/footer') %> 
+</body>
+<%- include('../partials/scripts') %>
+</html>

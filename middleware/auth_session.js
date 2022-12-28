@@ -5,8 +5,7 @@ const auth_session = async (req,res,next)=>{
         console.log('username set ok')
         const user = await User.findOne({name:req.session.username})
         if(user){
-            console.log('user found')
-            console.log(req.query);
+            //console.log('user found')
             return next()
         }
         else console.log('no user')
