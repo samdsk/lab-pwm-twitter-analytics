@@ -18,6 +18,7 @@ const db_url = require('./db/db_params')
 const signup = require('./routes/signup')
 const login = require('./routes/login')
 const dashboard = require('./routes/dashboard')
+const twitter = require('./routes/twitter')
 
 const auth_session = require('./middleware/auth_session')
 const not_found = require('./middleware/not_found')
@@ -68,6 +69,7 @@ app.get('/about',function(req,res){
 // app.use(/^\/dashboard.*/,auth_session,dashboard)
 app.use('/dashboard',auth_session,dashboard)
 
+app.use('/twitter',twitter) 
 
 app.use('/signup',signup)
 app.use('/login',login)
