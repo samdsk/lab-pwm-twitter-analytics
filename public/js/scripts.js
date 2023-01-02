@@ -29,10 +29,16 @@ $(document).ready(function(){
     })
   }
 
-  $('#profile').click((event)=>{
+  $('#search-btn').click((event)=>{
     event.preventDefault()
-    $.get("/profile",(data)=>{
-      console.log(data)
+    $.post("/twitter",$('#form-search').serialize(),(data,status,xhr)=>{      
+      if(xhr.status == 200){
+        $('#results').append(data)
+        console.log(data)
+      }else{
+        console.log('twitter error '+xhr.status)
+      }
+      
     })
   })
 

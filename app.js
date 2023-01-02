@@ -15,7 +15,8 @@ const tweet_fields = ['attachments',
 'reply_settings', 
 'source', 
 'text', 
-'withheld'
+'withheld',
+'media.fields'
 ]
 
 const tweet = async () => {

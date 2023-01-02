@@ -10,14 +10,16 @@
 
             <div class="col right border p-3">
                 <h3>New Search</h3>
-                <form class="form-controll needs-validation d-inline" action="/twitter" method="POST">
+                <form id="form-search" class="form-controll needs-validation d-inline" action="/twitter" method="POST">
                     <div class="input-group">
                         <input type="text" class="form-control" id="handler" name="handler" placeholder="@handler" required>                        
-                        <button class="btn btn-outline-primary " type="submit"><i class="bi bi-search"></i></button>                        
+                        <button id="search-btn" class="btn btn-outline-primary " type="submit"><i class="bi bi-search"></i></button>                        
                     </div>
                     <div class="invalid-feedback">Please choose a valid twitter handler.</div>                    
                 </form>
-                
+               <div id="results">
+
+               </div> 
             </div>
         </div>
     </main>
