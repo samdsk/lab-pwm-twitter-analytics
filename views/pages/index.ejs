@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--header-->
+<%- include('../partials/head') %>
+
+<body class="container-fluid blue">
+    <!--navigation-->
+    <%- include('../partials/header') %>
+
+    <main class="container mt-5 mb-5" id="index">
+        <p class="container-fluid text-center">
+            Welcome to <span class="text-danger">placeholder</span> 
+            <br> 
+            This is a Twitter analytics application which let you have insights about a list of public profiles
+        </p>
+        
+        <form id="sign-in" class="container-sm p-3 needs-validation" action="/login" method="post" novalidate>
+            <h4 class="text-star">Sign in</h4>
+            <div class="form-floating mb-3">
+                <input type="email" class="form-control" id="floatingInput" name="login_email" placeholder="name@example.com" required>
+                <label for="floatingInput">Email address</label>
+                <div class="invalid-feedback">Please choose a valid email.</div>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="password" class="form-control" name="login_password" id="floatingPassword" placeholder="Password" required>
+                <label for="floatingPassword">Password</label>
+            </div>
+            <div id="errors" class="alert alert-danger d-none"></div>
+            <div class="form-check mb-3">
+                <input class="form-check-input" name="login_remember" type="checkbox">
+                <label class="form-check-label">Remember me!</label>
+                <a href="#">Forgot your passoword?</a>
+            </div>
+            <button id="login" class="btn btn-outline-primary" type="">Login</button>
+            <div class="text-center">
+                <div class="row p-2">
+                    <svg class="col d-inline " viewBox="0 0 300 1" xmlns="http://www.w3.org/2000/svg">
+                        <line x1="0" y1="0" x2="300" y2="0" stroke="#aaaaaa" />
+                    </svg>
+                  
+                    <p class="col-1 d-inline pt-2">or</p>
+    
+                    <svg class="col d-inline " viewBox="0 0 300 1" xmlns="http://www.w3.org/2000/svg">
+                        <line x1="0" y1="0" x2="300" y2="0" stroke="#aaaaaa" />
+                    </svg>
+                </div>
+                <p class="">Don't have an account? <a href="/signup">Sign up for free</a></p>
+                
+            </div>
+        </form>
+    </main>
+    <!--footer-->
+    <%- include('../partials/footer') %>
+</body>
+<%- include('../partials/scripts') %>
+</html>

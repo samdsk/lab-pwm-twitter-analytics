@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%- include('../partials/head') %> 
+<body>
+    <%- include('../partials/header') %> 
+    <main class="container mt-5 mb-5" id="singup">
+
+        <noscript>Sorry, your browser does not support JavaScript!</noscript>
+        <form id="sign-up" class="container-sm p-3 needs-validation" method="POST" action="/signup" novalidate>
+            <h4 class="text-star">Sign in</h4>
+            <div class="form-floating mb-3 has-validation">
+                <input type="text" class="form-control" id="signup-name" name="signup_name" placeholder="First Name" required>
+                <label for="signup-name">Name</label>
+                <div class="valid-feedback">Looks good!</div>
+            </div>
+            <div class="form-floating mb-3 has-validation">
+                <input type="email" class="form-control" id="signup-email" name="signup_email" placeholder="name@example.com" required>
+                <label for="signup-email">Email</label>
+                <div class="invalid-feedback">Please choose a valid email.</div>
+            </div>
+            <div class="form-floating mb-3 has-validation">
+                <input type="password" class="form-control" id="signup-password" name="signup_password" placeholder="Password" required>
+                <label for="signup-password">Password</label>
+                <div class="valid-feedback">Looks good!</div>
+            </div>
+            <div class="form-floating mb-3 has-validation">
+                <input type="password" class="form-control" id="signup-password-2" name="signup_password_2" placeholder="Password" required>
+                <label for="signup-password-2">Repeat Password</label>
+                <div class="valid-feedback">Looks good!</div>
+            </div>
+            <div id="errors" class="alert alert-danger d-none"></div>
+            <div class="form-check mb-3 has-validation">
+                <input class="form-check-input" id="signup-terms" type="checkbox" name="signup_terms" required>
+                <label class="form-check-label" for="signup-terms">I agree to all statements in</label>
+                <a href="#">Terms of service</a>
+                <div class="invalid-feedback">You must agree before submitting.</div>
+            </div>
+            <button class="btn btn-outline-primary" type="submit">Sing up</button>
+            <div class="text-center">
+                <div class="row p-2">
+                    <svg class="col d-inline " viewBox="0 0 300 1" xmlns="http://www.w3.org/2000/svg">
+                        <line x1="0" y1="0" x2="300" y2="0" stroke="#aaaaaa" />
+                    </svg>
+                  
+                    <p class="col-1 d-inline pt-2">or</p>
+    
+                    <svg class="col d-inline " viewBox="0 0 300 1" xmlns="http://www.w3.org/2000/svg">
+                        <line x1="0" y1="0" x2="300" y2="0" stroke="#aaaaaa" />
+                    </svg>
+                </div>
+                <p class="">You have an account? <a href="/">Login</a></p>                
+            </div>            
+        </form>
+    </main>
+    <%- include('../partials/footer') %> 
+</body>
+<%- include('../partials/scripts') %>
+</html>

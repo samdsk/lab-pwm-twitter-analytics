@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%- include('../partials/head') %> 
+<body>
+    <%- include('../partials/header') %> 
+    <main class="container mt-5 mb-5" id="dashboard">
+        <noscript>Sorry, your browser does not support JavaScript!</noscript>
+        <div class="row">
+            <%- include('../partials/dashboard.ejs') %>
+
+            <div class="col right border p-3">
+                <h3>Profile</h3>
+                <div>
+                    <form class="form-controll">
+                        <label>Username:</label>
+                        <p>
+                            <% if (locals.username) { %>
+                            <%= username %>
+                            <% } %>
+                        </p>
+                        <label>Email:</label>
+                        <p>
+                            <% if (locals.email) { %>
+                            <%= email %>
+                            <% } %>
+                        </p>                        
+                        <label>Change password</label>                        
+                        <div class="form-floating mb-3 has-validation">
+                            <input type="password" class="form-control form-control-sm" id="signup-password" name="signup_password" placeholder="Password" required>
+                            <label for="signup-password">Password</label>
+                            <div class="valid-feedback">Looks good!</div>
+                        </div>
+                        <div class="form-floating mb-3 has-validation">
+                            <input type="password" class="form-control form-control-sm" id="signup-password-2" name="signup_password_2" placeholder="Password" required>
+                            <label for="signup-password-2">Repeat Password</label>
+                            <div class="valid-feedback">Looks good!</div>
+                        </div>
+
+                        <button class="btn btn-outline-primary" type="submit">Change password</button>
+                    </form>
+                </div>
+                
+            </div>
+        </div>
+    </main>
+    <%- include('../partials/footer') %> 
+</body>
+<%- include('../partials/scripts') %>
+</html>
+
+
+
+
+
+
+<script>
+    $(document).ready(()=>{
+
+    })
+</script>
