@@ -5,10 +5,7 @@ let TWEETS = {
     video:0,
     photo:0,
     links:0,
-    likes:{
-        count : 0,
-        avg : 0
-    },
+    polls:0,
     retweeted:{
         count : 0,
         last : 0,
@@ -17,22 +14,38 @@ let TWEETS = {
     replied_to:{
         count : 0,
         last : 0,
-        interval : []
+        interval : [],
+        metrics:{
+            retweet_count:0,
+            reply_count:0,
+            like_count:0,
+            quote_count:0,
+            impression_count:0
+        }
     },
     quoted:{
         count : 0,
         last : 0,
-        interval : []
+        interval : [],
+        metrics:{
+            retweet_count:0,
+            reply_count:0,
+            like_count:0,
+            quote_count:0,
+            impression_count:0
+        }
     },
     original:{
         count : 0,
         last : 0,
-        interval : []
-    },
-    total:{
-        count : 0,
-        last : 0,
-        interval : []
+        interval : [],
+        metrics:{
+            retweet_count:0,
+            reply_count:0,
+            like_count:0,
+            quote_count:0,
+            impression_count:0
+        }
     }
 }
 
@@ -58,50 +71,55 @@ const process_data = async (DATA) => {
         }
 
         
-        if(e?.entities?.urls) {
-            if(e.entities.urls[0].unwound_url) {
-                console.log(e.entities.urls[0].unwound_url); 
-                TWEETS.links += 1}
-        }
         
+        if(e?.entities?.urls) {            
+            if(e.entities.urls[0].unwound_url) {                
+                console.log("external url ",e.entities.urls[0].unwound_url); 
+                TWEETS.links += 1
+            }
+        }
+
+        if(e?.entities?.polls) {
+            console.log("poll ",e?.entities?.polls);
+            TWEETS.polls += 1
+        }
+
         let time = new Date(Date.parse(e.created_at)).getTime()
         
         if(e?.referenced_tweets){
             
             let type = (e?.referenced_tweets[0].type)
-
-            if(TWEETS[type].last == 0){
-                TWEETS[type].last = time
-            }else{                        
-                TWEETS[type]?.interval.push(time - TWEETS[type].last)
-                TWEETS[type].last = time
-            }
-
+            updateInterval(type,time)
+            if(type != "retweeted") updateMetrics(type,e.public_metrics)
             TWEETS[type].count +=1
 
         }else{
-            if(TWEETS.original.last == 0){
-                TWEETS.original.last  = time
-            }else{
-                TWEETS.original?.interval.push(time - TWEETS.original.last)
-                TWEETS.original.last
-            }
 
+            updateInterval("original",time)
+            updateMetrics("original",e.public_metrics)
             TWEETS.original.count +=1
-
         }
 
-        if(TWEETS.total.last == 0){
-            TWEETS.total.last = time
-        }else{
-            TWEETS.total?.interval.push(time - TWEETS.total.last)
-            TWEETS.total.last = time
-        }
-
-        TWEETS.total.count += 1
     });
 
     console.log(TWEETS);
+}
+
+function updateMetrics(type,public_metrics){
+
+    Object.keys(TWEETS[type].metrics).forEach(key => {
+        TWEETS[type].metrics[key] += public_metrics[key];                
+    })
+}
+
+function updateInterval(type,time){
+
+    if(TWEETS[type].last == 0){
+        TWEETS[type].last  = time
+    }else{
+        TWEETS[type]?.interval.push(time - TWEETS[type].last)
+        TWEETS[type].last = time
+    }
 }
 
 function msToHMS(e) {    
