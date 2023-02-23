@@ -1,66 +1,18 @@
 const fs = require('fs')
+const TWEETS = require('./tweets_data')
 
-let TWEETS = {
-    text: 0,
-    video:0,
-    photo:0,
-    links:0,
-    polls:0,
-    retweeted:{
-        count : 0,
-        last : 0,
-        interval : []
-    },
-    replied_to:{
-        count : 0,
-        last : 0,
-        interval : [],
-        metrics:{
-            retweet_count:0,
-            reply_count:0,
-            like_count:0,
-            quote_count:0,
-            impression_count:0
-        }
-    },
-    quoted:{
-        count : 0,
-        last : 0,
-        interval : [],
-        metrics:{
-            retweet_count:0,
-            reply_count:0,
-            like_count:0,
-            quote_count:0,
-            impression_count:0
-        }
-    },
-    original:{
-        count : 0,
-        last : 0,
-        interval : [],
-        metrics:{
-            retweet_count:0,
-            reply_count:0,
-            like_count:0,
-            quote_count:0,
-            impression_count:0
-        }
-    }
-}
 
-const process_data = async (DATA) => {        
-        
-    let FILE = fs.readFileSync('../log.json')
-    FILE = JSON.parse(FILE)
+const collectData = async (DATA) => { 
+      
+    DATA = JSON.parse(DATA)
 
-    let data = FILE._realData.data
-    let media = FILE._realData.includes?.media
+    let data = DATA._realData.data
+    let media = DATA._realData.includes?.media
     
     // sort tweets in ascending order
     data = data.sort((a,b) => {if(a.created_at > b.created_at) return 1 ;else return -1})
 
-    // process each tweet finding media type, tweet type, time intervals
+    // process each tweet finding media type, tweet type, time intervals and metrics
     data.forEach(e => {
 
         if(media && e.attachments?.media_keys){
@@ -69,8 +21,6 @@ const process_data = async (DATA) => {
         }else{                
             TWEETS.text+=1
         }
-
-        
         
         if(e?.entities?.urls) {            
             if(e.entities.urls[0].unwound_url) {                
@@ -89,36 +39,44 @@ const process_data = async (DATA) => {
         if(e?.referenced_tweets){
             
             let type = (e?.referenced_tweets[0].type)
-            updateInterval(type,time)
-            if(type != "retweeted") updateMetrics(type,e.public_metrics)
+            updateInterval(TWEETS,type,time)
+            if(type != "retweeted") updateMetrics(TWEETS,type,e.public_metrics)
             TWEETS[type].count +=1
 
         }else{
 
-            updateInterval("original",time)
-            updateMetrics("original",e.public_metrics)
+            updateInterval(TWEETS,"original",time)
+            updateMetrics(TWEETS,"original",e.public_metrics)
             TWEETS.original.count +=1
         }
 
     });
 
-    console.log(TWEETS);
+    return TWEETS
 }
 
-function updateMetrics(type,public_metrics){
+function calculateIntervals(data){
+    ["retweeted","replied_to","quoted","original"].forEach( (type) => {
+        if(data[type]?.interval)
+            data[type].interval = msToHMS(data[type].interval / data[type].count)
+    })
 
-    Object.keys(TWEETS[type].metrics).forEach(key => {
-        TWEETS[type].metrics[key] += public_metrics[key];                
+    return data
+}
+
+function updateMetrics(data,type,public_metrics){
+    Object.keys(data[type].metrics).forEach(key => {
+        data[type].metrics[key] += public_metrics[key];                
     })
 }
 
-function updateInterval(type,time){
-
-    if(TWEETS[type].last == 0){
-        TWEETS[type].last  = time
-    }else{
-        TWEETS[type]?.interval.push(time - TWEETS[type].last)
-        TWEETS[type].last = time
+function updateInterval(data,type,time){
+    
+    if(data[type].last == 0){
+        data[type].last  = time
+    }else{         
+        data[type].interval += time - data[type].last
+        data[type].last = time
     }
 }
 
@@ -131,4 +89,15 @@ function msToHMS(e) {
     return [Math.floor(h),Math.floor(m),Math.floor(s)]
 }
 
-process_data()
+const process_data = (async () => {
+
+    let FILE = fs.readFileSync('../log.json')
+    let d = await collectData(FILE).then( data => {
+        return calculateIntervals(data)
+    })
+
+    //console.log(d);
+
+    console.log(Object.create(TWEETS));
+    
+})()
