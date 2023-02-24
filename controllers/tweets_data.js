@@ -1,9 +1,16 @@
 const TWEETS = {
-    text: 0,
+    text:0,
     video:0,
     photo:0,
-    links:0,
+    link:0,
     polls:0,
+    higlights:{
+        retweet_count:{id:null,count:0},
+        reply_count:{id:null,count:0},
+        like_count:{id:null,count:0},
+        quote_count:{id:null,count:0},
+        impression_count:{id:null,count:0}
+    },
     retweeted:{
         count : 0,
         last : 0,
@@ -44,6 +51,11 @@ const TWEETS = {
             quote_count:0,
             impression_count:0
         }
+    },
+    total : {
+        count : 0,
+        last : 0,
+        interval : 0,
     }
 }
 
