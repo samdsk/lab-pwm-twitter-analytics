@@ -15,6 +15,7 @@ const SeachResultsSchema = new mongoose.Schema({
         photo: {type:Number,default:0}, // photo tweets count 
         video: {type:Number,default:0}, // video tweets count 
         mentions : {type:Number,default:0}, //mentions count
+        gifs : {type:Number,default:0}, // gif tweets count
     },
     highlights : {
         retweets : {type:Number,default:0}, // tweet with most retweets
