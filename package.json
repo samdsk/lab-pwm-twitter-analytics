@@ -6,6 +6,10 @@
   "scripts": {
     "devStart": "nodemon server.js"
   },
+
+  "nodemonConfig": {
+    "ignore": ["*.json"]
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/samdsk/lab-pwm.git"
