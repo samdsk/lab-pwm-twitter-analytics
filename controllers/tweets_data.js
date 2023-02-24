@@ -4,6 +4,7 @@ const TWEETS = {
     photo:0,
     link:0,
     polls:0,
+    animated_gif:0,
     higlights:{
         retweet_count:{id:null,count:0},
         reply_count:{id:null,count:0},

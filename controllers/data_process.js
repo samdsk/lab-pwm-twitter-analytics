@@ -24,13 +24,13 @@ const collectData = async (DATA) => {
         
         if(e?.entities?.urls) {            
             if(e.entities.urls[0].unwound_url) {                
-                console.log("external url ",e.entities.urls[0].unwound_url); 
+                //console.log("external url ",e.entities.urls[0].unwound_url); 
                 TWEETS.link += 1
             }
         }
 
         if(e?.entities?.polls) {
-            console.log("poll ",e?.entities?.polls);
+            //console.log("poll ",e?.entities?.polls);
             TWEETS.polls += 1
         }
 
@@ -101,9 +101,13 @@ function msToHMS(e) {
 const process_data = (async (filename) => {
 
     let FILE = fs.readFileSync(filename)
-    return await collectData(FILE).then( data => {
+    let data =  await collectData(FILE).then( data => {
         return calculateIntervals(data)
     })
+    //console.log(data);
+    return data
 })
+
+//process_data('../data.json')
 
 module.exports = process_data
