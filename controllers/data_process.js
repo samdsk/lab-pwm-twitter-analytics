@@ -1,7 +1,6 @@
 const fs = require('fs')
 const TWEETS = require('./tweets_data')
 
-
 const collectData = async (DATA) => { 
       
     DATA = JSON.parse(DATA)
@@ -123,7 +122,7 @@ const process_data = (async (filename) => {
     let data =  await collectData(FILE).then( data => {
         return avgInterval(data)
     })
-    console.log(data);
+    //console.log(data);
     return data
 })
 

@@ -6,7 +6,8 @@ const TWEETS = {
     end_date:null,
     followings:0,
     followers:0,
-
+    total_tweets:0,
+    
     tweets_by_type:{
         text:0,
         video:0,

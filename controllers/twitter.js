@@ -3,6 +3,7 @@ const app = twitter.v2
 const fs = require('fs')
 const data_process = require('./data_process')
 const filename = './data.json'
+const SearchResults = require('../models/SearchResults')
 
 const tweet_fields = [
     'attachments', 
@@ -41,28 +42,29 @@ const search = async (ID) => {
     })) 
 }
 
-
-
 const postTwitter = async(req,res,next) => {
     console.log("Handler: "+req.body.handler)
     const user = await app.userByUsername(req.body.handler,{"user.fields":"public_metrics"});
     if(user?.errors) return res.json(JSON.stringify(`Error: Invalid user`))
+
+
     console.log(user.data);
-
-    let id = user.data.id
-    let followers = user.data.followers_count
-    let followings = user.data.following_count
-    let total_tweets = user.data.tweet_count
     // let liked_tweets = await (await app.userLikedTweets(id)).fetchLast(100)
-
-
-    let mentions = await (await app.userMentionTimeline(user.data.id)).fetchLast()
-
+    // let mentions = await (await app.userMentionTimeline(user.data.id)).fetchLast()
+    // data_process(filename)
 
     search(req.body.handler)
-    .then( async (data) => {
-        console.log(data);
+    .then( async (data,err) => {
+        if(err) throw err;
+
+        data.user_id = user.data.id
+        data.username = req.body.handler
+        data.followers = user.data.public_metrics.followers_count
+        data.followings = user.data.public_metrics.following_count
+        data.total_tweets = user.data.public_metrics.tweet_count
         
+        console.log(data);
+
         res.sendStatus(200)
     })
     .catch(err => {

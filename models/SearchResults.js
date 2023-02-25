@@ -1,13 +1,14 @@
 const mongoose = require('mongoose')
 
 const SeachResultsSchema = new mongoose.Schema({
-    _id:mongoose.Schema.Types.ObjectId,
+    _id:{type:mongoose.Schema.Types.ObjectId},
     user_id: {type:String,required:true},
-    username: {tyoe:String,required:true},
+    username: {type:String,required:true},
     start_date : {type:Date,required:true},
     end_date : {type:Date,required:true},
     followings: {type:Number,default:0},
     followers: {type:Number,default:0},
+    total_tweets: {type:Number,default:0},
 
     tweets_by_type: {
         text: {type:Number,default:0}, // text tweets count 
