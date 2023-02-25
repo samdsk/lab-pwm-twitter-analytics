@@ -17,11 +17,24 @@ const SeachResultsSchema = new mongoose.Schema({
         mentions : {type:Number,default:0}, //mentions count
         gifs : {type:Number,default:0}, // gif tweets count
     },
+    
     highlights : {
-        retweets : {type:Number,default:0}, // tweet with most retweets
-        replies : {type:Number,default:0}, // tweet with most replies
-        likes : {type:Number,default:0}, // tweet with most likes
-        impressions : {type:Number,default:0}, // tweet with most impressions
+        retweets : {
+            id : {type:Number,default:0},
+            count : {type:String},
+        }, // tweet with most retweets
+        replies : {
+            id : {type:Number,default:0},
+            count : {type:String},
+        }, // tweet with most replies
+        likes : {
+            id : {type:Number,default:0},
+            count : {type:String},
+        }, // tweet with most likes
+        impressions : {
+            id : {type:Number,default:0},
+            count : {type:String},
+        }, // tweet with most impressions
     },
     
     metrics : {
