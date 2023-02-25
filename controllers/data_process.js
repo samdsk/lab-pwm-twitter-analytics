@@ -14,7 +14,7 @@ const collectData = async (DATA) => {
 
     // process each tweet finding media type, tweet type, time intervals and metrics
     data.forEach(e => {
-
+        // count post types
         if(media && e.attachments?.media_keys){
             let found = media.find(m => m.media_key == e.attachments?.media_keys[0])            
             if(found) TWEETS[found.type] += 1
@@ -22,20 +22,23 @@ const collectData = async (DATA) => {
             TWEETS.text+=1
         }
         
+        // posts with links
         if(e?.entities?.urls) {            
-            if(e.entities.urls[0].unwound_url) {                
-                //console.log("external url ",e.entities.urls[0].unwound_url); 
+            if(e.entities.urls[0].unwound_url) {
                 TWEETS.link += 1
             }
         }
 
-        if(e?.entities?.polls) {
-            //console.log("poll ",e?.entities?.polls);
+        // posts with polls
+        if(e?.entities?.polls) {            
             TWEETS.polls += 1
         }
 
         let time = new Date(Date.parse(e.created_at)).getTime()
         
+        // post subtypes: retweet, reply, quote, original
+        // for each type except for retweets count public metrics and time interval between posts
+        // interval accumulate the difference between two posts
         if(e?.referenced_tweets){
             
             let type = (e?.referenced_tweets[0].type)
@@ -44,12 +47,13 @@ const collectData = async (DATA) => {
             TWEETS[type].count +=1
 
         }else{
-
+            // if a post doesn't contain references means it's a poriginal tweet from the user
             updateInterval(TWEETS,"original",time)
             updateMetrics(TWEETS,"original",e)
             TWEETS.original.count +=1
         }
 
+        // count total posts and interval between tweets
         updateInterval(TWEETS,"total",time)
         TWEETS.total.count += 1;
     });
@@ -57,8 +61,9 @@ const collectData = async (DATA) => {
     return TWEETS
 }
 
+// calculate intervals by dividing the accumulated interval by count for each subtype
 function calculateIntervals(data){
-    ["retweeted","replied_to","quoted","original"].forEach( (type) => {
+    ["retweeted","replied_to","quoted","original","total"].forEach( (type) => {
         if(data[type]?.interval)
             data[type].interval = Math.floor(data[type].interval / data[type].count)
     })
@@ -66,6 +71,7 @@ function calculateIntervals(data){
     return data
 }
 
+// accumulate public metrics for each type
 function updateMetrics(data,type,e){
     Object.keys(data[type].metrics).forEach(key => {
         data[type].metrics[key] += e.public_metrics[key];
@@ -73,6 +79,7 @@ function updateMetrics(data,type,e){
     })
 }
 
+// compare current post with new post for most retweets, replies, likes, impressions
 function updateHighlights(data,key,e){
     if(data.higlights[key].count == 0)
         data.higlights[key] = {id:e.id,count:e.public_metrics[key]}
@@ -80,6 +87,7 @@ function updateHighlights(data,key,e){
         data.higlights[key] = {id:e.id,count:e.public_metrics[key]}
 }
 
+// accumulate interval for the given type
 function updateInterval(data,type,time){    
     if(data[type].last == 0){
         data[type].last  = time
@@ -89,6 +97,7 @@ function updateInterval(data,type,time){
     }
 }
 
+// converts from miliseconds to H:m:s
 function msToHMS(e) {
     let s = e/1000;
     let m = s/60;
@@ -104,10 +113,8 @@ const process_data = (async (filename) => {
     let data =  await collectData(FILE).then( data => {
         return calculateIntervals(data)
     })
-    //console.log(data);
+    
     return data
 })
-
-//process_data('../data.json')
 
 module.exports = process_data
