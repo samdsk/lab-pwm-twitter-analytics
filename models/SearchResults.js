@@ -2,12 +2,13 @@ const mongoose = require('mongoose')
 
 const SeachResultsSchema = new mongoose.Schema({
     _id:mongoose.Schema.Types.ObjectId,
-    id: {type:String,unique:true,required:true},
-    username: String,
-    start_date : Date,
-    end_date : Date,
+    user_id: {type:String,required:true},
+    username: {tyoe:String,required:true},
+    start_date : {type:Date,required:true},
+    end_date : {type:Date,required:true},
     followings: {type:Number,default:0},
     followers: {type:Number,default:0},
+
     tweets_by_type: {
         text: {type:Number,default:0}, // text tweets count 
         polls: {type:Number,default:0}, // poll tweets count 
@@ -15,42 +16,83 @@ const SeachResultsSchema = new mongoose.Schema({
         photo: {type:Number,default:0}, // photo tweets count 
         video: {type:Number,default:0}, // video tweets count 
         mentions : {type:Number,default:0}, //mentions count
-        gifs : {type:Number,default:0}, // gif tweets count
+        animated_gifs : {type:Number,default:0}, // gif tweets count
     },
-    
+
     highlights : {
-        retweets : {
+        retweet_count : {
             id : {type:Number,default:0},
             count : {type:String},
         }, // tweet with most retweets
-        replies : {
+        reply_count : {
             id : {type:Number,default:0},
             count : {type:String},
         }, // tweet with most replies
-        likes : {
+        like_count : {
+            id : {type:Number,default:0},
+            count : {type:String},
+        },
+        quote_count : {
             id : {type:Number,default:0},
             count : {type:String},
         }, // tweet with most likes
-        impressions : {
+        impression_count : {
             id : {type:Number,default:0},
             count : {type:String},
         }, // tweet with most impressions
     },
     
     metrics : {
-        posts : {type:Number,default:0}, // total posts
-        post_interval : {type:Number,default:0}, // avg interval of posts
-        retweets : {type:Number,default:0}, // retweets count
-        retweets_interval : {type:Number,default:0}, //avg interval of retweets
-        likes: {type:Number,default:0}, // avg likes per tweet
-        quotes : {type:Number,default:0}, // quotes count
-        quotes_interval : {type:Number,default:0}, // avg interval of quotes
-        replies: {type:Number,default:0}, // reply count
-        replies_interval: {type:Number,default:0}, // avg interval of replies
-        original : {type:Number,default:0}, // original tweet count
-        original_interval : {type:Number,default:0}, // avg interval of original posts
+        retweeted : {
+            count : {type:Number,default:0},
+            interval : {type:Number,default:0}
+        }, // retweeted posts
+        replied_to : {
+            count : {type:Number,default:0},
+            interval : {type:Number,default:0},
+            metrics:{
+                retweet_count:{type:Number,default:0},
+                reply_count:{type:Number,default:0},
+                like_count:{type:Number,default:0},
+                quote_count:{type:Number,default:0},
+                impression_count:{type:Number,default:0}
+            }
+        }, // reply posts
+        quoted : {
+            count : {type:Number,default:0},
+            interval : {type:Number,default:0},
+            metrics:{
+                retweet_count:{type:Number,default:0},
+                reply_count:{type:Number,default:0},
+                like_count:{type:Number,default:0},
+                quote_count:{type:Number,default:0},
+                impression_count:{type:Number,default:0}
+            }
+        }, // quoted posts
+        original : {
+            count : {type:Number,default:0},
+            interval : {type:Number,default:0},
+            metrics:{
+                retweet_count:{type:Number,default:0},
+                reply_count:{type:Number,default:0},
+                like_count:{type:Number,default:0},
+                quote_count:{type:Number,default:0},
+                impression_count:{type:Number,default:0}
+            }
+        }, // original posts
+        total : {
+            count : {type:Number,default:0},
+            interval : {type:Number,default:0},
+            metrics:{
+                retweet_count:{type:Number,default:0},
+                reply_count:{type:Number,default:0},
+                like_count:{type:Number,default:0},
+                quote_count:{type:Number,default:0},
+                impression_count:{type:Number,default:0}
+            }
+        }, // total posts
     },
-
+    
 })
 
 module.exports = mongoose.model('SearchResults',SeachResultsSchema)
