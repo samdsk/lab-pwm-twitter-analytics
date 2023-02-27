@@ -99,10 +99,10 @@ function updateMetrics(data,type,e){
 
 // compare current post with new post for most retweets, replies, likes, impressions
 function updateHighlights(data,key,e){
-    if(data.higlights[key].count == 0)
-        data.higlights[key] = {id:e.id,count:e.public_metrics[key]}
-    else if(data.higlights[key].count < e.public_metrics[key])
-        data.higlights[key] = {id:e.id,count:e.public_metrics[key]}
+    if(data.highlights[key].count == 0)
+        data.highlights[key] = {id:e.id,count:e.public_metrics[key]}
+    else if(data.highlights[key].count < e.public_metrics[key])
+        data.highlights[key] = {id:e.id,count:e.public_metrics[key]}
 }
 
 // accumulate interval for the given type
