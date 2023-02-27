@@ -6,9 +6,11 @@ const mongoose = require('mongoose')
 const SearchResults = require('../models/SearchResults')
 const User = require('../models/User')
 
-// ! file is in TESTING MODE
-// ! THERE ARE NO API REQUESTS SEND
-// ! READING FROM data.json
+// ! TESTING MODE - OFF
+// ! WRITING TO DATA.JSON
+// // ! file is in TESTING MODE
+// // ! THERE ARE NO API REQUESTS SEND
+// // ! READING FROM data.json
 const testing_filename = './data.json'
 const filename = './data.json'
 
@@ -33,7 +35,7 @@ const tweet_media_fields = [
     'media_key','type','url',
 ]
 
-// ! testing mode
+// // ! testing mode
 const search = async (ID) => { 
     res = await app.search(`from:${ID}`,{
         'tweet.fields':tweet_fields,
@@ -41,7 +43,7 @@ const search = async (ID) => {
         'media.fields':tweet_media_fields})
     
     let data = await res.fetchLast()    
-    // ! testing mode : set data variable
+    // // ! testing mode : set data variable
     return new Promise( (resolve,reject) => fs.writeFile(filename,JSON.stringify(data), (err)=>{
         if(err) reject(err)
         console.log(">>> File created successfully !")
@@ -73,7 +75,7 @@ const postTwitter = async(req,res,next) => {
         data.total_tweets = user.data.public_metrics.tweet_count
         //console.log(data);
 
-        // ! testing mode
+        // // ! testing mode
         console.log('creating search results')
         let count = await SearchResults.find({username:req.body.handler})
         console.log(count.length);
