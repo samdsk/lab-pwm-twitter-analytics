@@ -10,7 +10,7 @@ const User = require('../models/User')
 // ! THERE ARE NO API REQUESTS SEND
 // ! READING FROM data.json
 const testing_filename = './data.json'
-const filename = './data_asd.json'
+const filename = './data.json'
 
 const tweet_fields = [
     'attachments', 
@@ -35,18 +35,18 @@ const tweet_media_fields = [
 
 // ! testing mode
 const search = async (ID) => { 
-    // res = await app.search(`from:${ID}`,{
-    //     'tweet.fields':tweet_fields,
-    //     'expansions':['attachments.media_keys'],
-    //     'media.fields':tweet_media_fields})
+    res = await app.search(`from:${ID}`,{
+        'tweet.fields':tweet_fields,
+        'expansions':['attachments.media_keys'],
+        'media.fields':tweet_media_fields})
     
-    // data = await res.fetchLast()    
+    let data = await res.fetchLast()    
     // ! testing mode : set data variable
-    return new Promise( (resolve,reject) => fs.writeFile(filename,JSON.stringify("data_test"), (err)=>{
+    return new Promise( (resolve,reject) => fs.writeFile(filename,JSON.stringify(data), (err)=>{
         if(err) reject(err)
         console.log(">>> File created successfully !")
         
-        resolve(data_process(testing_filename))
+        resolve(data_process(filename))
     })) 
 }
 
