@@ -69,7 +69,7 @@ app.get('/about',function(req,res){
 // app.use(/^\/dashboard.*/,auth_session,dashboard)
 app.use('/dashboard',auth_session,dashboard)
 
-app.use('/twitter',twitter) 
+app.use('/twitter',auth_session,twitter) 
 
 app.use('/signup',signup)
 app.use('/login',login)
