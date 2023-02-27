@@ -2,8 +2,15 @@ const twitter = require('../twitter')
 const app = twitter.v2
 const fs = require('fs')
 const data_process = require('./data_process')
-const filename = './data.json'
+const mongoose = require('mongoose')
 const SearchResults = require('../models/SearchResults')
+const User = require('../models/User')
+
+// ! file is in TESTING MODE
+// ! THERE ARE NO API REQUESTS SEND
+// ! READING FROM data.json
+const testing_filename = './data.json'
+const filename = './data_asd.json'
 
 const tweet_fields = [
     'attachments', 
@@ -26,19 +33,20 @@ const tweet_media_fields = [
     'media_key','type','url',
 ]
 
+// ! testing mode
 const search = async (ID) => { 
-
-    res = await app.search(`from:${ID}`,{
-        'tweet.fields':tweet_fields,
-        'expansions':['attachments.media_keys'],
-        'media.fields':tweet_media_fields})
-
-    data = await res.fetchLast()
+    // res = await app.search(`from:${ID}`,{
+    //     'tweet.fields':tweet_fields,
+    //     'expansions':['attachments.media_keys'],
+    //     'media.fields':tweet_media_fields})
+    
+    // data = await res.fetchLast()    
     
     return new Promise( (resolve,reject) => fs.writeFile(filename,JSON.stringify(data), (err)=>{
         if(err) reject(err)
         console.log(">>> File created successfully !")
-        resolve(data_process(filename))
+        
+        resolve(data_process(testing_filename))
     })) 
 }
 
@@ -56,16 +64,21 @@ const postTwitter = async(req,res,next) => {
     search(req.body.handler)
     .then( async (data,err) => {
         if(err) throw err;
-
+        
+        data._id = new mongoose.Types.ObjectId()
         data.user_id = user.data.id
         data.username = req.body.handler
         data.followers = user.data.public_metrics.followers_count
         data.followings = user.data.public_metrics.following_count
         data.total_tweets = user.data.public_metrics.tweet_count
-        
-        console.log(data);
 
-        res.sendStatus(200)
+        // ! testing mode
+        // console.log('creating search results')
+        // await SearchResults.create(data)
+        // await User.findOneAndUpdate({name:req.session.username},{$push : {searched:data._id}}).orFail(new Error("User update failed."))
+
+        delete(data._id)
+        res.json(JSON.stringify(data))
     })
     .catch(err => {
         console.log(err);
