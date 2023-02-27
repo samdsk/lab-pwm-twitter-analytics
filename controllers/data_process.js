@@ -1,15 +1,20 @@
 const fs = require('fs')
-const TWEETS = require('./tweets_data')
+const pathToJsonObj = "./tweets_data.json"
+
 
 const collectData = async (DATA) => { 
       
     DATA = JSON.parse(DATA)
+    let jsonObj = fs.readFileSync(require.resolve(pathToJsonObj),"utf-8")
+    const TWEETS = JSON.parse(jsonObj)
 
     let data = DATA._realData.data
     let media = DATA._realData.includes?.media
     
     // sort tweets in ascending order
     data = data.sort((a,b) => {if(a.created_at > b.created_at) return 1 ;else return -1})
+
+    // console.log(">>> TWEETS ",TWEETS);
 
     TWEETS.start_date = data[0].created_at
     TWEETS.end_date = data[data.length-1].created_at
@@ -70,9 +75,13 @@ const collectData = async (DATA) => {
 // calculate intervals by dividing the accumulated interval by count for each subtype
 // requires TWEETS data type
 function avgInterval(data){
+    
     ["retweeted","replied_to","quoted","original","total"].forEach( (type) => {
-        if(data.metrics[type]?.interval)
+        if(data.metrics[type]?.interval){
+            // console.log(type," : ",data.metrics[type]);
+            
             data.metrics[type].interval = Math.floor(data.metrics[type].interval / data.metrics[type].count)
+        }
 
         delete data.metrics[type].last
     })
@@ -97,7 +106,8 @@ function updateHighlights(data,key,e){
 }
 
 // accumulate interval for the given type
-function updateInterval(data,type,time){    
+function updateInterval(data,type,time){
+    //console.log("here ",data);
     if(data.metrics[type].last == 0){
         data.metrics[type].last  = time
     }else{         

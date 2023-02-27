@@ -41,8 +41,8 @@ const search = async (ID) => {
     //     'media.fields':tweet_media_fields})
     
     // data = await res.fetchLast()    
-    
-    return new Promise( (resolve,reject) => fs.writeFile(filename,JSON.stringify(data), (err)=>{
+    // ! testing mode : set data variable
+    return new Promise( (resolve,reject) => fs.writeFile(filename,JSON.stringify("data_test"), (err)=>{
         if(err) reject(err)
         console.log(">>> File created successfully !")
         
@@ -56,7 +56,7 @@ const postTwitter = async(req,res,next) => {
     if(user?.errors) return res.json(JSON.stringify(`Error: Invalid user`))
 
 
-    console.log(user.data);
+    // console.log("request for ->",user.data);
     // let liked_tweets = await (await app.userLikedTweets(id)).fetchLast(100)
     // let mentions = await (await app.userMentionTimeline(user.data.id)).fetchLast()
     // data_process(filename)
@@ -71,11 +71,20 @@ const postTwitter = async(req,res,next) => {
         data.followers = user.data.public_metrics.followers_count
         data.followings = user.data.public_metrics.following_count
         data.total_tweets = user.data.public_metrics.tweet_count
+        //console.log(data);
 
         // ! testing mode
-        // console.log('creating search results')
-        // await SearchResults.create(data)
-        // await User.findOneAndUpdate({name:req.session.username},{$push : {searched:data._id}}).orFail(new Error("User update failed."))
+        console.log('creating search results')
+        let count = await SearchResults.find({username:req.body.handler})
+        console.log(count.length);
+
+        if(count.length > 1){
+            await SearchResults.findOneAndRemove({_id:count[0]._id})
+            await User.updateOne({username:req.session.username},{$pull : {searched:count[0]._id}})
+        }
+
+        await SearchResults.create(data)
+        await User.findOneAndUpdate({name:req.session.username},{$push : {searched:data._id}}).orFail(new Error("User update failed."))
 
         delete(data._id)
         res.json(JSON.stringify(data))
