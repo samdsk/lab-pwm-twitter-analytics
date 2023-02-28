@@ -91,6 +91,7 @@ const postTwitter = async(req,res,next) => {
         data.followings = user.data.public_metrics.following_count
         data.total_tweets = user.data.public_metrics.tweet_count
         data.user_img = user.data.profile_image_url
+        data.name = user.data.name
         data.date = new Date()
         //console.log(data);        
 

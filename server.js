@@ -11,6 +11,8 @@ const genid = require('genid')
 const helmet = require('helmet')
 const MongoStore = require('connect-mongo')(express_session)
 
+const { expressCspHeader, INLINE, NONE, SELF } = require('express-csp-header')
+
 
 //importing project modules
 const db_connect = require('./db/connect')
@@ -34,6 +36,12 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(helmet())
 app.use(cookie_parser())
+
+app.use(expressCspHeader({policies: {
+        'default-src': [NONE],
+        'img-src': [SELF],
+    }
+}))
 
 app.use('/',express_session({
     name:process.env.Session_name,

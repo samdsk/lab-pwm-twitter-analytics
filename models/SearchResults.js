@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 const SeachResultsSchema = new mongoose.Schema({
     _id:{type:mongoose.Schema.Types.ObjectId},
     date : {type:Date,required:true},
+    name : {type:String,required:true},
     user_img :{type:String},
     user_id: {type:String,required:true},
     username: {type:String,required:true},
