@@ -31,10 +31,13 @@ $(document).ready(function(){
 
   $('#search-btn').click((event)=>{
     event.preventDefault()
+    $('#search-btn').prop("disabled",true)
     $.post("/twitter",$('#form-search').serialize(),(data,status,xhr)=>{      
       if(xhr.status == 200){
-        $('#results').append(data)
-        console.log(data)
+        let json_data = JSON.parse(data)
+
+        console.log(json_data)
+        $('#search-btn').removeAttr("disabled")
       }else{
         console.log('twitter error '+xhr.status)
       }
