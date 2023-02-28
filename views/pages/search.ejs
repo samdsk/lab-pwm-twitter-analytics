@@ -5,6 +5,7 @@
     <%- include('../partials/header') %> 
     <main class="container mt-5 mb-5" id="dashboard">
         <noscript>Sorry, your browser does not support JavaScript!</noscript>
+        
         <div class="row">
             <%- include('../partials/dashboard.ejs') %>
 
@@ -17,6 +18,9 @@
                     </div>
                     <div class="invalid-feedback">Please choose a valid twitter handler.</div>                    
                 </form>
+                <div id="loader">
+                    <img src="../assets/loader.gif" />
+                </div>
                <div id="results">
 
                </div> 
