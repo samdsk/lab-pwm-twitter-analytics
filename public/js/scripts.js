@@ -35,7 +35,7 @@ $(document).ready(function(){
     $.post("/twitter",$('#form-search').serialize(),(data,status,xhr)=>{      
       if(xhr.status == 200){
         let json_data = JSON.parse(data)
-
+        
         console.log(json_data)
         $('#search-btn').removeAttr("disabled")
       }else{
