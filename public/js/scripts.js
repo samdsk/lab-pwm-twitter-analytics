@@ -1,10 +1,8 @@
 //TODO -
 (function () {
-    'use strict'
-  
+    'use strict'  
     // Fetch all the forms we want to apply custom Bootstrap validation styles to
     var forms = document.querySelectorAll('.needs-validation')
-
     // Loop over them and prevent submission
     Array.prototype.slice.call(forms)
       .forEach(function (form) {
@@ -12,8 +10,7 @@
           if (!form.checkValidity()) {
             event.preventDefault()
             event.stopPropagation()
-          }
-  
+          }  
           form.classList.add('was-validated')
         }, false)
       })
@@ -29,14 +26,29 @@ $(document).ready(function(){
     })
   }
 
+  function retrieve(){
+    if (typeof(Worker) !== "undefined") {
+      
+      let worker = new Worker('worker.js')
+      worker.onmessage = (event) => {        
+        $('#results').append(event.data)
+      }
+    } else {
+      $('#results').append("No Web Worker support...")
+    }
+  }
+
   $('#search-btn').click((event)=>{
     event.preventDefault()
+    $('#results').empty()
+    $('#loader').css('display','flex')
     $('#search-btn').prop("disabled",true)
     $.post("/twitter",$('#form-search').serialize(),(data,status,xhr)=>{      
       if(xhr.status == 200){
         let json_data = JSON.parse(data)
-        
-        console.log(json_data)
+        $('#results').append("ok")
+        $('#loader').hide()
+        $('#results').show()
         $('#search-btn').removeAttr("disabled")
       }else{
         console.log('twitter error '+xhr.status)
@@ -44,6 +56,10 @@ $(document).ready(function(){
       
     })
   })
+
+  function build(data){
+    
+  }
 
 })
 
