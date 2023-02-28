@@ -25,7 +25,9 @@ footer div.col {
 } 
 
 #dashboard .right{
-    
+    background-color: #aaaaaa;
+    max-width: 100%;
+    overflow: hidden;
 } 
 
 @media screen and (max-width: 1000px){
