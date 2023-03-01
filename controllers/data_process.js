@@ -51,14 +51,14 @@ const collectData = async (DATA) => {
             updateInterval(TWEETS,type,time)
             if(type != "retweeted") {
                 updateMetrics(TWEETS,type,e)
-                updateMetrics(TWEETS,"total",e)
+                updateMetricsTotal(TWEETS,e)
             }
             TWEETS.metrics[type].count +=1
 
         }else{
             // if a post doesn't contain references means it's a poriginal tweet from the user
             updateInterval(TWEETS,"original",time)
-            updateMetrics(TWEETS,"total",e)
+            updateMetricsTotal(TWEETS,e)
             updateMetrics(TWEETS,"original",e)
             TWEETS.metrics.original.count +=1
         }
@@ -94,6 +94,11 @@ function updateMetrics(data,type,e){
     Object.keys(data.metrics[type].metrics).forEach(key => {
         data.metrics[type].metrics[key] += e.public_metrics[key];
         updateHighlights(data,key,e)
+    })
+}
+function updateMetricsTotal(data,type,e){
+    Object.keys(data.metrics.total.metrics).forEach(key => {
+        data.metrics.total.metrics[key].push(e.public_metrics[key])
     })
 }
 
