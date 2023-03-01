@@ -96,7 +96,7 @@ function updateMetrics(data,type,e){
         updateHighlights(data,key,e)
     })
 }
-function updateMetricsTotal(data,type,e){
+function updateMetricsTotal(data,e){
     Object.keys(data.metrics.total.metrics).forEach(key => {
         data.metrics.total.metrics[key].push(e.public_metrics[key])
     })
