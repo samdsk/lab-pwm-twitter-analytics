@@ -26,35 +26,40 @@ $(document).ready(function(){
     })
   }
 
-  function retrieve(){
-    if (typeof(Worker) !== "undefined") {
+  function postViaWorker(data){
+    
+    let worker = new Worker('../js/worker.js')
+    console.log("calling worker");
       
-      let worker = new Worker('worker.js')
-      worker.onmessage = (event) => {        
-        $('#results').append(event.data)
-      }
-    } else {
-      $('#results').append("No Web Worker support...")
+    worker.postMessage("{data}")
+    worker.onmessage = (event) => {
+      console.log("qua",event);
     }
+
+
   }
 
   $('#search-btn').click((event)=>{
     event.preventDefault()
     $('#results').empty()
-    $('#loader').css('display','flex')
+    $('#loader').removeClass('d-none')
     $('#search-btn').prop("disabled",true)
-    $.post("/twitter",$('#form-search').serialize(),(data,status,xhr)=>{      
-      if(xhr.status == 200){
-        let json_data = JSON.parse(data)
-        build(json_data)
-        $('#loader').hide()
-        $('#results').show()
-        $('#search-btn').removeAttr("disabled")
-      }else{
-        console.log('twitter error '+xhr.status)
-      }
+
+    const data = postViaWorker($('#form-search').serialize())
+    console.log(data)
+
+    // $.post("/twitter",$('#form-search').serialize(),(data,status,xhr)=>{      
+    //   if(xhr.status == 200){
+    //     let json_data = JSON.parse(data)
+    //     build(json_data[0])
+    //     $('#loader').addClass('d-none')
+    //     $('#results').show()
+    //     $('#search-btn').removeAttr("disabled")
+    //   }else{
+    //     console.log('twitter error '+xhr.status)
+    //   }
       
-    })
+    // })
   })
 
   function build(data){

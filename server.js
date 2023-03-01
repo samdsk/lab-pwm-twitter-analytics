@@ -40,6 +40,8 @@ app.use(cookie_parser())
 app.use(expressCspHeader({policies: {
         'default-src': [NONE],
         'img-src': [SELF],
+        'script-src':[SELF],
+        'worker-src':[SELF]
     }
 }))
 
