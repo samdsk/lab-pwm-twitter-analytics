@@ -16,6 +16,25 @@
       })
   })()
 
+
+function postViaWorker(data){
+  
+  let worker = new Worker('../js/worker.js')
+  worker.crossOrigin = 
+  console.log("calling worker");
+    
+  worker.postMessage("{data}")
+  worker.onmessage = (event) => {
+      console.log("qua",event);
+  }
+
+  worker.onerror = (err) => {
+    console.log(err.message)
+  }
+
+
+}
+
 $(document).ready(function(){
 
   const errors = new URLSearchParams(document.location.search)
@@ -24,19 +43,6 @@ $(document).ready(function(){
     errors.forEach((v,k)=>{
       $('#errors').append('<p class="mb-0">'+k+" - "+v+"</p>")
     })
-  }
-
-  function postViaWorker(data){
-    
-    let worker = new Worker('../js/worker.js')
-    console.log("calling worker");
-      
-    worker.postMessage("{data}")
-    worker.onmessage = (event) => {
-      console.log("qua",event);
-    }
-
-
   }
 
   $('#search-btn').click((event)=>{

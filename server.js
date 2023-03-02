@@ -31,19 +31,41 @@ const error_handler = require('./middleware/error_handler')
 const PORT = process.env.PORT || 3000
 
 //middlewares
+
+
+// reference -> https://helmetjs.github.io/ 
+app.use(helmet({
+    contentSecurityPolicy:{ 
+        directives : {"script-src":["'self'","cdn.jsdelivr.net"]}
+    }
+    
+}))
+
+app.use((req, res, next) => {
+    // res.setHeader('Access-Control-Allow-Origin', '*');
+    // res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
+    // res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+    res.setHeader('Cross-origin-Embedder-Policy', 'require-corp');
+    res.setHeader('Cross-origin-Opener-Policy','same-origin');
+    res.setHeader('mi-hai-rotto-il-cazzo-policy','vaffanculooooooooooo')
+  
+    if (req.method === 'OPTIONS') {
+      res.sendStatus(200)
+    } else {
+      next()
+    }
+});
+
 app.use(express.static(__dirname + '/public'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
-app.use(helmet())
 app.use(cookie_parser())
 
-app.use(expressCspHeader({policies: {
-        'default-src': [NONE],
-        'img-src': [SELF],
-        'script-src':[SELF],
-        'worker-src':[SELF]
-    }
-}))
+// app.use(expressCspHeader({policies: {
+//         'default-src': [SELF],
+//         'img-src': [SELF],        
+//     }
+// }))
 
 app.use('/',express_session({
     name:process.env.Session_name,

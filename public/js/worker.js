@@ -17,7 +17,7 @@
 //     }
 // }
 
-self.onmessage = (data) => {
+onmessage = (data) => {
     postMessage("ciao")
 }
 
