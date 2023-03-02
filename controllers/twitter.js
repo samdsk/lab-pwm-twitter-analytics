@@ -121,16 +121,14 @@ const postTwitter = async(req,res,next) => {
         // await User.findOneAndUpdate({name:req.session.username},{$push : {searched:data._id}}).orFail(new Error("User update failed."))
 
         delete(data._id)
+        fs.writeFileSync("./output_data.json",JSON.stringify(data))
+
         res.json(JSON.stringify([data,data_2]))
     })
     .catch(err => {
         console.log(err);
         res.json(JSON.stringify(`${err.name}: ${err.message}`))
     })
-}
-
-const test = async(req,res,next) => {
-    console.log(req.body)
 }
 
 module.exports = postTwitter
