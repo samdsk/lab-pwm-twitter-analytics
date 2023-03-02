@@ -18,21 +18,13 @@
 
 
 function postViaWorker(data){
-  
-  let worker = new Worker('../js/worker.js')
-  worker.crossOrigin = 
-  console.log("calling worker");
-    
-  worker.postMessage("{data}")
-  worker.onmessage = (event) => {
-      console.log("qua",event);
-  }
-
-  worker.onerror = (err) => {
-    console.log(err.message)
-  }
-
-
+  return new Promise((resolve,reject) => {
+    let worker = new Worker('../js/worker.js')    
+    worker.postMessage(data)
+    worker.onmessage = (event) => {
+      resolve(event.data)
+    }
+  })
 }
 
 $(document).ready(function(){
@@ -45,15 +37,18 @@ $(document).ready(function(){
     })
   }
 
-  $('#search-btn').click((event)=>{
+  $('#search-btn').click(async (event)=>{
     event.preventDefault()
     $('#results').empty()
     $('#loader').removeClass('d-none')
     $('#search-btn').prop("disabled",true)
 
-    const data = postViaWorker($('#form-search').serialize())
-    console.log(data)
-
+    let data = await postViaWorker($('#form-search').serialize())
+    //console.log(data[0]);
+    build(data[0])
+    $('#loader').addClass('d-none')
+    $('#results').show()
+    $('#search-btn').removeAttr("disabled")
     // $.post("/twitter",$('#form-search').serialize(),(data,status,xhr)=>{      
     //   if(xhr.status == 200){
     //     let json_data = JSON.parse(data)

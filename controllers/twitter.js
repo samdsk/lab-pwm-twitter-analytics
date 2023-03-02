@@ -129,4 +129,8 @@ const postTwitter = async(req,res,next) => {
     })
 }
 
+const test = async(req,res,next) => {
+    console.log(req.body)
+}
+
 module.exports = postTwitter

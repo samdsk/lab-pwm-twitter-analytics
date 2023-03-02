@@ -1,26 +1,14 @@
+self.onmessage = (event) => {
+    console.log("Worker received msg",event.data)
+    var xhr = new XMLHttpRequest
+    xhr.open('POST','/twitter')
+    xhr.responseType = 'json'
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.send(event.data)
 
-// self.onmessage = (data) => {
-//     console.log("Worker received msg")
-//     var xhr = new XMLHttpRequest
-//     xhr.open('POST','/twitter',data)
-//     xhr.responseType = 'json'
-//     xhr.send()
-
-//     xhr.onreadystatechange = function (){
-//         let res;
-//         if(xhr.readyState == 4 && xhr.status == 200)
-//             res = xhr.responseText
-//         else res = xhr.status
-
-//         console.log(JSON.parse(res))
-//         postMessage(res)
-//     }
-// }
-
-onmessage = (data) => {
-    postMessage("ciao")
+    xhr.onreadystatechange = function (){        
+        if(xhr.readyState == 4 && xhr.status == 200){
+            postMessage(JSON.parse(xhr.response))
+        }
+    }
 }
-
-// self.addEventListener("message", function(event){
-//     postMessage(event)
-// })

@@ -36,7 +36,10 @@ const PORT = process.env.PORT || 3000
 // reference -> https://helmetjs.github.io/ 
 app.use(helmet({
     contentSecurityPolicy:{ 
-        directives : {"script-src":["'self'","cdn.jsdelivr.net"]}
+        directives : {
+            "script-src":["'self'","cdn.jsdelivr.net"],
+            "img-src":["'self'","pbs.twimg.com"]
+        }
     }
     
 }))
