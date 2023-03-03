@@ -27,7 +27,7 @@ function postViaWorker(data){
   })
 }
 
-$(document).ready(function(){
+$(document).ready(async function(){
 
   const errors = new URLSearchParams(document.location.search)
   if(!errors.entries().next().done){
@@ -37,30 +37,93 @@ $(document).ready(function(){
     })
   }
 
-  $('#search-btn').click(async (event)=>{
-    event.preventDefault()
-    $('#results').empty()
-    $('#loader').removeClass('d-none')
-    $('#search-btn').prop("disabled",true)
+  
+  async function genSearchResults(){
+    let data  = await fetch('../js/output_data.json').then( response => {
+      return response.json()
+    })
+    
+    await charts(data.tweets_by_type,"tweets-by-type")
+    
+    $('#results #name').text(data.name)
+
+    let ancor = document.createElement('a')
+    ancor.href = buildTwitterUrl(data.username)
+    ancor.id = "username-link"
+    ancor.title = "Twitter link"
+    ancor.innerText = "@"+data.username
+    ancor.target = '_blank'
+    $('#results #username').append(ancor)
+
+    let img = new Image()
+    img.src = data.user_img
+    img.crossOrigin = "anonymouse"
+    img.height = "48"
+    $('#results #user-info #user-profile').prepend(img)
+    
+    $('#total-tweets-data')
+    .attr({"data-real":data.total_tweets, "data-round":tweetCount(data.total_tweets)})
+    .text(tweetCount(data.total_tweets))
+    $('#followers-data')
+    .attr({"data-real":data.followers, "data-round":tweetCount(data.followers)})
+    .text(tweetCount(data.followers))
+    $('#followings-data')
+    .attr({"data-real":data.followings, "data-round":tweetCount(data.followings)})
+    .text(tweetCount(data.followings))
+    
+    $("#search-date .date").text((data.date).slice(0,10))
+    $("#search-date .time").text((data.date).slice(11,19))
+    $("#interval-start-date .date").text((data.start_date).slice(0,10))
+    $("#interval-start-date .time").text((data.start_date).slice(11,19))
+    $("#interval-end-date .date").text((data.end_date).slice(0,10))
+    $("#interval-end-date .time").text((data.end_date).slice(11,19))
+    $("#sample span").text(data.metrics.total.count)
+    
+    $(".data-hover").mouseover(function(){
+      $("span",this).text($("span",this).attr("data-real"))
+    })
+
+    $('.data-hover').mouseleave(function(){      
+      $("span",this).text($("span",this).attr("data-round"))      
+    })
+  }
+  
+  await genSearchResults()
+
+  function tweetCount(count){
+    if (count / 1000000 >= 1)
+      return (count / 1000000).toFixed(2) + "M"
+    
+    if(count / 1000 >= 1)
+      return (count / 1000).toFixed(1) + "K"
+    
+    return count
+  }
+
+  // $('#search-btn').click(async (event)=>{
+  //   event.preventDefault()
+  //   $('#results').empty()
+  //   $('#loader').removeClass('d-none')
+  //   $('#search-btn').prop("disabled",true)
 
     // let data = await postViaWorker($('#form-search').serialize())
     //console.log(data[0]);
 
-    let data  = await fetch('../js/output_data.json').then( response => {
-      return response.json()
-    })
-    await charts(data.tweets_by_type)
-    build(data)
-    $('#loader').addClass('d-none')
-    $('#results').show()
-    $('#search-btn').removeAttr("disabled")
-  })
+    // let data  = await fetch('../js/output_data.json').then( response => {
+    //   return response.json()
+    // })
+    
+    
+  //   $('#loader').addClass('d-none')
+  //   $('#results').show()
+  //   $('#search-btn').removeAttr("disabled")
+  // })
 
-  async function charts(input){
+  async function charts(input,id){
 
     let canvas = document.createElement("canvas")
     canvas.id = "chart"
-    document.getElementById("results").appendChild(canvas)
+    document.getElementById(id).appendChild(canvas)
 
     new Chart(document.getElementById('chart'),{
       type:'doughnut',
@@ -70,7 +133,7 @@ $(document).ready(function(){
           label:"Tweets by Type",
           data:Object.values(input),
           
-          backgroundColor:['#36A2EB','#36A2EB','#36A2EB','#36E2EB','#F6A2EB','#36C2EB'],
+          backgroundColor:['#ffbe0b','#fb5607','#ff006e','#8338ec','#3a86ff','#9e0059'],
           hoverOffset: 4
         }],
       }
@@ -104,11 +167,11 @@ $(document).ready(function(){
     
     let hl = $('<ul id="highlights">Highlights</ul>')
     
-    let most_retweets = $('<li>The post with most <a href="'+buildTwitterUrl(data.username,data.highlights.retweet_count.id)+'">retweets</a> '+data.highlights.retweet_count.count+'</li>')
-    let most_replies = $('<li>The post with most <a href="'+buildTwitterUrl(data.username,data.highlights.reply_count.id)+'">replies</a> '+data.highlights.reply_count.count+'</li>')
-    let most_likes = $('<li>The post with most <a href="'+buildTwitterUrl(data.username,data.highlights.like_count.id)+'">likes</a> '+data.highlights.like_count.count+'</li>')
-    let most_quotes = $('<li>The post with most <a href="'+buildTwitterUrl(data.username,data.highlights.quote_count.id)+'">quotes</a> '+data.highlights.quote_count.count+'</li>')
-    let most_impressions = $('<li>The post with most <a href="'+buildTwitterUrl(data.username,data.highlights.impression_count.id)+'">impressions</a> '+data.highlights.impression_count.count+'</li>')
+    let most_retweets = $('<li>The post with most <a href="'+buildTwitterPostUrlPost(data.username,data.highlights.retweet_count.id)+'">retweets</a> '+data.highlights.retweet_count.count+'</li>')
+    let most_replies = $('<li>The post with most <a href="'+buildTwitterPostUrl(data.username,data.highlights.reply_count.id)+'">replies</a> '+data.highlights.reply_count.count+'</li>')
+    let most_likes = $('<li>The post with most <a href="'+buildTwitterPostUrl(data.username,data.highlights.like_count.id)+'">likes</a> '+data.highlights.like_count.count+'</li>')
+    let most_quotes = $('<li>The post with most <a href="'+buildTwitterPostUrl(data.username,data.highlights.quote_count.id)+'">quotes</a> '+data.highlights.quote_count.count+'</li>')
+    let most_impressions = $('<li>The post with most <a href="'+buildTwitterPostUrl(data.username,data.highlights.impression_count.id)+'">impressions</a> '+data.highlights.impression_count.count+'</li>')
     
     hl.append(most_retweets).append(most_replies).append(most_likes).append(most_quotes).append(most_impressions)
     
@@ -123,8 +186,11 @@ $(document).ready(function(){
     
   }
   
-  function buildTwitterUrl(user,id){
-    return "https://twitter.com/"+user+"/status/"+id
+  function buildTwitterUrl(user){
+    return "https://twitter.com/"+user
+  }
+  function buildTwitterPostUrl(user,id){
+    return buildTwitterUrl(user)+"/status/"+id
   }
   
 })

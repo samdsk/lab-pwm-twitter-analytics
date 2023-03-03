@@ -47,9 +47,38 @@ footer div.col {
     
 }
 
-#results{
-    display: none;
+#results .row .col{
+    background-color: antiquewhite;
+    border: 1px black solid;
 }
+
+#results #user-profile {
+    display: inline-flex;
+}
+
+#results #user-profile img {
+    margin-top:1rem;
+    border-radius: 0.2rem;
+}
+
+#results #user-profile #name-username {
+    padding-left :1rem
+}
+
+#results #user-profile #name-username p:first-child{
+    margin-top: 1rem;
+}
+#results #user-profile #name-username p:nth-child(2){
+    margin-top: -1rem;
+}
+
+#results #total-tweets-real {
+    display: block;
+    position: relative;
+    top:-1rem;
+
+}
+
 
 @media screen and (max-width: 1000px){
     main form {
