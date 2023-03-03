@@ -16,6 +16,7 @@
       })
   })()
 
+Chart.register(ChartDataLabels)
 
 function postViaWorker(data){
   return new Promise((resolve,reject) => {
@@ -37,7 +38,6 @@ $(document).ready(async function(){
     })
   }
 
-  
   async function genSearchResults(){
     let data  = await fetch('../js/output_data.json').then( response => {
       return response.json()
@@ -56,8 +56,8 @@ $(document).ready(async function(){
     $('#results #username').append(ancor)
 
     let img = new Image()
-    img.src = data.user_img
     img.crossOrigin = "anonymouse"
+    img.src = data.user_img
     img.height = "48"
     $('#results #user-info #user-profile').prepend(img)
     
@@ -86,9 +86,45 @@ $(document).ready(async function(){
     $('.data-hover').mouseleave(function(){      
       $("span",this).text($("span",this).attr("data-round"))      
     })
+
+    for(let [k,v] of Object.entries(data.tweets_by_type)){
+      let s = $('<li><span class="key">'+k+': </span><span class="value">'+v+'</span></li>')
+      $("#tweets-by-type-data ul").append(s)
+    }
+
+    for(let type of Object.keys(data.highlights)){
+      $('#most-'+type+" a").attr({
+        "href":buildTwitterPostUrl(data.username,data.highlights[type].id)
+      }).text(data.highlights[type].count)
+    }
+
+    for(let type of Object.keys(data.metrics)){
+      if(type == "total") continue
+      $('#'+type+' #count').text(data.metrics[type].count)
+      let avg = msToHMS(data.metrics[type].interval/data.metrics[type].count)
+      $('#'+type+' #interval').text(avg)
+
+      if(type == "retweeted") continue
+
+      for(let key of Object.keys(data.metrics[type].metrics)){
+        let li = $('<li>'+key+' : '+Math.floor(data.metrics[type].metrics[key]/data.metrics[type].count)+'</li>')
+        $('#'+type+' #interval').append(li)
+      }
+    }
+
+    await metricCharts(data.metrics.total.retweet_count,'metrics')
   }
-  
+
   await genSearchResults()
+
+  function msToHMS(e) {
+    let s = e/1000;
+    let m = s/60;
+    s = s%60;
+    let h = m/60;
+    m = m%60;
+    return Math.floor(h)+":"+Math.floor(m)+":"+Math.floor(s)
+  }
 
   function tweetCount(count){
     if (count / 1000000 >= 1)
@@ -98,6 +134,26 @@ $(document).ready(async function(){
       return (count / 1000).toFixed(1) + "K"
     
     return count
+  }
+
+  async function metricCharts(data,id){
+    let canvas = document.createElement("canvas")
+    canvas.id = id+"chart"
+    document.getElementById(id).appendChild(canvas)
+
+    new Chart(document.getElementById(id+"chart"),{
+      type:'line',
+      data:{
+        label :  [...Array(10).keys()],
+        datasets: [{
+          label:"asd",
+          data:data,
+          borderColor: 'rgb(75, 192, 192)',
+          tension: 0.1
+        }]
+
+      }
+    })
   }
 
   // $('#search-btn').click(async (event)=>{
@@ -134,8 +190,22 @@ $(document).ready(async function(){
           data:Object.values(input),
           
           backgroundColor:['#ffbe0b','#fb5607','#ff006e','#8338ec','#3a86ff','#9e0059'],
-          hoverOffset: 4
+          hoverOffset: 4          
         }],
+      },
+      options : {
+        normalized:true,
+        plugins:{
+          datalabels:{
+            color:'white',
+            formatter: (value,context)=>{
+              let total = context.dataset.data.reduce((acc,v)=> acc+v,0)
+              
+              let perc = Math.floor(value/total *100)
+              return perc>5 ? perc+"%":''
+            }
+          }
+        }
       }
     })
   }

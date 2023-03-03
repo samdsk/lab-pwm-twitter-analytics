@@ -6,7 +6,7 @@
     <main class="container mt-5 mb-5" id="dashboard">
         <noscript>Sorry, your browser does not support JavaScript!</noscript>
         
-        <div class="row">
+        <div class="row container">
             <%- include('../partials/dashboard.ejs') %>
 
             <div class="col right border p-3">
@@ -57,16 +57,75 @@
                     </div>
                 </div>
                 <div id="pie-charts" class="row">
-                    <div id="tweets-by-type" class="col">1</div>
-                    <div id="" class="col">2</div>
-                    <div class="col">3</div>
+                    <div id="tweets-by-type" class="col"></div>
+                    <div id="tweets-by-type-data" class="col">
+                        <ul id="tweets-by-type-data-list"></ul>
+                    </div>
+                    <div id="metrics" class="col">
+                        <p id="retweeted">
+                            Retweets
+                            <span id="count"></span>
+                            Interval:
+                            <span id="interval"></span>
+                        </p>
+                        <p id="replied_to">
+                            Replies: 
+                            <span id="count"></span>
+                            Interval:
+                            <span id="interval"></span>
+                            <ul id="average"></ul>
+                        </p>
+                        <p id="quoted">
+                            Quotes:
+                            <span id="count"></span>
+                            Interval:
+                            <span id="interval"></span>
+                            <ul id="average"></ul>
+                        </p>
+                        <p id="original">
+                            Original:
+                            <span id="count"></span>
+                            Interval:
+                            <span id="interval"></span>
+                            <ul id="average"></ul>
+                        </p>
+                        
+                    </div>                    
                 </div>
-                <div id="highlights" class="row">
-                    <div class="col">1</div>
-                    <div class="col">2</div>
-                    <div class="col">3</div>
-                    <div class="col">4</div>
-                    <div class="col">5</div>
+                <div id="highlights" class="d-flex flex-row">                    
+                    <div class="col">
+                        <p id="most-retweet_count">
+                            most retweets:
+                            <a href="" target="_blank"></a>
+                        </p>
+                    </div>
+                    <div class="col">
+                        <p id="most-reply_count">
+                            most replies:
+                            <a href="" target="_blank"></a>
+                        </p>
+                    </div>
+                    <div class="col">
+                        <p id="most-like_count">
+                            most likes:
+                            <a href="" target="_blank"></a>
+                        </p>                        
+                    </div>
+                    <div class="col">
+                        <p id="most-quote_count">
+                            most quotes:
+                            <a href="" target="_blank"></a>
+                        </p>
+                    </div>
+                    <div class="col">
+                        <p id="most-impression_count">
+                            most impressions:
+                            <a href="" target="_blank"></a>
+                        </p>
+                    </div>
+                </div>
+                <div id="metrics">
+                        
                 </div>
                </div> 
             </div>
