@@ -16,7 +16,8 @@
       })
   })()
 
-Chart.register(ChartDataLabels)
+//Chart.register(ChartDataLabels)
+//Chart.register(outlabeledPie)
 
 function postViaWorker(data){
   return new Promise((resolve,reject) => {
@@ -114,10 +115,10 @@ $(document).ready(async function(){
     await charts(data.tweets_by_type,"tweets-by-type","tweets-type")
     await charts(fromMetricsToDataset(data.metrics,'total'),"tweets-by-type","tweets-type-2")
     await metricCharts(data.metrics,'metric-charts','retweets')
-  //   await metricCharts(data.metrics.total.metrics.reply_count,'metric-charts','reply',"#90BE6D")
-  //   await metricCharts(data.metrics.total.metrics.like_count,'metric-charts','likes',"#F3722C")
-  //   await metricCharts(data.metrics.total.metrics.quote_count,'metric-charts','quotes',"#F9C74F")
-  //   await metricCharts(data.metrics.total.metrics.impression_count,'metric-charts','impressions',"#577590")
+    // await metricCharts(data.metrics.total.metrics.reply_count,'metric-charts','reply',"#90BE6D")
+    // await metricCharts(data.metrics.total.metrics.like_count,'metric-charts','likes',"#F3722C")
+    // await metricCharts(data.metrics.total.metrics.quote_count,'metric-charts','quotes',"#F9C74F")
+    // await metricCharts(data.metrics.total.metrics.impression_count,'metric-charts','impressions',"#577590")
   }
 
   await genSearchResults()
@@ -144,8 +145,9 @@ $(document).ready(async function(){
       console.log(typeof(data[x]));
       struct["data"] = normalize(data[x])
       struct["label"] = x
-      struct["borderColor"] = colors[count++]
-      struct['fill'] = true
+      struct["backgroundColor"] = colors[count++]
+      //struct['borderWidth'] = "1"
+      struct['fill'] = false
       struct['tension'] = 0.1
       output.push(struct)
     }
@@ -183,36 +185,81 @@ $(document).ready(async function(){
     return count
   }
 
+
+
   async function metricCharts(data,id,type){
     let canvas = document.createElement("canvas")
     canvas.id = type+"-chart"
     document.getElementById(id).appendChild(canvas)
     let labels = [...Array(data.total.metrics.retweet_count.length).keys()]
     
-    const datasets = fromMetricsToDatasets(data.total.metrics)
+    const datasets = fromMetricsToDatasets(data.total.metrics) 
     console.log(datasets);
+
     new Chart(document.getElementById(canvas.id),{
-      type:'line',
-      data:{
-        labels :  labels,
-        datasets:datasets,
+    type:'bar',
+    data:{
+      labels :  labels,
+      datasets:datasets,
+    },
+    options: {
+      normalized:true,
+      parsing:true,
+      plugins: {
+        title:{
+          display:true,
+          text:"metric stacked charts"
+        },          
+         legend: {
+            display: true
+         },
+         datalabels:{display:false},
       },
-      options: {
-        normalized:true,
-        parsing:true,
-        plugins: {
-           legend: {
-              display: false
-           },
-           datalabels:{display:false},
-          },
-        scales: {
-          x: {display: true},
-          y: {display: true},
+      responsive : true,
+
+      scales: {
+        x: {
+          display:false,
+          stacked:true
+        },
+        y: {
+          display: false,
+          stacked:true
+        },
       }
-      }
-    })
+    }
+  })
+
   }
+
+  // new Chart(document.getElementById(canvas.id),{
+  //   type:'line',
+  //   data:{
+  //     labels :  labels,
+  //     datasets:datasets,
+  //   },
+  //   options: {
+  //     normalized:true,
+  //     parsing:true,
+  //     plugins: {
+  //       legend: {
+  //           display: false
+  //       },
+  //       datalabels:{display:false},
+  //       },
+  //     scales: {
+  //       x: {display: true},
+  //       y: {display: true},
+  //   }
+  //   }
+  // })
+
+
+
+
+
+
+
   // async function metricCharts(data,id,type,color){
   //   let canvas = document.createElement("canvas")
   //   canvas.id = type+"-chart"
@@ -226,9 +273,9 @@ $(document).ready(async function(){
   //       datasets: [{
   //         label: type,
   //         data: data,
-  //         fill: true,
+  //         fill: false,
   //         borderColor: color,
-  //         tension: 0.1          
+  //         tension: 0.5                   
   //       }],
   //     },
   //     options: {
@@ -272,7 +319,7 @@ $(document).ready(async function(){
     document.getElementById(id).appendChild(canvas)
 
     new Chart(document.getElementById(canvas.id),{
-      type:'doughnut',
+      type:'pie',//'doughnut',
       data:{
         labels:Object.keys(input),
         datasets:[{
@@ -283,20 +330,36 @@ $(document).ready(async function(){
           hoverOffset: 4          
         }],
       },
-      options : {
-        normalized:true,
-        plugins:{
-          datalabels:{
-            color:'white',
-            formatter: (value,context)=>{
-              let total = context.dataset.data.reduce((acc,v)=> acc+v,0)
-              
-              let perc = Math.floor(value/total *100)
-              return perc>5 ? perc+"%":''
+      options: {
+        zoomOutPercentage: 55,
+        plugins: {
+            legend: false,
+            outlabels: {
+                text: '%l %p',
+                color: 'white',
+                stretch: 45,
+                font: {
+                    resizable: true,
+                    minSize: 12,
+                    maxSize: 18
+                }
             }
-          }
         }
-      }
+    }
+      // options : {
+      //   normalized:true,
+      //   plugins:{
+      //     datalabels:{
+      //       color:'white',
+      //       formatter: (value,context)=>{
+      //         let total = context.dataset.data.reduce((acc,v)=> acc+v,0)
+              
+      //         let perc = Math.floor(value/total *100)
+      //         return perc>5 ? perc+"%":''
+      //       }
+      //     }
+      //   }
+      // }
     })
   }
   
