@@ -43,10 +43,9 @@ $(document).ready(async function(){
       return response.json()
     })
     
-    await charts(data.tweets_by_type,"tweets-by-type")
     
     $('#results #name').text(data.name)
-
+    
     let ancor = document.createElement('a')
     ancor.href = buildTwitterUrl(data.username)
     ancor.id = "username-link"
@@ -54,7 +53,7 @@ $(document).ready(async function(){
     ancor.innerText = "@"+data.username
     ancor.target = '_blank'
     $('#results #username').append(ancor)
-
+    
     let img = new Image()
     img.crossOrigin = "anonymouse"
     img.src = data.user_img
@@ -82,40 +81,88 @@ $(document).ready(async function(){
     $(".data-hover").mouseover(function(){
       $("span",this).text($("span",this).attr("data-real"))
     })
-
+    
     $('.data-hover').mouseleave(function(){      
       $("span",this).text($("span",this).attr("data-round"))      
     })
-
+    
     for(let [k,v] of Object.entries(data.tweets_by_type)){
       let s = $('<li><span class="key">'+k+': </span><span class="value">'+v+'</span></li>')
       $("#tweets-by-type-data ul").append(s)
     }
-
+    
     for(let type of Object.keys(data.highlights)){
       $('#most-'+type+" a").attr({
         "href":buildTwitterPostUrl(data.username,data.highlights[type].id)
       }).text(data.highlights[type].count)
     }
-
+    
     for(let type of Object.keys(data.metrics)){
       if(type == "total") continue
       $('#'+type+' #count').text(data.metrics[type].count)
       let avg = msToHMS(data.metrics[type].interval/data.metrics[type].count)
       $('#'+type+' #interval').text(avg)
-
+      
       if(type == "retweeted") continue
-
+      
       for(let key of Object.keys(data.metrics[type].metrics)){
         let li = $('<li>'+key+' : '+Math.floor(data.metrics[type].metrics[key]/data.metrics[type].count)+'</li>')
         $('#'+type+' #interval').append(li)
       }
     }
-
-    await metricCharts(data.metrics.total.retweet_count,'metrics')
+    fromMetricsToDataset(data.metrics)
+    await charts(data.tweets_by_type,"tweets-by-type","tweets-type")
+    await charts(fromMetricsToDataset(data.metrics,'total'),"tweets-by-type","tweets-type-2")
+    await metricCharts(data.metrics,'metric-charts','retweets')
+  //   await metricCharts(data.metrics.total.metrics.reply_count,'metric-charts','reply',"#90BE6D")
+  //   await metricCharts(data.metrics.total.metrics.like_count,'metric-charts','likes',"#F3722C")
+  //   await metricCharts(data.metrics.total.metrics.quote_count,'metric-charts','quotes',"#F9C74F")
+  //   await metricCharts(data.metrics.total.metrics.impression_count,'metric-charts','impressions',"#577590")
   }
 
   await genSearchResults()
+
+  function fromMetricsToDataset(data,skip){
+    let output = {}
+    for(let x of Object.keys(data)){
+      if(x == skip) continue
+      output[x] = data[x].count
+    }
+
+    return output
+  }
+  function fromMetricsToDatasets(data){
+    
+    let colors = ['#FFBE0B','#FB5607','#FF006E','#8338EC','#3A86FF']
+    let output = []
+    let count = 0
+
+    console.log(data);
+
+    for(let x of Object.keys(data)){
+      let struct = {}
+      console.log(typeof(data[x]));
+      struct["data"] = normalize(data[x])
+      struct["label"] = x
+      struct["borderColor"] = colors[count++]
+      struct['fill'] = true
+      struct['tension'] = 0.1
+      output.push(struct)
+    }
+
+    return output
+  }
+
+  function normalize(data){
+    
+    let output = []
+    let max = Math.max(...data)
+    for(let i=0;i<data.length;i++){
+      output.push(data[i]/max)
+    }
+
+    return output
+  }
 
   function msToHMS(e) {
     let s = e/1000;
@@ -136,25 +183,68 @@ $(document).ready(async function(){
     return count
   }
 
-  async function metricCharts(data,id){
+  async function metricCharts(data,id,type){
     let canvas = document.createElement("canvas")
-    canvas.id = id+"chart"
+    canvas.id = type+"-chart"
     document.getElementById(id).appendChild(canvas)
-
-    new Chart(document.getElementById(id+"chart"),{
+    let labels = [...Array(data.total.metrics.retweet_count.length).keys()]
+    
+    const datasets = fromMetricsToDatasets(data.total.metrics)
+    console.log(datasets);
+    new Chart(document.getElementById(canvas.id),{
       type:'line',
       data:{
-        label :  [...Array(10).keys()],
-        datasets: [{
-          label:"asd",
-          data:data,
-          borderColor: 'rgb(75, 192, 192)',
-          tension: 0.1
-        }]
-
+        labels :  labels,
+        datasets:datasets,
+      },
+      options: {
+        normalized:true,
+        parsing:true,
+        plugins: {
+           legend: {
+              display: false
+           },
+           datalabels:{display:false},
+          },
+        scales: {
+          x: {display: true},
+          y: {display: true},
+      }
       }
     })
   }
+  // async function metricCharts(data,id,type,color){
+  //   let canvas = document.createElement("canvas")
+  //   canvas.id = type+"-chart"
+  //   document.getElementById(id).appendChild(canvas)
+  //   let labels = [...Array(data.length).keys()]
+   
+  //   new Chart(document.getElementById(canvas.id),{
+  //     type:'line',
+  //     data:{
+  //       labels :  labels,
+  //       datasets: [{
+  //         label: type,
+  //         data: data,
+  //         fill: true,
+  //         borderColor: color,
+  //         tension: 0.1          
+  //       }],
+  //     },
+  //     options: {
+  //       plugins: {
+  //          legend: {
+  //             display: false
+  //          },
+  //          datalabels:{display:false},
+  //         },
+  //       scales: {
+  //         x: {display: false},
+  //         y: {display: false},
+  //     }
+  //     }
+  //   })
+  // }
 
   // $('#search-btn').click(async (event)=>{
   //   event.preventDefault()
@@ -175,13 +265,13 @@ $(document).ready(async function(){
   //   $('#search-btn').removeAttr("disabled")
   // })
 
-  async function charts(input,id){
+  async function charts(input,id,type){
 
     let canvas = document.createElement("canvas")
-    canvas.id = "chart"
+    canvas.id = type+"chart"
     document.getElementById(id).appendChild(canvas)
 
-    new Chart(document.getElementById('chart'),{
+    new Chart(document.getElementById(canvas.id),{
       type:'doughnut',
       data:{
         labels:Object.keys(input),
