@@ -10,7 +10,7 @@
             <%- include('../partials/dashboard.ejs') %>
 
             <div class="col right border p-3">
-                <h3>New Search</h3>
+                <h3>New Search <i class="bi bi-twitter"></i></h3>
                 <form id="form-search" class="form-controll needs-validation d-inline" action="/twitter" method="POST">
                     <div class="input-group">
                         <input type="text" class="form-control" id="handler" name="handler" placeholder="@handler" required>                        
@@ -26,101 +26,146 @@
                     <div id="user-info" class="col">
                         <div id="user-profile">
                             <div id="name-username">
-                                <p id="name"></p>
-                                <p id="username"></p>
+                                <p id="name"><i class="bi bi-person-workspace"></i> </p>
+                                <p id="username"><i class="bi bi-person-circle"></i> </p>
                             </div>
                         </div>
-                        <p id="total-tweets" class="data-hover">Total tweets: <span id="total-tweets-data"></span></p>
-                        <p id="followers" class="data-hover">Followers: <span id="followers-data"></span></p>
-                        <p id="followings" class="data-hover">Followings: <span id="followings-data"></span></p>
+                        <p id="total-tweets" class="mb-0"><i class="bi bi-twitter"></i> Total tweets: <span id="total-tweets-data" class="text-primary data-hover"></span></p>
+                        <div id="followers-follwings" class="row mt-0">
+                            <div class="col mt-0">
+                                <i class="bi bi-people-fill"></i> 
+                                Followers: 
+                                <span id="followers" class="text-primary data-hover"></span>
+                            </div>
+                            <div class="col mt-0">
+                                <i class="bi bi-person-check-fill"></i> 
+                                Followings: 
+                                <span id="followings" class="text-primary data-hover"></span>
+                            </div>
+                        </div>
+                        
                         
                     </div>
                     <div id="search-interval" class="col">
-                        <h5>Search Sample Interval</h5>
+                        <h5>Search Sample</h5>
                         <p id="search-date">
                             Search results of: 
-                            <span class="date"></span>
-                            <span class="time"></span>
+                            <i class="bi bi-calendar4-week"></i>
+                            <span class="date text-primary">
+                            </span>
+                            <span class="time text-primary"><i class="bi bi-clock text-dark"></i> </span>
                         </p>
-                        <p id="interval-start-date">
-                            Interval start: 
-                            <span class="date"></span>
-                            <span class="time"></span>
-                        </p>
-                        <p id="interval-end-date">
-                            Interval end:
-                            <span class="date"></span>
-                            <span class="time"></span>
-                        </p>
-                        <p id="sample">Sample size: <span class="data"></span></p>
+                        <p id="interval">
+                            Interval: 
+                            <i class="bi bi-calendar4-week"></i>
+                            <span id="interval-start-date" class="date text-primary"></span>
+                            <span id="interval-start-time" class="time text-primary"><i class="bi bi-clock text-dark"></i> </span>
+                            <i class="bi bi-arrow-right"></i>
+                            <i class="bi bi-calendar4-week"></i>
+                            <span id="interval-end-date" class="date text-primary"></span>
+                            <span id="interval-end-time"class="time text-primary"><i class="bi bi-clock text-dark"></i> </span>
+                        </p>                        
+                        <p id="sample">Sample size: <span class="data text-primary"></span></p>
                     </div>
                 </div>
-                <div id="highlights" class="d-flex flex-row">                    
-                    <div class="col">
-                        <p id="most-retweet_count">
-                            most retweets:
+                <div id="highlights" class="row justify-content-center">                    
+                    <div class="col flex-row">
+                        <p class="text-center mb-0">
+                            <i class="bi bi-repeat h1 text-primary"></i>
+                        </p>
+                        <p id="most-retweet_count" class="text-center">
+                            Most Retweets
+                            <br>
                             <a href="" target="_blank"></a>
                         </p>
                     </div>
-                    <div class="col">
-                        <p id="most-reply_count">
-                            most replies:
+                    <div class="col flex-row justify-content-center">
+                        <p class="text-center mb-0">
+                            <i class="bi bi-reply-fill h1 text-success"></i>
+                        </p>
+                        <p id="most-reply_count" class="text-center">
+                            Most Replies
+                            <br>
                             <a href="" target="_blank"></a>
                         </p>
                     </div>
-                    <div class="col">
-                        <p id="most-like_count">
-                            most likes:
+                    <div class="col flex-row justify-content-center">
+                        <p class="text-center mb-0">
+                            <i class="bi bi-heart-fill primary h1 text-danger"></i>
+                        </p>
+                        <p id="most-like_count" class="text-center">
+                            Most Likes 
+                            <br>
                             <a href="" target="_blank"></a>
                         </p>                        
                     </div>
-                    <div class="col">
-                        <p id="most-quote_count">
-                            most quotes:
+                    <div class="col flex-row justify-content-center">
+                        <p class="text-center mb-0">
+                            <i class="bi bi-chat-right-quote-fill h1 text-warning"></i>
+                        </p>
+                        <p id="most-quote_count" class="text-center">
+                            Most Quotes
+                            <br>
                             <a href="" target="_blank"></a>
                         </p>
                     </div>
-                    <div class="col">
-                        <p id="most-impression_count">
-                            most impressions:
+                    <div class="col flex-row justify-content-center">
+                        <p class="text-center mb-0">
+                            <i class="bi bi-bar-chart-line-fill h1 text-info" class="text-center"></i>
+                        </p>
+                        <p id="most-impression_count" class="text-center">
+                            Most Impressions
+                            <br>
                             <a href="" target="_blank"></a>
                         </p>
                     </div>
-                </div>
+                </div>                
                 <div id="pie-charts" class="row">
-                    <div id="tweets-by-type" class="col"></div>           
-                    <div id="metrics" class="col">
-                        <p id="retweeted">
-                            Retweets
-                            <span id="count"></span>
-                            Interval:
-                            <span id="interval"></span>
-                        </p>
-                        <p id="replied_to">
-                            Replies: 
-                            <span id="count"></span>
-                            Interval:
-                            <span id="interval"></span>
-                            <ul id="average"></ul>
-                        </p>
-                        <p id="quoted">
-                            Quotes:
-                            <span id="count"></span>
-                            Interval:
-                            <span id="interval"></span>
-                            <ul id="average"></ul>
-                        </p>
-                        <p id="original">
-                            Original:
-                            <span id="count"></span>
-                            Interval:
-                            <span id="interval"></span>
-                            <ul id="average"></ul>
-                        </p>
-                        
-                    </div>                    
+                    <div id="tweets-by-media-type" class="col">
+                        <h6 class="text-center">By Media Type</h6>      
+                    </div>
+                    <div id="tweets-by-type"  class="col">
+                        <h6 class="text-center">By Type</h6>   
+                    </div>
                 </div>
-                <div id="metric-charts">                        
+                <div id="metrics" class="row">                    
+                    <div class="row">
+                        <h4>Average interations per tweet by type</h4>
+                    </div>
+                    <div class="row">                            
+                        <div class="col">
+                            <div id="replied_to">
+                                <i class="bi bi-reply-fill h5 text-success"></i>
+                                Replies: 
+                                <!-- <span id="count"></span>
+                                Interval:
+                                <span id="interval"></span> -->
+                                <ul id="average" class="list-group list-group-flush"></ul>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div id="quoted">
+                                <i class="bi bi-chat-right-quote-fill h5 text-warning"></i>
+                                Quotes:
+                                <!-- <span id="count"></span>
+                                Interval:
+                                <span id="interval"></span> -->
+                                <ul id="average" class="list-group list-group-flush"></ul>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div id="original">
+                                <i class="bi bi-person-fill h5 text-primary"></i>
+                                Original:
+                                <!-- <span id="count"></span>
+                                Interval:
+                                <span id="interval"></span> -->
+                                <ul id="average" class="list-group list-group-flush"></ul>
+                            </div>
+                        </div>
+                    </div>                     
+                </div>
+                <div id="metric-charts" class="flex-row justify-content-center">
                 </div>
                </div> 
             </div>
