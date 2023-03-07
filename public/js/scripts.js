@@ -126,9 +126,9 @@ $(document).ready(async function(){
         $('#'+type+' ul#average').append(li)
       }
     }
-
-    await charts(data.tweets_by_type,"tweets-by-media-type","tweets-type")
-    await charts(fromMetricsToDataset(data.metrics,'total'),"tweets-by-type","tweets-type-2")
+    //input,labels,id,type
+    await charts(data.tweets_by_type,["Text","Video","Photo","Link","Poll","Gif"],"tweets-by-media-type")
+    await charts(fromMetricsToDataset(data.metrics,'total'),["Retweets","Replies","Likes","Quotes"],"tweets-by-type")
     await metricCharts(data.metrics,'metric-charts','retweets')
 
 
@@ -210,18 +210,18 @@ $(document).ready(async function(){
   }
 
    // draw pie charts
-   async function charts(input,id,type){
-
+   async function charts(input,labels,id){
+    
     let canvas = document.createElement("canvas")
-    canvas.id = type+"chart"
+    canvas.id = id+"chart"
     document.getElementById(id).appendChild(canvas)
 
     new Chart(document.getElementById(canvas.id),{
       type:'pie',
       data:{
-        labels:Object.keys(input),
+        labels:labels,
         datasets:[{
-          label:"Tweets by Type",
+          label:id,
           data:Object.values(input),
           backgroundColor:['#FF595E','#FFCA3A','#8AC926','#1982C4','#00B4D8','#6A4C93'],
           hoverOffset: 4
