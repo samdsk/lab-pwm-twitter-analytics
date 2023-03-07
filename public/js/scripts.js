@@ -89,20 +89,7 @@ $(document).ready(async function(){
     $("#interval-end-time").append((data.end_date).slice(11,19))
     $("#sample span").text(data.metrics.total.count)
     
-    $(".data-hover").mouseover(function(){
-      $(this).text($(this).attr("data-real"))
-    })
-    
-    $('.data-hover').mouseleave(function(){      
-      $(this).text($(this).attr("data-round"))      
-    })
 
-    $('#search-interval').mouseover(()=>{
-      $('#search-interval .time').show()
-    })
-    $('#search-interval').mouseleave(()=>{
-     $('#search-interval .time').hide()
-    })
    
     // ! highlights
     for(let type of Object.keys(data.highlights)){
@@ -121,9 +108,21 @@ $(document).ready(async function(){
       if(type == "retweeted") continue
       
       for(let key of Object.keys(data.metrics[type].metrics)){
-        
-        let li = $('<a onclick="return false;" class="list-group-item">'+key+' : '+Math.floor(data.metrics[type].metrics[key]/data.metrics[type].count)+'</a>')
-        console.log('#'+type+' ul');
+        let li = $('<a onclick="return false;" class="list-group-item"></a>')
+
+        let name = key.charAt(0).toUpperCase()+key.slice(1,-6)
+        let count = Math.floor(data.metrics[type].metrics[key]/data.metrics[type].count)
+
+        if(key == 'reply_count')
+          li.text('Replies : ')
+        else 
+          li.text(name+"s : ")
+
+        let span = $('<span class="data-hover" data-real>'+tweetCount(count)+'</span></a>')
+        span.attr({"data-real":count, "data-round":tweetCount(count)})
+
+        li.append(span)
+
         $('#'+type+' ul#average').append(li)
       }
     }
@@ -131,6 +130,22 @@ $(document).ready(async function(){
     await charts(data.tweets_by_type,"tweets-by-media-type","tweets-type")
     await charts(fromMetricsToDataset(data.metrics,'total'),"tweets-by-type","tweets-type-2")
     await metricCharts(data.metrics,'metric-charts','retweets')
+
+
+    $(".data-hover").mouseover(function(){
+      $(this).text($(this).attr("data-real"))
+    })
+    
+    $('.data-hover').mouseleave(function(){      
+      $(this).text($(this).attr("data-round"))      
+    })
+
+    $('#search-interval').mouseover(()=>{
+      $('#search-interval .time').show()
+    })
+    $('#search-interval').mouseleave(()=>{
+     $('#search-interval .time').hide()
+    })
   }
 
   await genSearchResults()

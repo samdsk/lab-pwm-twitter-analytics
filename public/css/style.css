@@ -134,6 +134,10 @@ footer div.col {
     #results canvas{
         max-width: 100%;
     }
+
+    #dashboard .icon-text{
+        display: none;
+    }
 }
 
 @media screen and (max-width: 750px){
