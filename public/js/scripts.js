@@ -54,7 +54,7 @@ $(document).ready(async function(){
     })
     
     
-    $('#results #name').text(data.name)
+    $('#results #name').append(data.name)
     
     let ancor = document.createElement('a')
     ancor.href = buildTwitterUrl(data.username)

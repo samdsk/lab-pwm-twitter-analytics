@@ -54,6 +54,10 @@ footer div.col {
 }
 
 #results #account-info{
+
+}
+
+#results #account-info{
     margin-top: 1rem;
     border-top:1px solid;    
     border-color: #cccccc; 
@@ -90,6 +94,7 @@ footer div.col {
 
 #results #user-profile img {
     /* margin-top:1rem; */
+    border:1px solid #4cc9f0;
     border-radius: 0.2rem;
 }
 
