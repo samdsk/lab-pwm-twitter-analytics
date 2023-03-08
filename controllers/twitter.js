@@ -43,7 +43,7 @@ const tweet_user_fields = [
     "location", 
     "name", 
     "pinned_tweet_id", 
-    "profile_image_url", 
+    "profile_image_url_bigger", // modified profile_image_url
     "protected", 
     "public_metrics", 
     "url", 
