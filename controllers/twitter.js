@@ -11,8 +11,8 @@ const User = require('../models/User')
 // ! file is in TESTING MODE
 // ! THERE ARE NO API REQUESTS SEND
 // ! READING FROM data.json
-const testing_filename = './data.json'
-const filename = './data_asd.json'
+const testing_filename = './data_elon.json'
+const filename = './data.json'
 
 const tweet_fields = [
     'attachments', 
@@ -43,7 +43,7 @@ const tweet_user_fields = [
     "location", 
     "name", 
     "pinned_tweet_id", 
-    "profile_image_url", 
+    "profile_image_url_bigger", // modified profile_image_url
     "protected", 
     "public_metrics", 
     "url", 
@@ -61,8 +61,8 @@ const search = async (ID) => {
     //     'media.fields':tweet_media_fields})
     
     // let data = await res.fetchLast()    
-    // // ! testing mode : set data variable
-    return new Promise( (resolve,reject) => fs.writeFile(filename,JSON.stringify("testing"), (err)=>{
+
+    return new Promise( (resolve,reject) => fs.writeFile(filename,JSON.stringify("data"), (err)=>{
         if(err) reject(err)
         console.log(">>> File created successfully !")
         
@@ -91,24 +91,39 @@ const postTwitter = async(req,res,next) => {
         data.followings = user.data.public_metrics.following_count
         data.total_tweets = user.data.public_metrics.tweet_count
         data.user_img = user.data.profile_image_url
+        data.name = user.data.name
         data.date = new Date()
-        //console.log(data);        
 
-        // // ! testing mode
-        // console.log('creating search results')
-        // let count = await SearchResults.find({username:req.body.handler})
+        console.log("Looking for previous searches");
+
+        // const count = await User.findOne({name:req.session.username},'searched')
+        // .then(async searched_results => {
+        //     let c = []
+            
+        //     for (let e of searched_results.searched){
+        //         let found = await SearchResults.findOne({_id:e,username:req.body.handler})
+        //         if(found) c.push(e)
+        //     }
+        //     return c
+        // })
         
-
+        let data_2 = null
+        
         // if(count.length > 1){
+        //     console.log("Found previous search results for same handler");
         //     await SearchResults.findOneAndRemove({_id:count[0]._id})
         //     await User.updateOne({username:req.session.username},{$pull : {searched:count[0]._id}})
+        //     data_2 = await SearchResults.findOne({_id:count[1]._id})            
         // }
-
+        
+        console.log('creating search results')
         // await SearchResults.create(data)
         // await User.findOneAndUpdate({name:req.session.username},{$push : {searched:data._id}}).orFail(new Error("User update failed."))
 
         delete(data._id)
-        res.json(JSON.stringify(data))
+        fs.writeFileSync("./output_data.json",JSON.stringify(data))
+
+        res.json(JSON.stringify([data,data_2]))
     })
     .catch(err => {
         console.log(err);

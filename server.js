@@ -11,7 +11,6 @@ const genid = require('genid')
 const helmet = require('helmet')
 const MongoStore = require('connect-mongo')(express_session)
 
-
 //importing project modules
 const db_connect = require('./db/connect')
 const db_url = require('./db/db_params')
@@ -29,10 +28,36 @@ const error_handler = require('./middleware/error_handler')
 const PORT = process.env.PORT || 3000
 
 //middlewares
+
+
+// reference -> https://helmetjs.github.io/ 
+app.use(helmet({
+    contentSecurityPolicy:{ 
+        directives : {
+            "script-src":["'self'","cdn.jsdelivr.net"],
+            "img-src":["'self'","pbs.twimg.com"]
+        }
+    }
+    
+}))
+
+app.use((req, res, next) => {
+    // res.setHeader('Access-Control-Allow-Origin', '*');
+    // res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
+    // res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+    res.setHeader('Cross-origin-Embedder-Policy', 'require-corp');
+    res.setHeader('Cross-origin-Opener-Policy','same-origin');
+ 
+    if (req.method === 'OPTIONS') {
+      res.sendStatus(200)
+    } else {
+      next()
+    }
+});
+
 app.use(express.static(__dirname + '/public'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
-app.use(helmet())
 app.use(cookie_parser())
 
 app.use('/',express_session({
@@ -54,6 +79,7 @@ app.use('/',express_session({
     })
 
 }))
+
 //setting render engine ejs
 app.set('view engine','ejs')
 
