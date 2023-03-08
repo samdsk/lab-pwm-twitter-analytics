@@ -30,42 +30,65 @@
                                 <p id="username"><i class="bi bi-twitter"></i> </p>
                             </div>
                         </div>
-                        <p id="total-tweets" class="mb-0"><i class="bi bi-arrow-down-up"></i> Total tweets: <span id="total-tweets-data" class="text-primary data-hover"></span></p>
-                        <div id="followers-follwings" class="row mt-0">
-                            <div class="col mt-0">
-                                <i class="bi bi-people-fill"></i> 
-                                Followers: 
-                                <span id="followers" class="text-primary data-hover"></span>
-                            </div>
-                            <div class="col mt-0">
-                                <i class="bi bi-person-check-fill"></i> 
-                                Followings: 
-                                <span id="followings" class="text-primary data-hover"></span>
-                            </div>
-                        </div>
-                        
-                        
+                        <p id="total-tweets" class="">
+                            <i class="bi bi-arrow-down-up"></i> 
+                            Total tweets: 
+                            <span id="total-tweets-data" class="text-primary data-hover"></span><span id="total-tweets-data-compare" class="text-primary data-hover"></span>
+                        </p>                        
+                        <p class="mt-0">
+                            <i class="bi bi-people-fill"></i> 
+                            Followers: 
+                            <span id="followers" class="text-primary data-hover"></span><span id="followers-compare" class="text-primary data-hover"></span>
+                        </p>
+                        <p class="mt-0">
+                            <i class="bi bi-person-check-fill"></i> 
+                            Followings: 
+                            <span id="followings" class="text-primary data-hover"></span><span id="followings-compare" class="text-primary data-hover"></span>
+                        </p>
                     </div>
                     <div id="search-interval" class="col">
-                        <h5>Search Sample</h5>
-                        <p id="search-date">
-                            Search results of: 
-                            <i class="bi bi-calendar4-week"></i>
-                            <span class="date text-primary">
-                            </span>
-                            <span class="time text-primary"><i class="bi bi-clock text-dark"></i> </span>
-                        </p>
-                        <p id="interval">
-                            Interval: 
-                            <i class="bi bi-calendar4-week"></i>
-                            <span id="interval-start-date" class="date text-primary"></span>
-                            <span id="interval-start-time" class="time text-primary"><i class="bi bi-clock text-dark"></i> </span>
-                            <i class="bi bi-arrow-right"></i>
-                            <i class="bi bi-calendar4-week"></i>
-                            <span id="interval-end-date" class="date text-primary"></span>
-                            <span id="interval-end-time"class="time text-primary"><i class="bi bi-clock text-dark"></i> </span>
-                        </p>                        
-                        <p id="sample">Sample size: <span class="data text-primary"></span></p>
+                        <div id="search-sample-new">
+                            <h6 class="font-weight-bold">New Search Sample</h6>
+                            <p id="search-date" class="h7 mb-0">
+                                Search results of: 
+                                <i class="bi bi-calendar4-week"></i>
+                                <span class="date text-primary mb-0">
+                                </span>
+                                <span class="time text-primary mb-0"><i class="bi bi-clock text-dark"></i> </span>
+                            </p>
+                            <p id="interval" class="h7 mb-0">
+                                Interval: 
+                                <i class="bi bi-calendar4-week"></i>
+                                <span id="interval-start-date" class="date text-primary mb-0"></span>
+                                <span id="interval-start-time" class="time text-primary mb-0"><i class="bi bi-clock text-dark"></i> </span>
+                                <i class="bi bi-arrow-right"></i>
+                                <i class="bi bi-calendar4-week"></i>
+                                <span id="interval-end-date" class="date text-primary mb-0"></span>
+                                <span id="interval-end-time"class="time text-primary mb-0"><i class="bi bi-clock text-dark"></i> </span>
+                            </p>                        
+                            <p id="sample" class="h7 mt-0">Sample size: <span class="data text-primary"></span></p>
+                        </div>
+                        <div id="search-sample-old">
+                            <h6 class="font-weight-bold">Old Search Sample</h6>
+                            <p id="search-date" class="h7 mb-0">
+                                Search results of: 
+                                <i class="bi bi-calendar4-week"></i>
+                                <span class="date text-primary">
+                                </span>
+                                <span class="time text-primary"><i class="bi bi-clock text-dark"></i> </span>
+                            </p>
+                            <p id="interval" class="h7 mb-0">
+                                Interval: 
+                                <i class="bi bi-calendar4-week"></i>
+                                <span id="interval-start-date" class="date text-primary"></span>
+                                <span id="interval-start-time" class="time text-primary"><i class="bi bi-clock text-dark"></i> </span>
+                                <i class="bi bi-arrow-right"></i>
+                                <i class="bi bi-calendar4-week"></i>
+                                <span id="interval-end-date" class="date text-primary"></span>
+                                <span id="interval-end-time"class="time text-primary"><i class="bi bi-clock text-dark"></i> </span>
+                            </p>                        
+                            <p id="sample" class="h7">Sample size: <span class="data text-primary"></span></p>
+                        </div>
                     </div>
                 </div>
                 <div id="highlights" class="row justify-content-center">                    
@@ -73,59 +96,69 @@
                         <p class="text-center mb-0">
                             <i class="bi bi-repeat h1 text-primary"></i>
                         </p>
-                        <p id="most-retweet_count" class="text-center">
+                        <p id="most-retweet_count-data" class="text-center">
                             Most Retweets
                             <br>
-                            <a href="" target="_blank"></a>
+                            <a id="most-retweet_count" class="data-hover" href="" target="_blank"></a><a id="most-retweet_count-compare" class="data-hover"  href="" target="_blank"></a>
                         </p>
                     </div>
                     <div class="col flex-row justify-content-center">
                         <p class="text-center mb-0">
                             <i class="bi bi-reply-fill h1 text-success"></i>
                         </p>
-                        <p id="most-reply_count" class="text-center">
+                        <p id="most-reply_count-data" class="text-center">
                             Most Replies
                             <br>
-                            <a href="" target="_blank"></a>
+                            <a id="most-reply_count" class="data-hover"  href="" target="_blank"></a><a id="most-reply_count-compare" class="data-hover"  href="" target="_blank"></a>
                         </p>
                     </div>
                     <div class="col flex-row justify-content-center">
                         <p class="text-center mb-0">
                             <i class="bi bi-heart-fill primary h1 text-danger"></i>
                         </p>
-                        <p id="most-like_count" class="text-center">
+                        <p id="most-like_count-data" class="text-center">
                             Most Likes 
                             <br>
-                            <a href="" target="_blank"></a>
+                            <a id="most-like_count" class="data-hover"  href="" target="_blank"></a><a id="most-like_count-compare" class="data-hover"  href="" target="_blank"></a>
                         </p>                        
                     </div>
                     <div class="col flex-row justify-content-center">
                         <p class="text-center mb-0">
                             <i class="bi bi-chat-right-quote-fill h1 text-warning"></i>
                         </p>
-                        <p id="most-quote_count" class="text-center">
+                        <p id="most-quote_count-data" class="text-center">
                             Most Quotes
                             <br>
-                            <a href="" target="_blank"></a>
+                            <a id="most-quote_count" class="data-hover"  href="" target="_blank"></a><a id="most-quote_count-compare" class="data-hover"  href="" target="_blank"></a>
                         </p>
                     </div>
                     <div class="col flex-row justify-content-center">
                         <p class="text-center mb-0">
                             <i class="bi bi-bar-chart-line-fill h1 text-info" class="text-center"></i>
                         </p>
-                        <p id="most-impression_count" class="text-center">
+                        <p id="most-impression_count-data" class="text-center">
                             Most Impressions
                             <br>
-                            <a href="" target="_blank"></a>
+                            <a id="most-impression_count" class="data-hover"  href="" target="_blank"></a><a id="most-impression_count-compare" class="data-hover"  href="" target="_blank"></a>
                         </p>
                     </div>
                 </div>                
                 <div id="pie-charts" class="row">
-                    <div id="tweets-by-media-type" class="col">
-                        <h6 class="text-center">By Media Type</h6>      
+                    <div class="col">
+                        <div id="tweets-by-media-type" class="row">
+                            <h6 class="text-center">By Media Type</h6>
+                        </div>
+                        <div class="row">
+                            <ul>                                
+                                <li>asd</li>
+                            </ul>
+                        </div>
                     </div>
-                    <div id="tweets-by-type"  class="col">
-                        <h6 class="text-center">By Type</h6>   
+                    <div class="col">
+                        <div id="tweets-by-type"  class="row">
+                            <h6 class="text-center">By Type</h6>   
+                        </div>
+
                     </div>
                 </div>
                 <div id="metrics" class="row">                    

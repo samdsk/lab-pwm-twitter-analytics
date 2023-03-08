@@ -41,7 +41,7 @@ footer div.col {
 #loader img{
     display: block;
     position: relative;
-    width: 64px;
+    width:73px;
     margin: auto;
     
 }
@@ -51,6 +51,10 @@ footer div.col {
     
     margin-top:1rem;
     padding:1rem;
+}
+
+#results .h7{
+    font-size:0.9rem;
 }
 
 #results #account-info{
