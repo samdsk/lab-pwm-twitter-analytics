@@ -48,7 +48,7 @@ footer div.col {
 
 #results .col{
     background-color: white;
-    
+    border:1px solid black;
     margin-top:1rem;
     padding:1rem;
 }
@@ -125,8 +125,9 @@ footer div.col {
 }
 
 #results canvas{
-    width: 500px;
-    max-width:80%;    
+    /* width: 500px;
+    max-width:80%;     */
+    background-color: #4cc9f0;
     margin-right: auto;
     margin-left: auto;
 }
