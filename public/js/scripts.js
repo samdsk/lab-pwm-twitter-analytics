@@ -63,56 +63,73 @@ $(document).ready(async function(){
   }
   
   async function gen(INPUT,LENGTH){
+
     let data = INPUT[0]
     let compare = null
     if(LENGTH==2) compare = INPUT[1]
-
-    $('#results #name').append(data.name)
-  
-    let ancor = document.createElement('a')
-    ancor.href = buildTwitterUrl(data.username)
-    ancor.id = "username-link"
-    ancor.title = "Twitter link"
-    ancor.innerText = "@"+data.username
-    ancor.target = '_blank'
-    $('#results #username').append(ancor)
+    let loading = "Loading: "
+    console.log(loading);
+    const load_user_datails = async () => {
+      $('#results #name').append(data.name)
     
-    let img = new Image()
-    img.crossOrigin = "anonymouse"
-    img.src = data.user_img
-    // img.height = "73"
-    $('#results #user-info #user-profile').prepend(img)
+      let ancor = document.createElement('a')
+      ancor.href = buildTwitterUrl(data.username)
+      ancor.id = "username-link"
+      ancor.title = "Twitter link"
+      ancor.innerText = "@"+data.username
+      ancor.target = '_blank'
+      $('#results #username').append(ancor)
+      
+      let img = new Image()
+      img.crossOrigin = "anonymouse"
+      img.src = data.user_img
     
-    $('#total-tweets-data')
-    .attr({"data-real":data.total_tweets, "data-round":tweetCount(data.total_tweets)})
-    .text(tweetCount(data.total_tweets))
+      $('#results #user-info #user-profile').prepend(img)
 
-    appendCompare("#total-tweets-data",data.total_tweets,compare.total_tweets)
+      let count = data.total_tweets
+      let count_rounded = tweetCount(count)
+      
+      $('#total-tweets-data')
+      .attr({"data-real":count, "data-round":count_rounded})
+      .text(count_rounded)
 
-    $('#followers')
-    .attr({"data-real":data.followers, "data-round":tweetCount(data.followers)})
-    .text(tweetCount(data.followers))
+      appendCompare("#total-tweets-data",count,compare.total_tweets)
+    }
 
-    appendCompare("#followers",data.followers,compare.followers)
+    const load_followers = async () => {
+      let count = data.followings
+      let count_rounded = tweetCount(count)
 
-    $('#followings')
-    .attr({"data-real":data.followings, "data-round":tweetCount(data.followings)})
-    .text(tweetCount(data.followings))
+      $('#followers')
+      .attr({"data-real":count, "data-round":count_rounded})
+      .text(count_rounded)
 
-    appendCompare("#followings",data.followings,compare.followings)
+      appendCompare("#followers",count,compare.followers)
+    }
+
+    const load_followings = async () => {
+      let count = data.followings
+      let count_rounded = tweetCount(count)
+
+      $('#followings')
+      .attr({"data-real":count, "data-round":count_rounded})
+      .text(count_rounded)
+
+      appendCompare("#followings",count,compare.followings)
+    }
     
-    $("#search-sample-new #search-date .date").text((data.date).slice(0,10))
-    $("#search-sample-new #search-date .time").append((data.date).slice(11,19))
-    $("#search-sample-new #interval-start-date").text((data.start_date).slice(0,10))
-    $("#search-sample-new #interval-start-time").append((data.start_date).slice(11,19))
-    $("#search-sample-new #interval-end-date").text((data.end_date).slice(0,10))
+    const load_sample_internal_new = async () => {   
+      $("#search-sample-new #search-date .date").text((data.date).slice(0,10))
+      $("#search-sample-new #search-date .time").append((data.date).slice(11,19))
+      $("#search-sample-new #interval-start-date").text((data.start_date).slice(0,10))
+      $("#search-sample-new #interval-start-time").append((data.start_date).slice(11,19))
+      $("#search-sample-new #interval-end-date").text((data.end_date).slice(0,10))
 
-    $("#search-sample-new #interval-end-time").append((data.end_date).slice(11,19))
-    $("#search-sample-new #sample span").text(data.metrics.total.count)
-
-    if(compare==null){
-      $("#search-sample-old").remove()
-    }else{
+      $("#search-sample-new #interval-end-time").append((data.end_date).slice(11,19))
+      $("#search-sample-new #sample span").text(data.metrics.total.count)
+    }
+    
+    const load_sample_interval_old = async () => {
       $("#search-sample-old #search-date .date").text((compare.date).slice(0,10))
       $("#search-sample-old #search-date .time").append((compare.date).slice(11,19))
       $("#search-sample-old #interval-start-date").text((compare.start_date).slice(0,10))
@@ -122,87 +139,113 @@ $(document).ready(async function(){
       $("#search-sample-old #interval-end-time").append((compare.end_date).slice(11,19))
       $("#search-sample-old #sample span").text(compare.metrics.total.count)
     }
+
+    const load_highlights = async () => {
+      for(let type of Object.keys(data.highlights)){
+        let id = '#most-'+type
+        let round = tweetCount(data.highlights[type].count)
+        $(id).attr({
+          "data-real":data.highlights[type].count,
+          "data-round":round,
+          "href":buildTwitterPostUrl(data.username,data.highlights[type].id)
+        }).text(round)
+
+        appendCompare(id,data.highlights[type].count,compare.highlights[type].count)
+
+        $(id+"-compare").attr({
+          "href":buildTwitterPostUrl(compare.username,compare.highlights[type].id)
+        })
+      } 
+    }   
     
-    function appendCompare(id,new_data,old_data){
-      if(old_data == null || old_data == undefined) return
-      
-      if(old_data == new_data) return
+    const load_tweets_by_media_type_data = async () => {
+      for(let type of Object.keys(data.tweets_by_media_type)){
 
-      let up = ["bi-caret-up-fill","text-success"]
-      let down = ["bi-caret-down-fill","text-danger"]
-      
-      let diff = new_data - old_data
-      let rounded_data = tweetCount(diff)
+        let count = data.tweets_by_media_type[type]
+        let count_rounded = tweetCount(count)
+        let id = "tweets-by-media-type-data-"+type
+        let span = $('<span class="data-hover"></span>')      
+        span.attr({"id":id,"data-real":count, "data-round":count_rounded})
+        span.text(count_rounded)
 
-      let icon = $('<i class="bi ms-1 me-1"></i>')
-      
-      if(new_data>old_data){
-        icon.addClass(up)
-      }else{
-        icon.addClass(down)
-      }
+        let span_compare = $('<span id="'+id+'-compare" class="data-hover"></span>')     
 
-      $(id).after(icon)
 
-      id = id+"-compare"
-      $(id).attr({"data-real":diff, "data-round":rounded_data})
-      $(id).append(rounded_data)
-    }
-  
-    // ! highlights
-    for(let type of Object.keys(data.highlights)){
-      let id = '#most-'+type
-      let round = tweetCount(data.highlights[type].count)
-      $(id).attr({
-        "data-real":data.highlights[type].count,
-        "data-round":round,
-        "href":buildTwitterPostUrl(data.username,data.highlights[type].id)
-      }).text(round)
+        let li = $('<li class="list-group-item">'+toUpperFirstChar(cleanText(type))+': </li>').append(span).append(span_compare)
+        $('#tweets-by-media-type-data ul').append(li)
 
-      appendCompare(id,data.highlights[type].count,compare.highlights[type].count)
-      $(id+"-compare").attr({
-        "href":buildTwitterPostUrl(compare.username,compare.highlights[type].id)
-      })
-    }
-    
-    
-    for(let type of Object.keys(data.metrics)){
-      if(type == "total") continue
-      // $('#'+type+' #count').text(data.metrics[type].count)
-      // let avg = msToHMS(data.metrics[type].interval/data.metrics[type].count)
-      // $('#'+type+' #interval').text(avg)
-      
-      if(type == "retweeted") continue
-      
-      for(let key of Object.keys(data.metrics[type].metrics)){
-        let li = $('<a onclick="return false;" class="list-group-item"></a>')
-
-        let name = key.charAt(0).toUpperCase()+key.slice(1,-6)
-        let count = Math.floor(data.metrics[type].metrics[key]/data.metrics[type].count)
-
-        if(key == 'reply_count')
-          li.text('Replies : ')
-        else 
-          li.text(name+"s : ")
-
-        let id = type+'-'+key
-        let span = $('<span id="'+id+'"class="data-hover" data-real>'+tweetCount(count)+'</span></a>')
-        let compare_span = $('<span id="'+id+'-compare" class="data-hover" data-real>'+tweetCount(count)+'</span></a>')
-        span.attr({"data-real":count, "data-round":tweetCount(count)})
-
-        li.append(span).append(compare_span)
-
-        appendCompare(id,count,compare.metrics[type].metrics[key])
-
-        $('#'+type+' ul#average').append(li)
+        appendCompare('#'+id,count,compare.tweets_by_media_type[type])
       }
     }
+
+    const load_avg_metrics_table = async () => {
+      for(let type of Object.keys(data.metrics)){
+        if(type == "total") continue
+
+        let span = $('<span id="tweets-by-type-data-'+type+'" class="data-hover"></span>').text(tweetCount(data.metrics[type].count))
+        let span_compare = $('<span id="tweets-by-type-data-'+type+'-compare" class="data-hover"></span>')
+        span.attr({"data-real":data.metrics[type].count, "data-round":tweetCount(data.metrics[type].count)})
+        let li = $('<li class="list-group-item">'+type+': </li>').append(span).append(span_compare)
+        $('#tweets-by-type-data ul').append(li)
+
+        appendCompare('#tweets-by-type-data-'+type,data.metrics[type].count,compare.metrics[type].count)
+
+        if(type == "retweeted") continue
+        
+        for(let key of Object.keys(data.metrics[type].metrics)){
+          let li = $('<a onclick="return false;" class="list-group-item"></a>')
+
+          let name = key.charAt(0).toUpperCase()+key.slice(1,-6)
+          let avg_count = Math.floor(data.metrics[type].metrics[key]/data.metrics[type].count)
+          let avg_count_compare = Math.floor(compare.metrics[type].metrics[key]/compare.metrics[type].count)
+
+          if(key == 'reply_count')
+            li.text('Replies : ')
+          else 
+            li.text(name+"s : ")
+
+          let id = type+'-'+key
+          
+          let span = $('<span id="'+id+'"class="data-hover">'+tweetCount(avg_count)+'</span>')
+          let compare_span = $('<span id="'+id+'-compare" class="data-hover"></span>')
+          span.attr({"data-real":avg_count, "data-round":tweetCount(avg_count)})
+
+          li.append(span).append(compare_span)        
+          $('#'+type+' ul#average').append(li)
+
+          appendCompare('#'+id,avg_count,avg_count_compare)
+        }
+      }
+    }
+
+    await load_user_datails()
+    await load_followers()
+    await load_followings()
+    await load_sample_internal_new()
+
+    if(compare==null){
+      console.log(loading+"50%");
+      $("#search-sample-old").remove()
+    }else{
+      console.log(loading+"50%");
+      await load_sample_interval_old()
+    }
+
+    await load_highlights()
+    await load_tweets_by_media_type_data()
+    await load_avg_metrics_table()
     //input,labels,id,type
-    await charts(data.tweets_by_type,["Text","Video","Photo","Link","Poll","Gif"],"tweets-by-media-type")
-    await charts(fromMetricsToDataset(data.metrics,'total'),["Retweets","Replies","Likes","Quotes"],"tweets-by-type")
+    await charts(data.tweets_by_media_type,["Text","Video","Photo","Link","Poll","Gif"],"tweets-by-media-type")
+    await charts(fromMetricsToDataset(data.metrics,'total'),["Retweets","Replies","Quotes","Originals"],"tweets-by-type")
     await metricCharts(data.metrics,'metric-charts','retweets')
 
+    set_data_hover()
 
+  }
+
+  await genSearchResults()
+
+  function set_data_hover(){   
     $(".data-hover").mouseover(function(){
       $(this).text($(this).attr("data-real"))
     })
@@ -217,10 +260,42 @@ $(document).ready(async function(){
     $('#search-interval').mouseleave(()=>{
     $('#search-interval .time').hide()
     })
-  }    
-  await genSearchResults()
+  }
+  
+  function appendCompare(id,new_data,old_data){
+    if(old_data == null || old_data == undefined) return
+    
+    if(old_data == new_data) return
 
+    let up = ["bi-caret-up-fill","text-success"]
+    let down = ["bi-caret-down-fill","text-danger"]
+    
+    let diff = new_data - old_data
+    let rounded_data = tweetCount(diff)
 
+    let icon = $('<i class="bi ms-1 me-1"></i>')
+    
+    if(new_data>old_data){
+      icon.addClass(up)
+    }else{
+      icon.addClass(down)
+    }
+
+    $(id).after(icon)
+
+    id = id+"-compare"
+    $(id).attr({"data-real":diff, "data-round":rounded_data})
+    $(id).append(rounded_data)
+  }
+
+  function toUpperFirstChar(str){
+    return str.charAt(0).toUpperCase()+str.slice(1)
+  }
+
+  function cleanText(str){
+    let regex = /[^A-Za-z0-9]/g    
+    return str.replace(regex," ")
+  }
 
   // custom data structure for chartsjs
   function fromMetricsToDataset(data,skip){
@@ -277,11 +352,12 @@ $(document).ready(async function(){
     
     return count
   }
+
   // draw pie charts
   async function charts(input,labels,id){
     
     let canvas = document.createElement("canvas")
-    canvas.id = id+"chart"
+    canvas.id = id+"-chart"
     document.getElementById(id).appendChild(canvas)
 
     new Chart(document.getElementById(canvas.id),{
