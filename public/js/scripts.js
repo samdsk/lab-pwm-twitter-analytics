@@ -235,8 +235,8 @@ $(document).ready(async function(){
     await load_tweets_by_media_type_data()
     await load_avg_metrics_table()
     //input,labels,id,type
-    await charts(data.tweets_by_media_type,["Text","Video","Photo","Link","Poll","Gif"],"tweets-by-media-type")
-    await charts(fromMetricsToDataset(data.metrics,'total'),["Retweets","Replies","Quotes","Originals"],"tweets-by-type")
+    await charts([data.tweets_by_media_type,compare.tweets_by_media_type],["Text","Video","Photo","Link","Poll","Gif"],"tweets-by-media-type")
+    await charts([fromMetricsToDataset(data.metrics,'total'),fromMetricsToDataset(compare.metrics,'total')],["Retweets","Replies","Quotes","Originals"],"tweets-by-type")
     await metricCharts(data.metrics,'metric-charts','retweets')
 
     set_data_hover()
@@ -261,7 +261,7 @@ $(document).ready(async function(){
     $('#search-interval .time').hide()
     })
   }
-  
+
   function appendCompare(id,new_data,old_data){
     if(old_data == null || old_data == undefined) return
     
@@ -365,14 +365,21 @@ $(document).ready(async function(){
       data:{
         labels:labels,
         datasets:[{
-          label:id,
-          data:Object.values(input),
+          label:cleanText(id)+" new",
+          data:Object.values(input[0]),
+          backgroundColor:['#FF595E','#FFCA3A','#8AC926','#1982C4','#00B4D8','#6A4C93'],
+          hoverOffset: 4
+        },{
+          label:cleanText(id)+" old",
+          data:Object.values(input[1]),
           backgroundColor:['#FF595E','#FFCA3A','#8AC926','#1982C4','#00B4D8','#6A4C93'],
           hoverOffset: 4
         }],
       },
       options : {
         responsive:true,
+        aspectRatio: 1,
+        maintainAspectRatio:false,
         plugins:{
           legend:{
             position:"bottom"
@@ -406,7 +413,8 @@ $(document).ready(async function(){
       datasets:datasets,
     },
     options: {
-      responsive:true,      
+      responsive:true,
+      maintainAspectRatio:false,
       plugins: {
         title:{
           display:true,

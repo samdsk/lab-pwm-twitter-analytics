@@ -6,7 +6,7 @@
     <main class="container mt-5 mb-5" id="dashboard">
         <noscript>Sorry, your browser does not support JavaScript!</noscript>
         
-        <div class="row container">
+        <div class="row container justify-content-center">
             <%- include('../partials/dashboard.ejs') %>
 
             <div class="col right border p-3">
@@ -23,7 +23,7 @@
                 </div>
                <div id="results" class="contianer">
                 <div id="account-info" class="row">
-                    <div id="user-info" class="col">
+                    <div id="user-info" class="col col-sm-12 col-lg-6">
                         <div id="user-profile">
                             <div id="name-username">                                
                                 <p id="name"><i class="bi bi-person"></i> </p>
@@ -46,7 +46,7 @@
                             <span id="followings" class="text-primary data-hover"></span><span id="followings-compare" class="text-primary data-hover"></span>
                         </p>
                     </div>
-                    <div id="search-interval" class="col">
+                    <div id="search-interval" class="col col-sm-12 col-lg-6">
                         <div id="search-sample-new">
                             <h6 class="font-weight-bold">New Search Sample</h6>
                             <p id="search-date" class="h7 mb-0">
@@ -91,8 +91,8 @@
                         </div>
                     </div>
                 </div>
-                <div id="highlights" class="row justify-content-center">                    
-                    <div class="col flex-row">
+                <div id="highlights" class="row  justify-content-start">                    
+                    <div class="col-sm-12 col-md-4 col-lg-4  flex-row">
                         <p class="text-center mb-0">
                             <i class="bi bi-repeat h1 text-primary"></i>
                         </p>
@@ -102,7 +102,7 @@
                             <a id="most-retweet_count" class="data-hover" href="" target="_blank"></a><a id="most-retweet_count-compare" class="data-hover"  href="" target="_blank"></a>
                         </p>
                     </div>
-                    <div class="col flex-row justify-content-center">
+                    <div class="col-sm-12 col-md-4 col-lg-4  flex-row justify-content-center">
                         <p class="text-center mb-0">
                             <i class="bi bi-reply-fill h1 text-success"></i>
                         </p>
@@ -112,7 +112,7 @@
                             <a id="most-reply_count" class="data-hover"  href="" target="_blank"></a><a id="most-reply_count-compare" class="data-hover"  href="" target="_blank"></a>
                         </p>
                     </div>
-                    <div class="col flex-row justify-content-center">
+                    <div class="col-sm-12 col-md-4 col-lg-4  flex-row justify-content-center">
                         <p class="text-center mb-0">
                             <i class="bi bi-heart-fill primary h1 text-danger"></i>
                         </p>
@@ -122,7 +122,7 @@
                             <a id="most-like_count" class="data-hover"  href="" target="_blank"></a><a id="most-like_count-compare" class="data-hover"  href="" target="_blank"></a>
                         </p>                        
                     </div>
-                    <div class="col flex-row justify-content-center">
+                    <div class="col-sm-12 col-md-6 col-lg-6  flex-row justify-content-center">
                         <p class="text-center mb-0">
                             <i class="bi bi-chat-right-quote-fill h1 text-warning"></i>
                         </p>
@@ -132,7 +132,7 @@
                             <a id="most-quote_count" class="data-hover"  href="" target="_blank"></a><a id="most-quote_count-compare" class="data-hover"  href="" target="_blank"></a>
                         </p>
                     </div>
-                    <div class="col flex-row justify-content-center">
+                    <div class="col-sm-12 col-md-6 col-lg-6  flex-row justify-content-center">
                         <p class="text-center mb-0">
                             <i class="bi bi-bar-chart-line-fill h1 text-info" class="text-center"></i>
                         </p>
@@ -143,21 +143,21 @@
                         </p>
                     </div>
                 </div>                
-                <div id="pie-charts" class="row">
-                    <div class="col">
-                        <div id="tweets-by-media-type" class="row">
-                            <h6 class="text-center">By Media Type</h6>
+                <div id="pie-charts" class="row justify-content-center">
+                    <div id="tweets-by-media-type-wrapper" class="col-sm-12 col-md-8 col-lg-6 col-xl-6">
+                        <h6 class="text-center">By Media Type</h6>
+                        <div id="tweets-by-media-type" class="row pie-chart-container ">
                         </div>
-                        <div id="tweets-by-media-type-data" class="row">
+                        <div id="tweets-by-media-type-data" class="row p-3">
                             <ul class="list-group list-group-flush">                                
                             </ul>
                         </div>
                     </div>
-                    <div class="col">
-                        <div id="tweets-by-type"  class="row">
-                            <h6 class="text-center">By Type</h6>   
+                    <div id="tweets-by-type-wrapper" class="col-sm-12 col-md-8 col-lg-6 col-xl-6">
+                        <h6 class="text-center">By Type</h6>   
+                        <div id="tweets-by-type"  class="row pie-chart-container">
                         </div>
-                        <div id="tweets-by-type-data" class="row">
+                        <div id="tweets-by-type-data" class="row p-3">
                             <ul class="list-group list-group-flush">
                             </ul>
                         </div>
@@ -167,8 +167,8 @@
                     <div class="row">
                         <h4>Average interations per tweet by type</h4>
                     </div>
-                    <div class="row">                            
-                        <div class="col">
+                    <div class="row align-items-start">                            
+                        <div class="col-sm-12 col-md-12 col-lg-6 col-xl-4">
                             <div id="replied_to">
                                 <i class="bi bi-reply-fill h5 text-success"></i>
                                 Replies: 
@@ -178,7 +178,7 @@
                                 <ul id="average" class="list-group list-group-flush"></ul>
                             </div>
                         </div>
-                        <div class="col">
+                        <div class="col-sm-12 col-md-12 col-lg-6 col-xl-4">
                             <div id="quoted">
                                 <i class="bi bi-chat-right-quote-fill h5 text-warning"></i>
                                 Quotes:
@@ -188,7 +188,7 @@
                                 <ul id="average" class="list-group list-group-flush"></ul>
                             </div>
                         </div>
-                        <div class="col">
+                        <div class="col-sm-12 col-md-12 col-lg-6 col-xl-4">
                             <div id="original">
                                 <i class="bi bi-person-fill h5 text-primary"></i>
                                 Original:
@@ -200,7 +200,7 @@
                         </div>
                     </div>                     
                 </div>
-                <div id="metric-charts" class="flex-row justify-content-center">
+                <div id="metric-charts" class="flex-row justify-content-center bar-chart">
                 </div>
                </div> 
             </div>

@@ -7,23 +7,27 @@ footer{
     border-color: #aaaaaa;
 }
 
-main form{    
+main{
+    min-height: 90vh;
+}
+
+main form{
     width: 50% !important;
-    
+
 }
 
 footer div.col {
     background-color:white ;
 }
 #dashboard .row {
-    
+
 }
 
 #dashboard .left{
-    
-} 
 
-#dashboard .right{    
+}
+
+#dashboard .right{
     max-width: 100%;
     min-height: 600px;
     overflow: hidden;
@@ -32,10 +36,10 @@ footer div.col {
 #loader{
     display: flex;
     justify-content: center;
-    position: relative;    
+    position: relative;
     width: 100%;
     height: 100%;
-    
+
 }
 
 #loader img{
@@ -43,12 +47,10 @@ footer div.col {
     position: relative;
     width:73px;
     margin: auto;
-    
 }
 
 #results .col{
-    background-color: white;
-    border:1px solid black;
+    background-color: white;    
     margin-top:1rem;
     padding:1rem;
 }
@@ -58,17 +60,13 @@ footer div.col {
 }
 
 #results #account-info{
-
-}
-
-#results #account-info{
     margin-top: 1rem;
-    border-top:1px solid;    
-    border-color: #cccccc; 
+    border-top:1px solid;
+    border-color: #cccccc;
 }
 
 #results #user-info{
-    border-right:1px solid;    
+    border-right:1px solid;
     border-color: #cccccc;
 }
 
@@ -76,11 +74,6 @@ footer div.col {
     margin-top: 1rem;
     border-top:1px solid;
     border-bottom:1px solid;
-    border-color: #cccccc;
-}
-
-#results #tweets-by-media-type{
-    border-right:1px solid;
     border-color: #cccccc;
 }
 
@@ -96,8 +89,7 @@ footer div.col {
     display: inline-flex;
 }
 
-#results #user-profile img {
-    /* margin-top:1rem; */
+#results #user-profile img {    
     border:1px solid #4cc9f0;
     border-radius: 0.2rem;
 }
@@ -121,27 +113,39 @@ footer div.col {
 }
 
 #results #pie-charts{
-    margin-top: 1rem;
+    margin-top: 1rem;    
+}
+#results #tweets-by-type-wrapper{
+    border-left: 1px solid #cccccc;
 }
 
-#results canvas{
-    /* width: 500px;
-    max-width:80%;     */
-    background-color: #4cc9f0;
-    margin-right: auto;
+#results .pie-chart-container{
+    position: relative;
+    
+    
     margin-left: auto;
+    margin-right: auto;
+}
+
+#results .bar-chart{    
+    
+    height: 400px;
 }
 
 @media screen and (max-width: 1000px){
     main form {
         width: 70% !important;
     }
-    #results canvas{
-        max-width: 100%;
-    }
 
     #dashboard .icon-text{
         display: none;
+    }
+
+    #tweets-by-type-wrapper{
+        border-left: none !important;
+    }
+    #results .bar-chart{
+        height: 300px;
     }
 }
 
@@ -150,7 +154,14 @@ footer div.col {
         width: 100% !important;
     }
 
+    #results .pie-chart-container{
+        width: 70%;
+        
+    }
 
+    #results .bar-chart{
+        height: 200px;
+    }
 
 }
 
