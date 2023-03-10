@@ -13,14 +13,73 @@ const SeachResultsSchema = new mongoose.Schema({
     followers: {type:Number,default:0},
     total_tweets: {type:Number,default:0},
 
-    tweets_by_type: {
-        text: {type:Number,default:0}, // text tweets count 
-        polls: {type:Number,default:0}, // poll tweets count 
-        link: {type:Number,default:0}, // link tweets count 
-        photo: {type:Number,default:0}, // photo tweets count 
-        video: {type:Number,default:0}, // video tweets count 
-        mentions : {type:Number,default:0}, //mentions count
-        animated_gifs : {type:Number,default:0}, // gif tweets count
+    tweets_by_media_type: {
+        text : {
+            count : {type:Number,default:0},
+            interval : {type:Number,default:0},
+            metrics:{
+                retweet_count:{type:Number,default:0},
+                reply_count:{type:Number,default:0},
+                like_count:{type:Number,default:0},
+                quote_count:{type:Number,default:0},
+                impression_count:{type:Number,default:0}
+            }
+        }, // original posts
+        video : {
+            count : {type:Number,default:0},
+            interval : {type:Number,default:0},
+            metrics:{
+                retweet_count:{type:Number,default:0},
+                reply_count:{type:Number,default:0},
+                like_count:{type:Number,default:0},
+                quote_count:{type:Number,default:0},
+                impression_count:{type:Number,default:0}
+            }
+        }, // original posts
+        photo : {
+            count : {type:Number,default:0},
+            interval : {type:Number,default:0},
+            metrics:{
+                retweet_count:{type:Number,default:0},
+                reply_count:{type:Number,default:0},
+                like_count:{type:Number,default:0},
+                quote_count:{type:Number,default:0},
+                impression_count:{type:Number,default:0}
+            }
+        }, // original posts
+        link : {
+            count : {type:Number,default:0},
+            interval : {type:Number,default:0},
+            metrics:{
+                retweet_count:{type:Number,default:0},
+                reply_count:{type:Number,default:0},
+                like_count:{type:Number,default:0},
+                quote_count:{type:Number,default:0},
+                impression_count:{type:Number,default:0}
+            }
+        }, // original posts
+        polls : {
+            count : {type:Number,default:0},
+            interval : {type:Number,default:0},
+            metrics:{
+                retweet_count:{type:Number,default:0},
+                reply_count:{type:Number,default:0},
+                like_count:{type:Number,default:0},
+                quote_count:{type:Number,default:0},
+                impression_count:{type:Number,default:0}
+            }
+        }, // original posts
+        animated_gifs : {
+            count : {type:Number,default:0},
+            interval : {type:Number,default:0},
+            metrics:{
+                retweet_count:{type:Number,default:0},
+                reply_count:{type:Number,default:0},
+                like_count:{type:Number,default:0},
+                quote_count:{type:Number,default:0},
+                impression_count:{type:Number,default:0}
+            }
+        } // gif tweets count
     },
 
     highlights : {
@@ -83,7 +142,7 @@ const SeachResultsSchema = new mongoose.Schema({
                 quote_count:{type:Number,default:0},
                 impression_count:{type:Number,default:0}
             }
-        }, // original posts
+        }, // original posts        
         total : {
             count : {type:Number,default:0},
             interval : {type:Number,default:0},

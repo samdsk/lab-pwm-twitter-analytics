@@ -1,7 +1,7 @@
 const fs = require('fs')
 const pathToJsonObj = "./tweets_data.json"
 
-
+// FIXME refactor metrics update 
 const collectData = async (DATA) => { 
       
     DATA = JSON.parse(DATA)
@@ -23,9 +23,13 @@ const collectData = async (DATA) => {
         // count post types
         if(media && e.attachments?.media_keys){
             let found = media.find(m => m.media_key == e.attachments?.media_keys[0])            
-            if(found) TWEETS.tweets_by_type[found.type] += 1
+            if(found) {
+                TWEETS.tweets_by_media_type[found.type] += 1
+                updateMetrics(TWEETS.tweets_by_media_type,found.type,e)
+            }
         }else{                
             TWEETS.tweets_by_type.text+=1
+            updateMetrics(TWEETS.tweets_by_media_type,text,e)
         }
         
         // posts with links
@@ -50,7 +54,7 @@ const collectData = async (DATA) => {
             let type = (e?.referenced_tweets[0].type)
             updateInterval(TWEETS,type,time)
             if(type != "retweeted") {
-                updateMetrics(TWEETS,type,e)
+                updateMetrics(TWEETS.metrics,type,e)
                 updateMetricsTotal(TWEETS,e)
             }
             TWEETS.metrics[type].count +=1
@@ -77,9 +81,7 @@ const collectData = async (DATA) => {
 function avgInterval(data){
     
     ["retweeted","replied_to","quoted","original","total"].forEach( (type) => {
-        if(data.metrics[type]?.interval){
-            // console.log(type," : ",data.metrics[type]);
-            
+        if(data.metrics[type]?.interval){ 
             data.metrics[type].interval = Math.floor(data.metrics[type].interval / data.metrics[type].count)
         }
 
