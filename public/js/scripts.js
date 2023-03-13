@@ -42,33 +42,50 @@ $(document).ready(async function(){
       })
     }
   }
-  errorDisplay() 
+  errorDisplay()
+  
+  $('#search-btn').click(async (event)=>{
+    event.preventDefault()
+    $('#results').hide()
+    $('#loader').removeClass('d-none')
+    $('#search-btn').prop("disabled",true)
+
+    // let data = await postViaWorker($('#form-search').serialize())
+    
+    let data  = await fetch('../js/output_data_compare.json').then( response => {
+        return response.json()
+    })
+      
+    await genSearchResults(data)
+    
+    $('#loader').addClass('d-none')
+    $('#results').show()
+    $('#search-btn').removeAttr("disabled")
+  })  
+
 
   // ! populate with seach results + charts
-  async function genSearchResults(){
-
-    // ! testing from file
-    let data  = await fetch('../js/output_data_compare.json').then( response => {
-      return response.json()
-    })
-
-    if(data.length==2){
+  async function genSearchResults(data){
+    console.log(data.length);
+    if(data.length==2 && data[1] != null){
       if(data[0].username == data[1].username){
         console.log("Ok: comparing mode");
         gen(data,data.length)
       }else{
         console.log("Error: comparing different users");
       }
+    }else{
+      gen(data,1)
     }
   }
   
   async function gen(INPUT,LENGTH){
 
     let data = INPUT[0]
-    let compare = null
+    let compare = undefined
     if(LENGTH==2) compare = INPUT[1]
-    let loading = "Loading: "
-    console.log(loading);
+
+    
     const load_user_datails = async () => {
       $('#results #name').append(data.name)
     
@@ -93,18 +110,20 @@ $(document).ready(async function(){
       .attr({"data-real":count, "data-round":count_rounded})
       .text(count_rounded)
 
-      appendCompare("#total-tweets-data",count,compare.total_tweets)
+      if(compare)
+        appendCompare("#total-tweets-data",count,compare.total_tweets)
     }
 
     const load_followers = async () => {
-      let count = data.followings
+      let count = data.followers
       let count_rounded = tweetCount(count)
 
       $('#followers')
       .attr({"data-real":count, "data-round":count_rounded})
       .text(count_rounded)
 
-      appendCompare("#followers",count,compare.followers)
+      if(compare)
+        appendCompare("#followers",count,compare.followers)
     }
 
     const load_followings = async () => {
@@ -115,7 +134,8 @@ $(document).ready(async function(){
       .attr({"data-real":count, "data-round":count_rounded})
       .text(count_rounded)
 
-      appendCompare("#followings",count,compare.followings)
+      if(compare)
+        appendCompare("#followings",count,compare.followings)
     }
     
     const load_sample_internal_new = async () => {   
@@ -130,14 +150,16 @@ $(document).ready(async function(){
     }
     
     const load_sample_interval_old = async () => {
-      $("#search-sample-old #search-date .date").text((compare.date).slice(0,10))
-      $("#search-sample-old #search-date .time").append((compare.date).slice(11,19))
-      $("#search-sample-old #interval-start-date").text((compare.start_date).slice(0,10))
-      $("#search-sample-old #interval-start-time").append((compare.start_date).slice(11,19))
-      $("#search-sample-old #interval-end-date").text((compare.end_date).slice(0,10))
-
-      $("#search-sample-old #interval-end-time").append((compare.end_date).slice(11,19))
-      $("#search-sample-old #sample span").text(compare.metrics.total.count)
+      if(compare){
+        $("#search-sample-old #search-date .date").text((compare.date).slice(0,10))
+        $("#search-sample-old #search-date .time").append((compare.date).slice(11,19))
+        $("#search-sample-old #interval-start-date").text((compare.start_date).slice(0,10))
+        $("#search-sample-old #interval-start-time").append((compare.start_date).slice(11,19))
+        $("#search-sample-old #interval-end-date").text((compare.end_date).slice(0,10))
+  
+        $("#search-sample-old #interval-end-time").append((compare.end_date).slice(11,19))
+        $("#search-sample-old #sample span").text(compare.metrics.total.count)
+      }
     }
 
     const load_highlights = async () => {
@@ -150,7 +172,8 @@ $(document).ready(async function(){
           "href":buildTwitterPostUrl(data.username,data.highlights[type].id)
         }).text(round)
 
-        appendCompare(id,data.highlights[type].count,compare.highlights[type].count)
+        if(compare)
+          appendCompare(id,data.highlights[type].count,compare.highlights[type].count)
 
         $(id+"-compare").attr({
           "href":buildTwitterPostUrl(compare.username,compare.highlights[type].id)
@@ -174,7 +197,8 @@ $(document).ready(async function(){
         let li = $('<li class="list-group-item">'+toUpperFirstChar(cleanText(type))+': </li>').append(span).append(span_compare)
         $('#tweets-by-media-type-data ul').append(li)
 
-        appendCompare('#'+id,count,compare.tweets_by_media_type[type])
+        if(compare)
+         appendCompare('#'+id,count,compare.tweets_by_media_type[type])
       }
     }
 
@@ -187,8 +211,8 @@ $(document).ready(async function(){
         span.attr({"data-real":data.metrics[type].count, "data-round":tweetCount(data.metrics[type].count)})
         let li = $('<li class="list-group-item">'+type+': </li>').append(span).append(span_compare)
         $('#tweets-by-type-data ul').append(li)
-
-        appendCompare('#tweets-by-type-data-'+type,data.metrics[type].count,compare.metrics[type].count)
+        if(compare)
+          appendCompare('#tweets-by-type-data-'+type,data.metrics[type].count,compare.metrics[type].count)
 
         if(type == "retweeted") continue
         
@@ -212,8 +236,8 @@ $(document).ready(async function(){
 
           li.append(span).append(compare_span)        
           $('#'+type+' ul#average').append(li)
-
-          appendCompare('#'+id,avg_count,avg_count_compare)
+          if(compare)
+            appendCompare('#'+id,avg_count,avg_count_compare)
         }
       }
     }
@@ -223,11 +247,9 @@ $(document).ready(async function(){
     await load_followings()
     await load_sample_internal_new()
 
-    if(compare==null){
-      console.log(loading+"50%");
+    if(compare==null){      
       $("#search-sample-old").remove()
-    }else{
-      console.log(loading+"50%");
+    }else{      
       await load_sample_interval_old()
     }
 
@@ -243,7 +265,7 @@ $(document).ready(async function(){
 
   }
 
-  await genSearchResults()
+  // await genSearchResults()
 
   function set_data_hover(){   
     $(".data-hover").mouseover(function(){
@@ -504,24 +526,6 @@ $(document).ready(async function(){
   //   })
   // }
 
-  // $('#search-btn').click(async (event)=>{
-  //   event.preventDefault()
-  //   $('#results').empty()
-  //   $('#loader').removeClass('d-none')
-  //   $('#search-btn').prop("disabled",true)
-
-    // let data = await postViaWorker($('#form-search').serialize())
-    //console.log(data[0]);
-
-    // let data  = await fetch('../js/output_data.json').then( response => {
-    //   return response.json()
-    // })
-    
-    
-  //   $('#loader').addClass('d-none')
-  //   $('#results').show()
-  //   $('#search-btn').removeAttr("disabled")
-  // })  
 
 // $('.dashboard').click((event)=>{
   //   event.preventDefault()
