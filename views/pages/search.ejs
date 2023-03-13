@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <%- include('../partials/head') %> 
-<body>
+<body class="container-fluid wrapper">
     <%- include('../partials/header') %> 
     <main class="container mt-5 mb-5" id="dashboard">
         <noscript>Sorry, your browser does not support JavaScript!</noscript>
@@ -9,7 +9,7 @@
         <div class="row container justify-content-center">
             <%- include('../partials/dashboard.ejs') %>
 
-            <div class="col right border p-3">
+            <div class="col right border p-3 ">
                 <h3>New Search <i class="bi bi-twitter"></i></h3>
                 <form id="form-search" class="form-controll needs-validation d-inline" action="/twitter" method="POST">
                     <div class="input-group">
@@ -21,7 +21,7 @@
                 <div id="loader"class="d-none">
                     <img src="../assets/loader.gif" />
                 </div>
-               <div id="results" class="contianer">
+               <div id="results" class="contianer ">
                 <div id="account-info" class="row">
                     <div id="user-info" class="col col-sm-12 col-lg-6">
                         <div id="user-profile">
@@ -163,40 +163,48 @@
                         </div>
                     </div>
                 </div>
-                <div id="metrics" class="row">                    
+                <div id="avg-interactions-wrapper" class="row">                    
                     <div class="row">
-                        <h4>Average interations per tweet by type</h4>
+                        <h4>Average interations per tweet by media type</h4>
                     </div>
-                    <div class="row align-items-start">                            
-                        <div class="col-sm-12 col-md-12 col-lg-6 col-xl-4">
-                            <div id="replied_to">
-                                <i class="bi bi-reply-fill h5 text-success"></i>
-                                Replies: 
-                                <!-- <span id="count"></span>
-                                Interval:
-                                <span id="interval"></span> -->
-                                <ul id="average" class="list-group list-group-flush"></ul>
-                            </div>
+                    <div id="avg-interactions" class="row align-items-start">                            
+                        <div id="text" class="col-sm-12 col-md-12 col-lg-6 col-xl-4">                            
+                            <i class="bi bi-reply-fill h5 text-success"></i>
+                            Text: 
+                            <!-- <span id="count"></span>
+                            Interval:
+                            <span id="interval"></span> -->
+                            <ul id="average" class="list-group list-group-flush"></ul>                           
                         </div>
-                        <div class="col-sm-12 col-md-12 col-lg-6 col-xl-4">
-                            <div id="quoted">
-                                <i class="bi bi-chat-right-quote-fill h5 text-warning"></i>
-                                Quotes:
-                                <!-- <span id="count"></span>
-                                Interval:
-                                <span id="interval"></span> -->
-                                <ul id="average" class="list-group list-group-flush"></ul>
-                            </div>
+                        <div id="video" class="col-sm-12 col-md-12 col-lg-6 col-xl-4">                            
+                            <i class="bi bi-reply-fill h5 text-success"></i>
+                            Video: 
+                            <ul id="average" class="list-group list-group-flush"></ul>                           
                         </div>
-                        <div class="col-sm-12 col-md-12 col-lg-6 col-xl-4">
-                            <div id="original">
-                                <i class="bi bi-person-fill h5 text-primary"></i>
-                                Original:
-                                <!-- <span id="count"></span>
-                                Interval:
-                                <span id="interval"></span> -->
-                                <ul id="average" class="list-group list-group-flush"></ul>
-                            </div>
+                        <div id="photo" class="col-sm-12 col-md-12 col-lg-6 col-xl-4">                            
+                            <i class="bi bi-reply-fill h5 text-success"></i>
+                            Photo: 
+                            <ul id="average" class="list-group list-group-flush"></ul>                           
+                        </div>
+                        <div id="link" class="col-sm-12 col-md-12 col-lg-6 col-xl-4">                            
+                            <i class="bi bi-reply-fill h5 text-success"></i>
+                            Link:
+                            <ul id="average" class="list-group list-group-flush"></ul>                           
+                        </div>
+                        <div id="polls" class="col-sm-12 col-md-12 col-lg-6 col-xl-4">                            
+                            <i class="bi bi-reply-fill h5 text-success"></i>
+                            Polls:
+                            <ul id="average" class="list-group list-group-flush"></ul>                           
+                        </div>
+                        <div id="animated_gif" class="col-sm-12 col-md-12 col-lg-6 col-xl-4">                            
+                            <i class="bi bi-reply-fill h5 text-success"></i>
+                            Animated Gif:
+                            <ul id="average" class="list-group list-group-flush"></ul>                           
+                        </div>
+                        <div id="original" class="col-sm-12 col-md-12 col-lg-6 col-xl-4">                            
+                            <i class="bi bi-reply-fill h5 text-success"></i>
+                            Orignal Tweets:
+                            <ul id="average" class="list-group list-group-flush"></ul>                           
                         </div>
                     </div>                     
                 </div>

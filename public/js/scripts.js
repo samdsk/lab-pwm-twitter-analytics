@@ -59,6 +59,7 @@ $(document).ready(async function(){
     await genSearchResults(data)
     
     $('#loader').addClass('d-none')
+    $('#results').removeClass("d-none")
     $('#results').show()
     $('#search-btn').removeAttr("disabled")
   })  
@@ -84,7 +85,6 @@ $(document).ready(async function(){
     let data = INPUT[0]
     let compare = undefined
     if(LENGTH==2) compare = INPUT[1]
-
     
     const load_user_datails = async () => {
       $('#results #name').append(data.name)
@@ -146,7 +146,7 @@ $(document).ready(async function(){
       $("#search-sample-new #interval-end-date").text((data.end_date).slice(0,10))
 
       $("#search-sample-new #interval-end-time").append((data.end_date).slice(11,19))
-      $("#search-sample-new #sample span").text(data.metrics.total.count)
+      $("#search-sample-new #sample span").text(data.total.count)
     }
     
     const load_sample_interval_old = async () => {
@@ -158,7 +158,7 @@ $(document).ready(async function(){
         $("#search-sample-old #interval-end-date").text((compare.end_date).slice(0,10))
   
         $("#search-sample-old #interval-end-time").append((compare.end_date).slice(11,19))
-        $("#search-sample-old #sample span").text(compare.metrics.total.count)
+        $("#search-sample-old #sample span").text(compare.total.count)
       }
     }
 
@@ -172,56 +172,54 @@ $(document).ready(async function(){
           "href":buildTwitterPostUrl(data.username,data.highlights[type].id)
         }).text(round)
 
-        if(compare)
+        if(compare){
           appendCompare(id,data.highlights[type].count,compare.highlights[type].count)
 
-        $(id+"-compare").attr({
-          "href":buildTwitterPostUrl(compare.username,compare.highlights[type].id)
-        })
-      } 
+          $(id+"-compare").attr({
+            "href":buildTwitterPostUrl(compare.username,compare.highlights[type].id)
+          })
+          } 
+
+        }
     }   
     
     const load_tweets_by_media_type_data = async () => {
-      for(let type of Object.keys(data.tweets_by_media_type)){
+      for(let type of Object.keys(data.media_type)){
 
-        let count = data.tweets_by_media_type[type]
+        let count = data.media_type[type].count
         let count_rounded = tweetCount(count)
         let id = "tweets-by-media-type-data-"+type
-        let span = $('<span class="data-hover"></span>')      
+        let span = $('<span class="data-hover"></span>')
         span.attr({"id":id,"data-real":count, "data-round":count_rounded})
         span.text(count_rounded)
 
-        let span_compare = $('<span id="'+id+'-compare" class="data-hover"></span>')     
-
+        let span_compare = $('<span id="'+id+'-compare" class="data-hover"></span>')
 
         let li = $('<li class="list-group-item">'+toUpperFirstChar(cleanText(type))+': </li>').append(span).append(span_compare)
         $('#tweets-by-media-type-data ul').append(li)
 
         if(compare)
-         appendCompare('#'+id,count,compare.tweets_by_media_type[type])
+         appendCompare('#'+id,count,compare.media_type[type].count)
       }
     }
 
     const load_avg_metrics_table = async () => {
-      for(let type of Object.keys(data.metrics)){
-        if(type == "total") continue
+      for(let type of Object.keys(data.media_type)){       
 
-        let span = $('<span id="tweets-by-type-data-'+type+'" class="data-hover"></span>').text(tweetCount(data.metrics[type].count))
-        let span_compare = $('<span id="tweets-by-type-data-'+type+'-compare" class="data-hover"></span>')
-        span.attr({"data-real":data.metrics[type].count, "data-round":tweetCount(data.metrics[type].count)})
+        let span = $('<span id="media-type-avg-data-'+type+'" class="data-hover"></span>').text(tweetCount(data[type].count))
+        let span_compare = $('<span id="media-type-avg-data-'+type+'-compare" class="data-hover"></span>')
+        span.attr({"data-real":data[type].count, "data-round":tweetCount(data[type].count)})
         let li = $('<li class="list-group-item">'+type+': </li>').append(span).append(span_compare)
-        $('#tweets-by-type-data ul').append(li)
+        $('#avg-interactions #'+type+' ul#average').append(li)
         if(compare)
-          appendCompare('#tweets-by-type-data-'+type,data.metrics[type].count,compare.metrics[type].count)
-
-        if(type == "retweeted") continue
+          appendCompare('#media-type-avg-data-'+type,data[type].count,compare[type].count)        
         
-        for(let key of Object.keys(data.metrics[type].metrics)){
+        for(let key of Object.keys(data[type].metrics)){
           let li = $('<a onclick="return false;" class="list-group-item"></a>')
 
           let name = key.charAt(0).toUpperCase()+key.slice(1,-6)
-          let avg_count = Math.floor(data.metrics[type].metrics[key]/data.metrics[type].count)
-          let avg_count_compare = Math.floor(compare.metrics[type].metrics[key]/compare.metrics[type].count)
+          let avg_count = Math.floor(data[type].metrics[key]/data[type].count)
+          let avg_count_compare = Math.floor(compare[type].metrics[key]/compare[type].count)
 
           if(key == 'reply_count')
             li.text('Replies : ')
@@ -253,13 +251,13 @@ $(document).ready(async function(){
       await load_sample_interval_old()
     }
 
-    await load_highlights()
+    await load_highlights()    
     await load_tweets_by_media_type_data()
-    await load_avg_metrics_table()
+    //await load_avg_metrics_table()
     //input,labels,id,type
-    await charts([data.tweets_by_media_type,compare.tweets_by_media_type],["Text","Video","Photo","Link","Poll","Gif"],"tweets-by-media-type")
-    await charts([fromMetricsToDataset(data.metrics,'total'),fromMetricsToDataset(compare.metrics,'total')],["Retweets","Replies","Quotes","Originals"],"tweets-by-type")
-    await metricCharts(data.metrics,'metric-charts','retweets')
+    // await charts([data.tweets_by_media_type,compare.tweets_by_media_type],["Text","Video","Photo","Link","Poll","Gif"],"tweets-by-media-type")
+    // await charts([fromMetricsToDataset(data.metrics,'total'),fromMetricsToDataset(compare.metrics,'total')],["Retweets","Replies","Quotes","Originals"],"tweets-by-type")
+    // await metricCharts(data.metrics,'metric-charts','retweets')
 
     set_data_hover()
 
@@ -291,6 +289,8 @@ $(document).ready(async function(){
 
     let up = ["bi-caret-up-fill","text-success"]
     let down = ["bi-caret-down-fill","text-danger"]
+
+    console.log(new_data,old_data);
     
     let diff = new_data - old_data
     let rounded_data = tweetCount(diff)

@@ -6,14 +6,13 @@ header{
 footer{
     background-color:white ;
     border-color: #aaaaaa;
-    background-color: #4cc9f0;
-    height: auto;
+    position: relative
 }
 
 html,body{
     height: 100%;
-    display: flex;
-    flex-direction: column;
+    /* display: flex;
+    flex-direction: column; */
 }
 
 main{
