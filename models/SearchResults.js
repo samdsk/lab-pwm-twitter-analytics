@@ -12,8 +12,9 @@ const SeachResultsSchema = new mongoose.Schema({
     followings: {type:Number,default:0},
     followers: {type:Number,default:0},
     total_tweets: {type:Number,default:0},
+    mentions:{type:Number,default:0},
 
-    tweets_by_media_type: {
+    media_type: {
         text : {
             count : {type:Number,default:0},
             interval : {type:Number,default:0},
@@ -69,7 +70,7 @@ const SeachResultsSchema = new mongoose.Schema({
                 impression_count:{type:Number,default:0}
             }
         }, // original posts
-        animated_gifs : {
+        animated_gif : {
             count : {type:Number,default:0},
             interval : {type:Number,default:0},
             metrics:{
@@ -105,7 +106,7 @@ const SeachResultsSchema = new mongoose.Schema({
         }, // tweet with most impressions
     },
     
-    metrics : {
+    type : {
         retweeted : {
             count : {type:Number,default:0},
             interval : {type:Number,default:0}
@@ -143,18 +144,19 @@ const SeachResultsSchema = new mongoose.Schema({
                 impression_count:{type:Number,default:0}
             }
         }, // original posts        
-        total : {
-            count : {type:Number,default:0},
-            interval : {type:Number,default:0},
-            metrics:{
-                retweet_count:[{type:Number,default:0}],
-                reply_count:[{type:Number,default:0}],
-                like_count:[{type:Number,default:0}],
-                quote_count:[{type:Number,default:0}],
-                impression_count:[{type:Number,default:0}]
-            }
-        }, // total posts
+         
     },
+    total : {// total posts
+        count : {type:Number,default:0},
+        interval : {type:Number,default:0},
+        metrics:{
+            retweet_count:[{type:Number,default:0}],
+            reply_count:[{type:Number,default:0}],
+            like_count:[{type:Number,default:0}],
+            quote_count:[{type:Number,default:0}],
+            impression_count:[{type:Number,default:0}]
+        }
+    }
     
 })
 

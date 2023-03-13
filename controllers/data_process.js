@@ -1,7 +1,6 @@
 const fs = require('fs')
 const pathToJsonObj = "./tweets_data.json"
 
-// FIXME refactor metrics update 
 const collectData = async (DATA) => { 
       
     DATA = JSON.parse(DATA)
@@ -18,89 +17,107 @@ const collectData = async (DATA) => {
 
     TWEETS.start_date = data[0].created_at
     TWEETS.end_date = data[data.length-1].created_at
+    
+    let interval_start_time = new Date(Date.parse(TWEETS.start_date)).getTime()
     // process each tweet finding media type, tweet type, time intervals and metrics
     data.forEach(e => {
-        // count post types
-        if(media && e.attachments?.media_keys){
-            let found = media.find(m => m.media_key == e.attachments?.media_keys[0])            
-            if(found) {
-                TWEETS.tweets_by_media_type[found.type] += 1
-                updateMetrics(TWEETS.tweets_by_media_type,found.type,e)
-            }
-        }else{                
-            TWEETS.tweets_by_type.text+=1
-            updateMetrics(TWEETS.tweets_by_media_type,text,e)
-        }
+
+        // section - count post media types
+        let mediaType = findMediaType(media,e)
         
-        // posts with links
-        if(e?.entities?.urls) {            
-            if(e.entities.urls[0].unwound_url) {
-                TWEETS.tweets_by_type.link += 1
-            }
-        }
-
-        // posts with polls
-        if(e?.entities?.polls) {            
-            TWEETS.tweets_by_type.polls += 1
-        }
-
         let time = new Date(Date.parse(e.created_at)).getTime()
-        
+
+        if(mediaType){
+            console.log(mediaType,time,interval_start_time);
+            TWEETS.media_type[mediaType].count +=1
+            updateMetrics(TWEETS.media_type,mediaType,e)
+            updateInterval(TWEETS.media_type[mediaType],time,interval_start_time)
+        }else{
+            throw new Error("Media type undefined! ->",mediaType)
+        }
+
         // post subtypes: retweet, reply, quote, original
         // for each type except for retweets count public metrics and time interval between posts
         // interval accumulate the difference between two posts
-        if(e?.referenced_tweets){
-            
-            let type = (e?.referenced_tweets[0].type)
-            updateInterval(TWEETS,type,time)
-            if(type != "retweeted") {
-                updateMetrics(TWEETS.metrics,type,e)
-                updateMetricsTotal(TWEETS,e)
-            }
-            TWEETS.metrics[type].count +=1
-
-        }else{
-            // if a post doesn't contain references means it's a poriginal tweet from the user
-            updateInterval(TWEETS,"original",time)
-            updateMetricsTotal(TWEETS,e)
-            updateMetrics(TWEETS,"original",e)
-            TWEETS.metrics.original.count +=1
-        }
-
-        // count total posts and interval between tweets
-        updateInterval(TWEETS,"total",time)
         
-        TWEETS.metrics.total.count += 1;
+        let type = findTweetType(e)
+        
+        if(type) {
+            if(type != "retweeted"){
+                console.log(type,time,interval_start_time);
+                updateMetrics(TWEETS.type,type,e)
+                updateMetricsTotal(TWEETS,e)
+                updateInterval(TWEETS.type[type],time,interval_start_time)
+            }else console.log("Skipping retweeted post");
+        }else{
+            throw new Error("Type undefined! ->",type)
+        }
+        
+        TWEETS.type[type].count +=1
+        
+        // count total posts and interval between tweets
+        updateInterval(TWEETS.total,time,interval_start_time)
+        TWEETS.total.count += 1;
     });
 
     return TWEETS
 }
 
+function findTweetType(e){
+    let type = undefined
+    if(e?.referenced_tweets){            
+        type = (e?.referenced_tweets[0].type)
+    }else{
+        // if a post doesn't contain references means it's a original tweet from the user
+        type = "original"
+    }
+    return type
+}
+
+
+function findMediaType(media,e){
+    let mediaType = undefined
+    if(media && e.attachments?.media_keys){
+        mediaType = media.find(m => m.media_key == e.attachments?.media_keys[0])?.type
+    }else if(e?.entities?.urls && e.entities.urls[0].unwound_url) {// posts with links
+        mediaType = "link"
+    }else if(e?.entities?.polls) {// posts with polls
+        mediaType = "polls"
+    }else{
+        mediaType = "text"
+    }
+
+    return mediaType
+}
+
 // calculate intervals by dividing the accumulated interval by count for each subtype
 // requires TWEETS data type
 function avgInterval(data){
-    
-    ["retweeted","replied_to","quoted","original","total"].forEach( (type) => {
-        if(data.metrics[type]?.interval){ 
-            data.metrics[type].interval = Math.floor(data.metrics[type].interval / data.metrics[type].count)
-        }
-
-        delete data.metrics[type].last
+    Object.keys(data).forEach( key => {
+        data[key].interval = calcAvg(data[key].count,data[key].interval)
     })
-
-    return data
+    delete data.last
+}
+function avgIntervalTotal(data){    
+    data.interval = calcAvg(data.count,data.interval)
+    delete data.last
+}
+function calcAvg(count,sum) {
+    if(count == 0) return 0
+    return Math.floor(sum/count)
 }
 
 // accumulate public metrics for each type
-function updateMetrics(data,type,e){
-    Object.keys(data.metrics[type].metrics).forEach(key => {
-        data.metrics[type].metrics[key] += e.public_metrics[key];
-        updateHighlights(data,key,e)
+function updateMetrics(data,type,e){    
+    Object.keys(data[type].metrics).forEach(key => {
+        data[type].metrics[key] += e.public_metrics[key];
     })
 }
 function updateMetricsTotal(data,e){
-    Object.keys(data.metrics.total.metrics).forEach(key => {
-        data.metrics.total.metrics[key].push(e.public_metrics[key])
+    let total = data.total.metrics
+    Object.keys(total).forEach(key => {
+        total[key].push(e.public_metrics[key])
+        updateHighlights(data,key,e)
     })
 }
 
@@ -113,14 +130,14 @@ function updateHighlights(data,key,e){
 }
 
 // accumulate interval for the given type
-function updateInterval(data,type,time){
-    //console.log("here ",data);
-    if(data.metrics[type].last == 0){
-        data.metrics[type].last  = time
+function updateInterval(data,time,interval_start_time){
+    console.log("here ",data.interval,data.last);
+    if(data.last == 0){        
+        data.interval = time - interval_start_time
     }else{         
-        data.metrics[type].interval += time - data.metrics[type].last
-        data.metrics[type].last = time
+        data.interval += time - data.last
     }
+    data.last = time
 }
 
 // converts from miliseconds to H:m:s
@@ -137,7 +154,10 @@ const process_data = (async (filename) => {
 
     let FILE = fs.readFileSync(filename)
     let data =  await collectData(FILE).then( data => {
-        return avgInterval(data)
+        avgInterval(data.media_type)
+        avgInterval(data.type)
+        avgIntervalTotal(data.total)
+        return data
     })
     //console.log(data);
     return data
