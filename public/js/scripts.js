@@ -44,25 +44,31 @@ $(document).ready(async function(){
   }
   errorDisplay()
   
-  $('#search-btn').click(async (event)=>{
-    event.preventDefault()
-    $('#results').hide()
-    $('#loader').removeClass('d-none')
-    $('#search-btn').prop("disabled",true)
+  // $('#search-btn').click(async (event)=>{
+  //   event.preventDefault()
+  //   $('#results').hide()
+  //   $('#loader').removeClass('d-none')
+  //   $('#search-btn').prop("disabled",true)
 
-    // let data = await postViaWorker($('#form-search').serialize())
+  //   // let data = await postViaWorker($('#form-search').serialize())
     
-    let data  = await fetch('../js/output_data_compare.json').then( response => {
-        return response.json()
-    })
+  //   let data  = await fetch('../js/output_data_compare.json').then( response => {
+  //       return response.json()
+  //   })
       
-    await genSearchResults(data)
+  //   await genSearchResults(data)
     
-    $('#loader').addClass('d-none')
-    $('#results').removeClass("d-none")
-    $('#results').show()
-    $('#search-btn').removeAttr("disabled")
-  })  
+  //   $('#loader').addClass('d-none')
+  //   $('#results').removeClass("d-none")
+  //   $('#results').show()
+  //   $('#search-btn').removeAttr("disabled")
+  // })  
+
+  let data  = await fetch('../js/output_data_compare.json').then( response => {
+    return response.json()
+  })
+  
+  await genSearchResults(data)
 
 
   // ! populate with seach results + charts
@@ -107,7 +113,7 @@ $(document).ready(async function(){
       let count_rounded = tweetCount(count)
       
       $('#total-tweets-data')
-      .attr({"data-real":count, "data-round":count_rounded})
+      .attr({"data-real":count, "data-round":count_rounded,"title":"Total tweets"})
       .text(count_rounded)
 
       if(compare)
@@ -119,7 +125,7 @@ $(document).ready(async function(){
       let count_rounded = tweetCount(count)
 
       $('#followers')
-      .attr({"data-real":count, "data-round":count_rounded})
+      .attr({"data-real":count, "data-round":count_rounded,"title":"Total followers"})
       .text(count_rounded)
 
       if(compare)
@@ -131,7 +137,7 @@ $(document).ready(async function(){
       let count_rounded = tweetCount(count)
 
       $('#followings')
-      .attr({"data-real":count, "data-round":count_rounded})
+      .attr({"data-real":count, "data-round":count_rounded,"title":"Total followings"})
       .text(count_rounded)
 
       if(compare)
@@ -150,6 +156,11 @@ $(document).ready(async function(){
     }
     
     const load_sample_interval_old = async () => {
+      if(compare == null || compare == undefined){      
+        $("#search-sample-old").remove()
+        return
+      }
+
       if(compare){
         $("#search-sample-old #search-date .date").text((compare.date).slice(0,10))
         $("#search-sample-old #search-date .time").append((compare.date).slice(11,19))
@@ -169,6 +180,7 @@ $(document).ready(async function(){
         $(id).attr({
           "data-real":data.highlights[type].count,
           "data-round":round,
+          "title":"The tweet with most "+countToPlural(type).toLowerCase(),
           "href":buildTwitterPostUrl(data.username,data.highlights[type].id)
         }).text(round)
 
@@ -203,67 +215,158 @@ $(document).ready(async function(){
       }
     }
 
-    const load_avg_metrics_table = async () => {
-      for(let type of Object.keys(data.media_type)){       
+    const load_tweets_by_type = async () => {
+      let id = "tweets-by-type-data"
 
-        let span = $('<span id="media-type-avg-data-'+type+'" class="data-hover"></span>').text(tweetCount(data[type].count))
-        let span_compare = $('<span id="media-type-avg-data-'+type+'-compare" class="data-hover"></span>')
-        span.attr({"data-real":data[type].count, "data-round":tweetCount(data[type].count)})
-        let li = $('<li class="list-group-item">'+type+': </li>').append(span).append(span_compare)
-        $('#avg-interactions #'+type+' ul#average').append(li)
-        if(compare)
-          appendCompare('#media-type-avg-data-'+type,data[type].count,compare[type].count)        
+      for(let type of Object.keys(data.type)){
         
-        for(let key of Object.keys(data[type].metrics)){
+        let span = $('<span id="'+id+'-'+type+'" class="data-hover"></span>').text(tweetCount(data.type[type].count))
+        let span_compare = $('<span id="'+id+'-'+type+'-compare" class="data-hover"></span>')
+
+        span.attr({"data-real":data.type[type].count, "data-round":tweetCount(data.type[type].count),"title":type})
+
+        let li = $('<li class="list-group-item">'+type+': </li>').append(span).append(span_compare)
+        $('#'+id+' ul').append(li)
+        if(compare)
+          appendCompare('#'+id+'-'+type,data.type[type].count,compare.type[type].count)
+
+      }
+    }
+    
+
+    const load_avg_metrics_table = async () => {
+      for(let type of Object.keys(data.media_type)){        
+
+        let id = 'avg-interactions-'+type
+        $('#'+id+' #interval').text(msToHMS(data.media_type[type].interval))
+        
+        for(let key of Object.keys(data.media_type[type].metrics)){
           let li = $('<a onclick="return false;" class="list-group-item"></a>')
-
-          let name = key.charAt(0).toUpperCase()+key.slice(1,-6)
-          let avg_count = Math.floor(data[type].metrics[key]/data[type].count)
-          let avg_count_compare = Math.floor(compare[type].metrics[key]/compare[type].count)
-
-          if(key == 'reply_count')
-            li.text('Replies : ')
-          else 
-            li.text(name+"s : ")
-
-          let id = type+'-'+key
           
-          let span = $('<span id="'+id+'"class="data-hover">'+tweetCount(avg_count)+'</span>')
-          let compare_span = $('<span id="'+id+'-compare" class="data-hover"></span>')
-          span.attr({"data-real":avg_count, "data-round":tweetCount(avg_count)})
+          if(data.media_type[type].count == 0) {
+            $('#'+id).remove()
+            continue
+          }
+          
+          let avg_count = Math.floor(data.media_type[type].metrics[key]/data.media_type[type].count)
+          let avg_count_compare = Math.floor(compare.media_type[type].metrics[key]/compare.media_type[type].count)
 
-          li.append(span).append(compare_span)        
-          $('#'+type+' ul#average').append(li)
+          let name = countToPlural(key)
+          li.text(name+" : ")
+
+          let span_id = id+'-'+key          
+          let span = $('<span id="'+span_id+'"class="data-hover">'+tweetCount(avg_count)+'</span>')
+          let compare_span = $('<span id="'+span_id+'-compare" class="data-hover"></span>')
+          span.attr({"data-real":avg_count, "data-round":tweetCount(avg_count),"title":"Average "+name.toLowerCase()})
+
+          li.append(span).append(compare_span)
+          $('#'+id+' ul#average').append(li)
           if(compare)
-            appendCompare('#'+id,avg_count,avg_count_compare)
+            appendCompare('#'+span_id,avg_count,avg_count_compare)
         }
       }
     }
 
-    await load_user_datails()
-    await load_followers()
-    await load_followings()
-    await load_sample_internal_new()
+    const load_total_info = async () => {
+      let id = "total-info-h"
+      let count = data.total.count
+      let count_rounded = tweetCount(count)
 
-    if(compare==null){      
-      $("#search-sample-old").remove()
-    }else{      
-      await load_sample_interval_old()
+      let span = $('<span id="'+id+'-data" class="data-hover">'+count+'</span>')
+      span.attr({"data-real":count,"data_round":count_rounded,"title":"Total tweets analized"})
+      let span_compare = $('<span id="'+id+'-data-compare" class="data-hover"></span>')
+
+      $('#'+id).append(span).append(span_compare)
+
+      id = id+"-data"
+      appendCompare('#'+id,count,compare.total.count)
+
+      $("#total-info-i #interval").text(msToHMS(data.total.interval))
+
     }
 
-    await load_highlights()    
-    await load_tweets_by_media_type_data()
-    //await load_avg_metrics_table()
+    const load_total_charts = async () => {
+      let id = "total-charts-wrapper-"
+      for(let type of Object.keys(data.total.metrics)){
+        lineCharts(id+type,data.total.metrics[type],type)
+      }
+    }
+    
+
+    // load_user_datails()
+    // load_followers()
+    // load_followings()
+    // load_sample_internal_new()  
+    // load_sample_interval_old()
+    // load_highlights()    
+    // load_tweets_by_media_type_data()
+    // load_tweets_by_type()
+    // load_avg_metrics_table()
+    // load_total_info()
+    load_total_charts()
+
+    Promise.all([
+      load_user_datails(),
+      load_followers(),
+      load_followings(),
+      load_sample_internal_new(),
+      load_sample_interval_old(),
+      load_highlights(), 
+      load_tweets_by_media_type_data(),
+      load_tweets_by_type(),
+      load_avg_metrics_table(),
+      load_total_info()
+    ])
+
     //input,labels,id,type
-    // await charts([data.tweets_by_media_type,compare.tweets_by_media_type],["Text","Video","Photo","Link","Poll","Gif"],"tweets-by-media-type")
-    // await charts([fromMetricsToDataset(data.metrics,'total'),fromMetricsToDataset(compare.metrics,'total')],["Retweets","Replies","Quotes","Originals"],"tweets-by-type")
+    await pieCharts([data.media_type,compare.media_type],["Text","Video","Photo","Link","Poll","Gif"],"tweets-by-media-type")
+    await pieCharts([data.type,compare.type],["Retweets","Replies","Quotes","Originals"],"tweets-by-type")
     // await metricCharts(data.metrics,'metric-charts','retweets')
 
     set_data_hover()
 
   }
 
-  // await genSearchResults()
+  async function lineCharts(id,data,type){
+    console.log(id);
+    let canvas = document.createElement("canvas")
+    canvas.id = type+"-chart"
+    document.getElementById(id).appendChild(canvas)
+    let labels = [...Array(data.length).keys()]
+    color = '#5634f0'
+    new Chart(document.getElementById(canvas.id),{
+      type:'line',
+      data:{
+        labels :  labels,
+        datasets: [{
+          label: type,
+          data: data,
+          fill: false,
+          borderColor: color,
+          tension: 0.5                   
+        }],
+      },
+      options: {
+        plugins: {
+           legend: {
+              display: true
+           },
+           datalabels:{display:false},
+          },
+        scales: {
+          x: {display: false},
+          y: {display: false},
+      }
+      }
+    })
+  }
+
+  function countToPlural(key){
+    if(key == 'reply_count')
+      return  "Replies"
+    else
+      return key.charAt(0).toUpperCase()+key.slice(1,-6)+"s"
+  }
 
   function set_data_hover(){   
     $(".data-hover").mouseover(function(){
@@ -290,7 +393,7 @@ $(document).ready(async function(){
     let up = ["bi-caret-up-fill","text-success"]
     let down = ["bi-caret-down-fill","text-danger"]
 
-    console.log(new_data,old_data);
+    // console.log(new_data,old_data);
     
     let diff = new_data - old_data
     let rounded_data = tweetCount(diff)
@@ -299,14 +402,16 @@ $(document).ready(async function(){
     
     if(new_data>old_data){
       icon.addClass(up)
+      icon.attr("title","Gained")
     }else{
       icon.addClass(down)
+      icon.attr("title","Lost")
     }
 
     $(id).after(icon)
 
     id = id+"-compare"
-    $(id).attr({"data-real":diff, "data-round":rounded_data})
+    $(id).attr({"data-real":diff, "data-round":rounded_data, "title":"Difference between new and old data"})
     $(id).append(rounded_data)
   }
 
@@ -363,7 +468,7 @@ $(document).ready(async function(){
     s = s%60;
     let h = m/60;
     m = m%60;
-    return Math.floor(h)+":"+Math.floor(m)+":"+Math.floor(s)
+    return Math.floor(h)+"H "+Math.floor(m)+"m "+Math.floor(s)+"s"
   }
   function tweetCount(count){
     if (count / 1000000 >= 1 || count / 1000000 <= -1)
@@ -376,25 +481,34 @@ $(document).ready(async function(){
   }
 
   // draw pie charts
-  async function charts(input,labels,id){
+  async function pieCharts(input,labels,id){
     
     let canvas = document.createElement("canvas")
     canvas.id = id+"-chart"
     document.getElementById(id).appendChild(canvas)
 
+    let values_1 = []
+    let values_2 = []
+    for(let key of Object.keys(input[0])){
+      values_1.push(input[0][key].count)
+      values_2.push(input[1][key].count)
+    }
+
+    let colors = ['#FF595E','#FFCA3A','#8AC926','#1982C4','#00B4D8','#6A4C93']
+
     new Chart(document.getElementById(canvas.id),{
-      type:'pie',
+      type:'doughnut',
       data:{
         labels:labels,
         datasets:[{
           label:cleanText(id)+" new",
-          data:Object.values(input[0]),
-          backgroundColor:['#FF595E','#FFCA3A','#8AC926','#1982C4','#00B4D8','#6A4C93'],
+          data:values_1,
+          backgroundColor:colors,
           hoverOffset: 4
         },{
           label:cleanText(id)+" old",
-          data:Object.values(input[1]),
-          backgroundColor:['#FF595E','#FFCA3A','#8AC926','#1982C4','#00B4D8','#6A4C93'],
+          data:values_2,
+          backgroundColor:colors,
           hoverOffset: 4
         }],
       },
@@ -409,8 +523,7 @@ $(document).ready(async function(){
           datalabels:{
             color:'white',
             formatter: (value,context)=>{
-              let total = context.dataset.data.reduce((acc,v)=> acc+v,0)
-              
+              let total = context.dataset.data.reduce((acc,v)=> acc+v,0)              
               let perc = Math.floor(value/total *100)
               return perc>2 ? perc+"%":''
             }
@@ -493,38 +606,7 @@ $(document).ready(async function(){
   //   }
   // })
 
-  // async function metricCharts(data,id,type,color){
-  //   let canvas = document.createElement("canvas")
-  //   canvas.id = type+"-chart"
-  //   document.getElementById(id).appendChild(canvas)
-  //   let labels = [...Array(data.length).keys()]
-   
-  //   new Chart(document.getElementById(canvas.id),{
-  //     type:'line',
-  //     data:{
-  //       labels :  labels,
-  //       datasets: [{
-  //         label: type,
-  //         data: data,
-  //         fill: false,
-  //         borderColor: color,
-  //         tension: 0.5                   
-  //       }],
-  //     },
-  //     options: {
-  //       plugins: {
-  //          legend: {
-  //             display: false
-  //          },
-  //          datalabels:{display:false},
-  //         },
-  //       scales: {
-  //         x: {display: false},
-  //         y: {display: false},
-  //     }
-  //     }
-  //   })
-  // }
+
 
 
 // $('.dashboard').click((event)=>{
