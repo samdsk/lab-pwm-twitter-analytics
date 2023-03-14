@@ -35,6 +35,7 @@ app.use(helmet({
     contentSecurityPolicy:{ 
         directives : {
             "script-src":["'self'","cdn.jsdelivr.net"],
+            "script-src-attr":["'self'","cdn.jsdelivr.net"],
             "img-src":["'self'","pbs.twimg.com"]
         }
     }
