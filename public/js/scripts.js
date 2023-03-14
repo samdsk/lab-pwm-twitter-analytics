@@ -44,29 +44,29 @@ $(document).ready(async function(){
   }
   errorDisplay()
   
-  // $('#search-btn').click(async (event)=>{
-  //   event.preventDefault()
-  //   $('#results').hide()
-  //   $('#loader').removeClass('d-none')
-  //   $('#search-btn').prop("disabled",true)
+  $('#search-btn').click(async (event)=>{
+    event.preventDefault()
+    $('#results').hide()
+    $('#loader').removeClass('d-none')
+    $('#search-btn').prop("disabled",true)
 
-  //   // let data = await postViaWorker($('#form-search').serialize())
+    let data = await postViaWorker($('#form-search').serialize())
     
-  //   let data  = await fetch('../js/output_data_compare.json').then( response => {
-  //       return response.json()
-  //   })
+    // let data  = await fetch('../js/output_data_compare.json').then( response => {
+    //     return response.json()
+    // })
       
-  //   await genSearchResults(data)
+    await genSearchResults(data)
     
-  //   $('#loader').addClass('d-none')
-  //   $('#results').removeClass("d-none")
-  //   $('#results').show()
-  //   $('#search-btn').removeAttr("disabled")
-  // })  
+    $('#loader').addClass('d-none')
+    $('#results').removeClass("d-none")
+    $('#results').show()
+    $('#search-btn').removeAttr("disabled")
+  })  
 
-  let data  = await fetch('../js/output_data_compare.json').then( response => {
-    return response.json()
-  })
+  // let data  = await fetch('../js/output_data_compare.json').then( response => {
+  //   return response.json()
+  // })
   
   await genSearchResults(data)
 

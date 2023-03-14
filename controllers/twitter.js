@@ -50,14 +50,14 @@ const tweet_user_fields = [
 
 // // ! testing mode
 const search = async (ID) => { 
-    // res = await app.search(`from:${ID}`,{
-    //     'tweet.fields':tweet_fields,
-    //     'expansions':['attachments.media_keys'],
-    //     'media.fields':tweet_media_fields})
+    res = await app.search(`from:${ID}`,{
+        'tweet.fields':tweet_fields,
+        'expansions':['attachments.media_keys'],
+        'media.fields':tweet_media_fields})
     
-    // let data = await res.fetchLast()    
+    let data = await res.fetchLast()    
 
-    return new Promise( (resolve,reject) => fs.writeFile(testing_filename,JSON.stringify("data"), (err)=>{
+    return new Promise( (resolve,reject) => fs.writeFile(filename,JSON.stringify(data), (err)=>{
         if(err) reject(err)
         console.log(">>> File created successfully !")
         
@@ -73,10 +73,12 @@ const postTwitter = async(req,res,next) => {
     if(user?.errors) return res.json(JSON.stringify(`Error: Invalid user`))
 
     console.log("request for ->",user.data);
-    // let liked_tweets = await (await app.userLikedTweets(id)).fetchLast(100)
-    // let mentions = await (await app.userMentionTimeline(user.data.id)).fetchLast()
-    // data_process(filename)
-    // console.log(mentions.meta.result_count);
+    //let liked_tweets = await (await app.userLikedTweets(id)).fetchLast(100)
+    let mentions = await (await app.userMentionTimeline(user.data.id)).fetchLast(800)
+    
+    fs.writeFileSync("./output_metions.json",JSON.stringify(mentions))
+    //data_process(filename)
+    console.log(mentions.meta.result_count);
 
     search(req.body.handler)
     .then( async (data,err) => {
@@ -116,7 +118,7 @@ const postTwitter = async(req,res,next) => {
         }
         
         console.log('creating search results')
-        console.log(data);
+        // console.log(data);
         await SearchResults.create(data)
         await User.findOneAndUpdate({name:req.session.username},{$push : {searched:data._id}}).orFail(new Error("User update failed."))
 

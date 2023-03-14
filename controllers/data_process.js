@@ -20,22 +20,59 @@ const collectData = async (DATA) => {
     
     let interval_start_time = new Date(Date.parse(TWEETS.start_date)).getTime()
     // process each tweet finding media type, tweet type, time intervals and metrics
+
+    // collect how many tweets of media type and type per day
+    const tweets_per_day = {}
+    // collect metioned users
+    const mentioned_users = {}
+    // collect used hashtags
+    const hashtags = {}
+
     data.forEach(e => {
 
         // section - count post media types
         let mediaType = findMediaType(media,e)
+        let date = new Date(Date.parse(e.created_at))
+        let time = date.getTime()
+        date = date.toDateString()
+
         
-        let time = new Date(Date.parse(e.created_at)).getTime()
+        e?.entities?.mentions?.forEach( mention => {
+            mentioned_users[mention.username] = (mentioned_users [mention.username] || 0)+1
+        })
+
+        e?.entities?.hashtags?.forEach( hashtag => {
+            hashtags[hashtag.tag] = (hashtags[hashtag.tag] || 0)+1
+        })
+        
+
+        if(!(date in tweets_per_day))
+            tweets_per_day[date] = {
+                media:{
+                text:0,
+                video:0,
+                photo:0,
+                link:0,
+                polls:0,
+                animated_gif:0
+            },
+            type:{
+                retweeted:0,
+                replied_to:0,
+                quoted:0,
+                original:0,
+            }}
 
         if(mediaType){
-            console.log(mediaType,time,interval_start_time);
             TWEETS.media_type[mediaType].count +=1
             updateMetrics(TWEETS.media_type,mediaType,e)
             updateInterval(TWEETS.media_type[mediaType],time,interval_start_time)
+
+            tweets_per_day[date].media[mediaType]++            
         }else{
             throw new Error("Media type undefined! ->",mediaType)
         }
-
+        
         // post subtypes: retweet, reply, quote, original
         // for each type except for retweets count public metrics and time interval between posts
         // interval accumulate the difference between two posts
@@ -43,23 +80,26 @@ const collectData = async (DATA) => {
         let type = findTweetType(e)
         
         if(type) {
-            if(type != "retweeted"){
-                console.log(type,time,interval_start_time);
+            if(type != "retweeted"){                
                 updateMetrics(TWEETS.type,type,e)
                 updateMetricsTotal(TWEETS,e)
                 updateInterval(TWEETS.type[type],time,interval_start_time)
-            }else console.log("Skipping retweeted post");
+            }
+            tweets_per_day[date].type[type]++ 
         }else{
             throw new Error("Type undefined! ->",type)
         }
-        
+
         TWEETS.type[type].count +=1
         
         // count total posts and interval between tweets
         updateInterval(TWEETS.total,time,interval_start_time)
         TWEETS.total.count += 1;
     });
-
+    // console.log(hashtags_count);
+    TWEETS.tweets_per_day = tweets_per_day
+    TWEETS.mentioned_users  = mentioned_users 
+    TWEETS.hashtags = hashtags
     return TWEETS
 }
 
@@ -130,8 +170,7 @@ function updateHighlights(data,key,e){
 }
 
 // accumulate interval for the given type
-function updateInterval(data,time,interval_start_time){
-    console.log("here ",data.interval,data.last);
+function updateInterval(data,time,interval_start_time){    
     if(data.last == 0){        
         data.interval = time - interval_start_time
     }else{         
@@ -162,5 +201,11 @@ const process_data = (async (filename) => {
     //console.log(data);
     return data
 })
+
+// function test(){
+//     console.log(process_data('../data_leo.json'))
+// }
+
+// test()
 
 module.exports = process_data

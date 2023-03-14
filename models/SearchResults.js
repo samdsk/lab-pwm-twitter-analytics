@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 
+// FIXME adapt the scheme for new structure
 const SeachResultsSchema = new mongoose.Schema({
     _id:{type:mongoose.Schema.Types.ObjectId},
     date : {type:Date,required:true},
@@ -13,7 +14,9 @@ const SeachResultsSchema = new mongoose.Schema({
     followers: {type:Number,default:0},
     total_tweets: {type:Number,default:0},
     mentions:{type:Number,default:0},
-
+    mentioned_users:{type:Object},
+    hashtags:{type:Object},
+    tweets_per_day:{type:Object},
     media_type: {
         text : {
             count : {type:Number,default:0},
