@@ -28,14 +28,17 @@ const collectData = async (DATA) => {
     // collect used hashtags
     const hashtags = {}
 
+    const lang = {}
+
     data.forEach(e => {
 
         // section - count post media types
         let mediaType = findMediaType(media,e)
-        let date = new Date(Date.parse(e.created_at))
-        let time = date.getTime()
-        date = date.toDateString()
+        
+        let time = new Date(Date.parse(e.created_at))
+        let date = e.created_at.split('T')[0]
 
+        lang[e.lang] = (lang[e.lang] || 0)+1
         
         e?.entities?.mentions?.forEach( mention => {
             mentioned_users[mention.username] = (mentioned_users [mention.username] || 0)+1
@@ -100,6 +103,7 @@ const collectData = async (DATA) => {
     TWEETS.tweets_per_day = tweets_per_day
     TWEETS.mentioned_users  = mentioned_users 
     TWEETS.hashtags = hashtags
+    TWEETS.langs = lang
     return TWEETS
 }
 
@@ -113,8 +117,6 @@ function findTweetType(e){
     }
     return type
 }
-
-
 function findMediaType(media,e){
     let mediaType = undefined
     if(media && e.attachments?.media_keys){
@@ -129,7 +131,6 @@ function findMediaType(media,e){
 
     return mediaType
 }
-
 // calculate intervals by dividing the accumulated interval by count for each subtype
 // requires TWEETS data type
 function avgInterval(data){
@@ -146,7 +147,6 @@ function calcAvg(count,sum) {
     if(count == 0) return 0
     return Math.floor(sum/count)
 }
-
 // accumulate public metrics for each type
 function updateMetrics(data,type,e){    
     Object.keys(data[type].metrics).forEach(key => {
@@ -198,12 +198,12 @@ const process_data = (async (filename) => {
         avgIntervalTotal(data.total)
         return data
     })
-    //console.log(data);
+    console.log(data);
     return data
 })
 
 // function test(){
-//     console.log(process_data('../data_leo.json'))
+//     console.log(process_data('../data.json'))
 // }
 
 // test()

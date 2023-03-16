@@ -48,7 +48,7 @@ const tweet_user_fields = [
     "withheld"
 ]
 
-// // ! testing mode
+
 const search = async (ID) => { 
     res = await app.search(`from:${ID}`,{
         'tweet.fields':tweet_fields,
@@ -74,10 +74,9 @@ const postTwitter = async(req,res,next) => {
 
     console.log("request for ->",user.data);
     //let liked_tweets = await (await app.userLikedTweets(id)).fetchLast(100)
-    let mentions = await (await app.userMentionTimeline(user.data.id)).fetchLast(800)
-    
-    fs.writeFileSync("./output_metions.json",JSON.stringify(mentions))
-    //data_process(filename)
+
+    let mentions = await (await app.userMentionTimeline(user.data.id)).fetchLast()    
+    fs.writeFileSync("./output_metions.json",JSON.stringify(mentions))    
     console.log(mentions.meta.result_count);
 
     search(req.body.handler)
@@ -90,10 +89,10 @@ const postTwitter = async(req,res,next) => {
         data.followers = user.data.public_metrics.followers_count
         data.followings = user.data.public_metrics.following_count
         data.total_tweets = user.data.public_metrics.tweet_count
-        data.user_img = user.data.profile_image_url.replace("normal.png","bigger.png")
+        data.user_img = user.data.profile_image_url.replace("_normal","_bigger")
         data.name = user.data.name
         data.date = new Date()
-        // data.mentions = mentions.meta.result_count
+        data.mentions = mentions.meta.result_count
 
         console.log("Looking for previous searches");
 
