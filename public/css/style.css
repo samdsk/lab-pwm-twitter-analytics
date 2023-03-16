@@ -120,23 +120,24 @@ footer div.col {
     top:-1rem;
 }
 
-#results #pie-charts{
-    margin-top: 1rem;    
-}
+
 #results #tweets-by-type-wrapper{
     border-left: 1px solid #cccccc;
 }
 
 #results .pie-chart-container{
-    position: relative;    
+    position: relative;     
     margin-left: auto;
-    margin-right: auto;
-    width: 350px;
+    margin-right: auto;    
+    width:350px;
 }
 
-#results .bar-chart{    
-    
+#results .bar-chart{
     height: 400px;
+}
+
+#results canvas{
+    
 }
 
 @media screen and (max-width: 1000px){

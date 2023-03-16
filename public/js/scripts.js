@@ -333,6 +333,17 @@ $(document).ready(async function(){
         await pieCharts(extractCounts(data.type),labels,null,id,'doughnut')
     }
 
+    const load_week_chart = async () => {
+      let id = "week-chart-wrapper"
+      let labels = Object.keys(data.tweets_per_day)
+      let colors = ['#FFBE0B','#FB5607','#FF006E','#8338EC','#3A86FF','#3A6CFF']
+
+      let datasets = extractMediaAndType(data.tweets_per_day,colors)
+      await metricCharts(datasets,labels,id,"tweets-per-day")
+    } 
+
+    load_week_chart()
+
     load_media_type_Chart()
     load_type_Chart()
     load_langs_chart()
@@ -395,7 +406,6 @@ $(document).ready(async function(){
 
     return {data:dataset,labels:labels}
   }
-
   function extractCounts(data){
     let dataset = []
     Object.keys(data).forEach( key => {
@@ -404,7 +414,6 @@ $(document).ready(async function(){
 
     return dataset
   }
-
   // draw pie charts
   async function pieCharts(data_1,labels,data_2,id,chartType = 'pie'){
     
@@ -444,10 +453,21 @@ $(document).ready(async function(){
         maintainAspectRatio:false,
         plugins:{
           legend:{
-            position:"bottom"
+            position:"bottom",
+            labels: {
+              generateLabels: (chart) => {
+                const datasets = chart.data.datasets;
+                return datasets[0].data.map((data, i) => ({
+                  text: `${chart.data.labels[i]} : ${data}`,
+                  fillStyle: datasets[0].backgroundColor[i],
+                  index: i
+                }))
+              }
+            }
           },
           datalabels:{
-            color:'white',
+            anchor:"center",            
+            color:'white',            
             formatter: (value,context)=>{
               let total = context.dataset.data.reduce((acc,v)=> acc+v,0)              
               let perc = Math.floor(value/total *100)
@@ -458,14 +478,86 @@ $(document).ready(async function(){
       }
     })
   }
-  async function metricCharts(data,id,type){
+
+  function toDataset(data,label,color,stack){
+    let struct = {}
+    struct["data"] = data
+    struct["label"] = label
+    struct["backgroundColor"] = color
+    struct['stack'] = stack
+
+    return struct
+  }
+  
+  function extractMediaAndType(data,colors){
+    let labels = Object.keys(data)
+    let count = 0
+
+    let media = {
+      text: [],
+      video: [],
+      photo: [],
+      link: [],
+      polls: [],
+      animated_gif: []
+    }
+    let type = {
+      retweeted: [],
+      replied_to: [],
+      quoted: [],
+      original: []
+    }
+
+    let tweet_media_types = Object.keys(data[labels[0]].media)
+    let tweet_types = Object.keys(data[labels[0]].type)
+
+    for(let day of labels){
+      for(let x of tweet_media_types){
+        media[x].push(data[day].media[x])
+      }
+      for(let x of tweet_types){
+        type[x].push(data[day].type[x])
+      }
+    }
+
+    let output = []
+    for(let m of Object.keys(media)){      
+      output.push(toDataset(media[m],m,colors[count++],0))
+    }
+
+    count = 0
+
+    for(let t of Object.keys(type)){      
+      output.push(toDataset(type[t],t,colors[count++],1))
+    }
+
+    return output
+  }
+
+  function fromMetricsToDatasets(data){
+    
+    let colors = ['#FFBE0B','#FB5607','#FF006E','#8338EC','#3A86FF']
+    let output = []
+    let count = 0
+
+    for(let x of Object.keys(data)){
+      let struct = {}
+      struct["data"] = normalize(data[x])
+      struct["label"] = x
+      struct["backgroundColor"] = colors[count++]      
+      struct['fill'] = false
+      struct['tension'] = 0.1
+      output.push(struct)
+    }
+
+    return output
+  }
+
+  async function metricCharts(datasets,labels,id,type){
     let canvas = document.createElement("canvas")
     canvas.id = type+"-chart"
     
-    document.getElementById(id).appendChild(canvas)
-    let labels = [...Array(data.total.metrics.retweet_count.length).keys()]
-    
-    const datasets = fromMetricsToDatasets(data.total.metrics)    
+    document.getElementById(id).appendChild(canvas)      
 
     new Chart(document.getElementById(canvas.id),{
     type:'bar',
@@ -479,16 +571,16 @@ $(document).ready(async function(){
       plugins: {
         title:{
           display:true,
-          text:"metric stacked charts"
+          text:cleanText(id)
         },          
          legend: {
-            display: true
+            display: false
          },
          datalabels:{display:false},
       },
       scales: {
         x: {
-          display:false,
+          display:true,
           stacked:true
         },
         y: {
@@ -657,24 +749,6 @@ $(document).ready(async function(){
     return output
   }
 
-  function fromMetricsToDatasets(data){
-    
-    let colors = ['#FFBE0B','#FB5607','#FF006E','#8338EC','#3A86FF']
-    let output = []
-    let count = 0
-
-    for(let x of Object.keys(data)){
-      let struct = {}
-      struct["data"] = normalize(data[x])
-      struct["label"] = x
-      struct["backgroundColor"] = colors[count++]      
-      struct['fill'] = false
-      struct['tension'] = 0.1
-      output.push(struct)
-    }
-
-    return output
-  }
   function normalize(data){    
     let output = []
     let max = Math.max(...data)
