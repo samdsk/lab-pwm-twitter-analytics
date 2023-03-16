@@ -14,9 +14,10 @@ const SeachResultsSchema = new mongoose.Schema({
     followers: {type:Number,default:0},
     total_tweets: {type:Number,default:0},
     mentions:{type:Number,default:0},
-    mentioned_users:{type:Object},
-    hashtags:{type:Object},
-    tweets_per_day:{type:Object},
+    mentioned_users:{type:Object,default:null},
+    hashtags:{type:Object,default:null},
+    langs:{type:Object,default:null},
+    tweets_per_day:{type:Object,default:null},
     media_type: {
         text : {
             count : {type:Number,default:0},

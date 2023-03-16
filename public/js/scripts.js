@@ -1,5 +1,4 @@
 // ! boostrap form validation check script
-
 (function () {
     'use strict'  
     // Fetch all the forms we want to apply custom Bootstrap validation styles to
@@ -44,29 +43,29 @@ $(document).ready(async function(){
   }
   errorDisplay()
   
-  $('#search-btn').click(async (event)=>{
-    event.preventDefault()
-    $('#results').hide()
-    $('#loader').removeClass('d-none')
-    $('#search-btn').prop("disabled",true)
+  // $('#search-btn').click(async (event)=>{
+  //   event.preventDefault()
+  //   $('#results').hide()
+  //   $('#loader').removeClass('d-none')
+  //   $('#search-btn').prop("disabled",true)
 
-    let data = await postViaWorker($('#form-search').serialize())
+  //   let data = await postViaWorker($('#form-search').serialize())
     
-    // let data  = await fetch('../js/output_data_compare.json').then( response => {
-    //     return response.json()
-    // })
+  //   // let data  = await fetch('../js/output_data_compare.json').then( response => {
+  //   //     return response.json()
+  //   // })
       
-    await genSearchResults(data)
+  //   await genSearchResults(data)
     
-    $('#loader').addClass('d-none')
-    $('#results').removeClass("d-none")
-    $('#results').show()
-    $('#search-btn').removeAttr("disabled")
-  })  
+  //   $('#loader').addClass('d-none')
+  //   $('#results').removeClass("d-none")
+  //   $('#results').show()
+  //   $('#search-btn').removeAttr("disabled")
+  // })  
 
-  // let data  = await fetch('../js/output_data_compare.json').then( response => {
-  //   return response.json()
-  // })
+  let data  = await fetch('../js/output_data_compare.json').then( response => {
+    return response.json()
+  })
   
   await genSearchResults(data)
 
@@ -93,7 +92,7 @@ $(document).ready(async function(){
     if(LENGTH==2) compare = INPUT[1]
     
     const load_user_datails = async () => {
-      $('#results #name').append(data.name)
+      $('#results #name').text(data.name)
     
       let ancor = document.createElement('a')
       ancor.href = buildTwitterUrl(data.username)
@@ -101,11 +100,13 @@ $(document).ready(async function(){
       ancor.title = "Twitter link"
       ancor.innerText = "@"+data.username
       ancor.target = '_blank'
-      $('#results #username').append(ancor)
+      $('#results #username').empty().append(ancor)
       
       let img = new Image()
       img.crossOrigin = "anonymouse"
       img.src = data.user_img
+      img.width = "73"
+      img.height = "73"
     
       $('#results #user-info #user-profile').prepend(img)
 
@@ -291,7 +292,52 @@ $(document).ready(async function(){
         lineCharts(id+type,data.total.metrics[type],type)
       }
     }
-    
+
+    const load_hashtags = async () => {
+      let id = "hashtags-chart-wrapper"
+      if(data.hashtags){
+        let hashtags = Object.entries(data.hashtags).sort((a,b)=> b[1]-a[1]).slice(0,10)
+        await barChart(hashtags,id,"hashtags")        
+      }
+    }
+
+    const load_mentioned_users = async () => {
+      let id = "mentioned_users-chart-wrapper"
+      if(data.mentioned_users){
+        let mentions = Object.entries(data.mentioned_users).sort((a,b)=> b[1]-a[1]).slice(0,10)
+        await barChart(mentions,id,"mentioned_users")        
+      }
+    }    
+
+    const load_langs_chart = async () => {
+      let id = "tweets-by-langs"  
+      let dataset = extractLangs(data.langs)
+      await pieCharts(dataset.data,dataset.labels,null,id)
+      return 
+    }
+
+    const load_media_type_Chart = async () => {
+      let id = "tweets-by-media-type"
+      let labels = ["Text","Video","Photo","Link","Poll","Gif"]
+      if(compare)
+        await pieCharts(extractCounts(data.media_type),labels,extractCounts(compare.media_type),id,'doughnut')
+      else
+        await pieCharts(extractCounts(data.media_type),labels,null,id,'doughnut')
+    }
+    const load_type_Chart = async () => {
+      let id = "tweets-by-type"
+      let labels = ["Retweets","Replies","Quotes","Originals"]
+      if(compare) 
+        await pieCharts(extractCounts(data.type),labels,extractCounts(compare.type),id,'doughnut')
+      else 
+        await pieCharts(extractCounts(data.type),labels,null,id,'doughnut')
+    }
+
+    load_media_type_Chart()
+    load_type_Chart()
+    load_langs_chart()
+    load_hashtags()
+    load_mentioned_users()
 
     // load_user_datails()
     // load_followers()
@@ -303,7 +349,7 @@ $(document).ready(async function(){
     // load_tweets_by_type()
     // load_avg_metrics_table()
     // load_total_info()
-    load_total_charts()
+    // load_total_charts()
 
     Promise.all([
       load_user_datails(),
@@ -312,19 +358,195 @@ $(document).ready(async function(){
       load_sample_internal_new(),
       load_sample_interval_old(),
       load_highlights(), 
-      load_tweets_by_media_type_data(),
-      load_tweets_by_type(),
+      //load_tweets_by_media_type_data(),
+      //load_tweets_by_type(),
       load_avg_metrics_table(),
       load_total_info()
     ])
 
     //input,labels,id,type
-    await pieCharts([data.media_type,compare.media_type],["Text","Video","Photo","Link","Poll","Gif"],"tweets-by-media-type")
-    await pieCharts([data.type,compare.type],["Retweets","Replies","Quotes","Originals"],"tweets-by-type")
+    // 
+    // 
     // await metricCharts(data.metrics,'metric-charts','retweets')
 
     set_data_hover()
 
+  }
+
+  function extractLangs(langs) {
+    let labels = []
+    let dataset = []
+    var unknown_lang = 0
+    Object.entries(langs).map( e => {
+      let eng = new Intl.DisplayNames(e[0],{type:"language",fallback:'none'})
+      let lang = eng.of(e[0])
+      if(lang){
+        labels.push(lang)
+        dataset.push(e[1])
+      }else{
+        unknown_lang += e[1];
+      }
+    })
+
+    if(unknown_lang>0){
+      labels.push("Unidentified")
+      dataset.push(unknown_lang)
+    }
+
+    return {data:dataset,labels:labels}
+  }
+
+  function extractCounts(data){
+    let dataset = []
+    Object.keys(data).forEach( key => {
+      dataset.push((data[key].count))
+    })
+
+    return dataset
+  }
+
+  // draw pie charts
+  async function pieCharts(data_1,labels,data_2,id,chartType = 'pie'){
+    
+    let canvas = document.createElement("canvas")
+    canvas.id = id+"-chart"
+    document.getElementById(id).appendChild(canvas)
+
+    let colors = ['#FF595E','#FFCA3A','#8AC926','#1982C4','#00B4D8','#6A4C93']
+
+    let dataset_1 = {
+      label:cleanText(id)+" new",
+      data:data_1,
+      backgroundColor:colors,
+      hoverOffset: 4
+    }
+    let datasets = [dataset_1]
+
+    if(data_2){
+      let dataset_2 = {
+        label:cleanText(id)+" old",
+        data:data_2,
+        backgroundColor:colors,
+        hoverOffset: 4        
+      }
+      datasets.push(dataset_2)
+    }
+
+    new Chart(document.getElementById(canvas.id),{
+      type:chartType,
+      data:{
+        labels:labels,
+        datasets:datasets,
+      },
+      options : {
+        responsive:true,
+        aspectRatio: 1,
+        maintainAspectRatio:false,
+        plugins:{
+          legend:{
+            position:"bottom"
+          },
+          datalabels:{
+            color:'white',
+            formatter: (value,context)=>{
+              let total = context.dataset.data.reduce((acc,v)=> acc+v,0)              
+              let perc = Math.floor(value/total *100)
+              return perc>2 ? perc+"%":''
+            }
+          }
+        }
+      }
+    })
+  }
+  async function metricCharts(data,id,type){
+    let canvas = document.createElement("canvas")
+    canvas.id = type+"-chart"
+    
+    document.getElementById(id).appendChild(canvas)
+    let labels = [...Array(data.total.metrics.retweet_count.length).keys()]
+    
+    const datasets = fromMetricsToDatasets(data.total.metrics)    
+
+    new Chart(document.getElementById(canvas.id),{
+    type:'bar',
+    data:{
+      labels :  labels,
+      datasets:datasets,
+    },
+    options: {
+      responsive:true,
+      maintainAspectRatio:false,
+      plugins: {
+        title:{
+          display:true,
+          text:"metric stacked charts"
+        },          
+         legend: {
+            display: true
+         },
+         datalabels:{display:false},
+      },
+      scales: {
+        x: {
+          display:false,
+          stacked:true
+        },
+        y: {
+          display: false,
+          stacked:true
+        },
+      }
+    },
+    
+  })
+
+  }
+  async function barChart(data,id,type){
+    
+    let canvas = document.createElement("canvas")
+    canvas.id = type+"-chart"
+    document.getElementById(id).appendChild(canvas)
+
+    let labels = []
+    let dataset = []
+
+    data.forEach(e => {
+      labels.push(e[0])
+      dataset.push(e[1])
+    })
+
+    color = '#5634f0'
+    new Chart(document.getElementById(canvas.id),{
+      type:'bar',      
+      data:{
+        labels :  labels,
+        datasets: [{
+          label: type,
+          data: dataset,
+          fill: false,
+          backgroundColor: color,
+        }],
+      },
+      options: {
+        indexAxis:'y',
+        barThickness:"15",
+        plugins: {
+           legend: {
+              display: false
+           },
+           datalabels:{display:false,color:"#fff"},
+          },
+        scales: {
+          x: {
+            ticks: {
+                maxRotation: 45,
+                minRotation: 45
+            }
+          },
+          y: {display: true},
+      }
+      }
+    })
   }
 
   async function lineCharts(id,data,type){
@@ -480,101 +702,6 @@ $(document).ready(async function(){
     return count
   }
 
-  // draw pie charts
-  async function pieCharts(input,labels,id){
-    
-    let canvas = document.createElement("canvas")
-    canvas.id = id+"-chart"
-    document.getElementById(id).appendChild(canvas)
-
-    let values_1 = []
-    let values_2 = []
-    for(let key of Object.keys(input[0])){
-      values_1.push(input[0][key].count)
-      values_2.push(input[1][key].count)
-    }
-
-    let colors = ['#FF595E','#FFCA3A','#8AC926','#1982C4','#00B4D8','#6A4C93']
-
-    new Chart(document.getElementById(canvas.id),{
-      type:'doughnut',
-      data:{
-        labels:labels,
-        datasets:[{
-          label:cleanText(id)+" new",
-          data:values_1,
-          backgroundColor:colors,
-          hoverOffset: 4
-        },{
-          label:cleanText(id)+" old",
-          data:values_2,
-          backgroundColor:colors,
-          hoverOffset: 4
-        }],
-      },
-      options : {
-        responsive:true,
-        aspectRatio: 1,
-        maintainAspectRatio:false,
-        plugins:{
-          legend:{
-            position:"bottom"
-          },
-          datalabels:{
-            color:'white',
-            formatter: (value,context)=>{
-              let total = context.dataset.data.reduce((acc,v)=> acc+v,0)              
-              let perc = Math.floor(value/total *100)
-              return perc>2 ? perc+"%":''
-            }
-          }
-        }
-      }
-    })
-  }
-  async function metricCharts(data,id,type){
-    let canvas = document.createElement("canvas")
-    canvas.id = type+"-chart"
-    
-    document.getElementById(id).appendChild(canvas)
-    let labels = [...Array(data.total.metrics.retweet_count.length).keys()]
-    
-    const datasets = fromMetricsToDatasets(data.total.metrics)    
-
-    new Chart(document.getElementById(canvas.id),{
-    type:'bar',
-    data:{
-      labels :  labels,
-      datasets:datasets,
-    },
-    options: {
-      responsive:true,
-      maintainAspectRatio:false,
-      plugins: {
-        title:{
-          display:true,
-          text:"metric stacked charts"
-        },          
-         legend: {
-            display: true
-         },
-         datalabels:{display:false},
-      },
-      scales: {
-        x: {
-          display:false,
-          stacked:true
-        },
-        y: {
-          display: false,
-          stacked:true
-        },
-      }
-    },
-    
-  })
-
-  }
   function buildTwitterUrl(user){
     return "https://twitter.com/"+user
   }
