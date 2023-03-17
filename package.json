@@ -6,6 +6,11 @@
   "scripts": {
     "devStart": "nodemon server.js"
   },
+  "nodemonConfig": {
+    "ignore": [
+      "*.json"
+    ]
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/samdsk/lab-pwm.git"
@@ -22,18 +27,18 @@
   "homepage": "https://github.com/samdsk/lab-pwm#readme",
   "dependencies": {
     "bcrypt": "^5.1.0",
-    "bootstrap-icons": "^1.9.1",
+    "bootstrap-icons": "^1.10.3",
     "connect-mongo": "^3.2.0",
     "cookie-parser": "^1.4.6",
-    "cookie-signature": "^1.2.0",
     "ejs": "^3.1.8",
     "express": "^4.18.2",
     "express-async-errors": "^3.1.1",
     "express-session": "^1.17.3",
     "genid": "^0.1.0",
     "helmet": "^6.0.0",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "mongoose": "^6.7.3",
+    "npm": "^9.6.0",
     "twitter-api-v2": "^1.12.9"
   },
   "devDependencies": {
