@@ -1,36 +1,160 @@
 header{
     background-color:white ;
+    max-height: 10%;
 }
-
 
 footer{
     background-color:white ;
     border-color: #aaaaaa;
+    position: relative
 }
 
-main form{    
+html,body{
+    height: 100%;
+    /* display: flex;
+    flex-direction: column; */
+}
+
+main{
+    min-height:60vh;
+}
+
+main form{
     width: 50% !important;
-    
+
 }
 
 footer div.col {
     background-color:white ;
 }
 #dashboard .row {
-    
+
 }
 
 #dashboard .left{
-    
-} 
 
-#dashboard .right{
+}
+
+/* #dashboard .right{
+    max-width: 100%;
+    min-height: 600px;
+    overflow: hidden;
+} */
+
+#loader{
+    display: flex;
+    justify-content: center;
+    position: relative;
+    width: 100%;
+    height: 100%;
+
+}
+
+#loader img{
+    display: block;
+    position: relative;
+    width:73px;
+    margin: auto;
+}
+
+#results .col{
+    background-color: white;    
+    margin-top:1rem;
+    padding:1rem;
+}
+
+#results .h7{
+    font-size:0.9rem;
+}
+
+#results #account-info{
+    margin-top: 1rem;
+    border-top:1px solid;
+    border-color: #cccccc;
+}
+
+#results #user-info{
+    border-right:1px solid;
+    border-color: #cccccc;
+}
+
+#results #highlights{
+    margin-top: 1rem;
+    border-top:1px solid;
+    border-bottom:1px solid;
+    border-color: #cccccc;
+}
+
+#results #metrics{
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top:1px solid;
+    border-bottom:1px solid;
+    border-color: #cccccc;
+}
+
+#results #user-profile {
+    display: inline-flex;
+}
+
+#results #user-profile img {    
+    border:1px solid #4cc9f0;
+    border-radius: 0.2rem;
+}
+
+#results #user-profile #name-username {
+    padding-left :1rem
+}
+
+#results #user-profile #name-username p:nth-child(2){
+    margin-top: -1rem;
+}
+
+#results #search-interval .time{
+    display: none;
+}
+
+#results #total-tweets-real {
+    display: block;
+    position: relative;
+    top:-1rem;
+}
+
+
+#results #tweets-by-type-wrapper{
+    border-left: 1px solid #cccccc;
+}
+
+#results .pie-chart-container{
+    position: relative;     
+    margin-left: auto;
+    margin-right: auto;    
+    width:350px;
+}
+
+#results .bar-chart{
     
-} 
+    height: 400px;
+}
+
+#results canvas{
+    
+}
 
 @media screen and (max-width: 1000px){
     main form {
         width: 70% !important;
+    }
+
+    #dashboard .icon-text{
+        display: none;
+    }
+
+    #tweets-by-type-wrapper{
+        border-left: none !important;
+    }
+    #results .bar-chart{
+        height: 300px;
     }
 }
 
@@ -38,5 +162,15 @@ footer div.col {
     main form {
         width: 100% !important;
     }
+
+    #results .pie-chart-container{
+        width: 300px;
+        
+    }
+
+    #results .bar-chart{
+        height: 200px;
+    }
+
 }
 
