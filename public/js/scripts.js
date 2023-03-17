@@ -54,6 +54,7 @@ $(document).ready(async function(){
     $('#search-btn').prop("disabled",true)
 
     let data = await postViaWorker($('#form-search').serialize())
+
     $('#loader #loader-gif').addClass('d-none')
     $('#loader #working-gif').removeClass('d-none')
     
@@ -352,17 +353,7 @@ $(document).ready(async function(){
       let datasets = extractMediaAndType(data.tweets_per_day,colors)
       await metricCharts(datasets,labels,id,"tweets-per-day")
     }
-    // load_user_datails()
-    // load_followers()
-    // load_followings()
-    // load_sample_internal_new()  
-    // load_sample_interval_old()
-    // load_highlights()    
-    // load_tweets_by_media_type_data()
-    // load_tweets_by_type()
-    // load_avg_metrics_table()
-    // load_total_info()
-    // load_total_charts()
+
 
     Promise.all([
       load_user_datails(),
@@ -371,8 +362,6 @@ $(document).ready(async function(){
       load_sample_internal_new(),
       load_sample_interval_old(),
       load_highlights(), 
-      //load_tweets_by_media_type_data(),
-      //load_tweets_by_type(),
       load_avg_metrics_table(),
       load_total_info(),
       load_week_chart(),
@@ -462,8 +451,10 @@ $(document).ready(async function(){
         maintainAspectRatio:false,
         plugins:{
           legend:{
-            position:"bottom",
-            labels: {
+            position:"left",
+            labels: {           
+              boxWidth:10,
+              borderRadius:10,
               generateLabels: (chart) => {
                 const datasets = chart.data.datasets;
                 return datasets[0].data.map((data, i) => ({

@@ -129,11 +129,10 @@ footer div.col {
     position: relative;     
     margin-left: auto;
     margin-right: auto;    
-    width:350px;
+    width:400px;
 }
 
-#results .bar-chart{
-    
+#results .bar-chart{    
     height: 400px;
 }
 
