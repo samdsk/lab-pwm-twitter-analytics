@@ -43,31 +43,31 @@ $(document).ready(async function(){
   }
   errorDisplay()
   
-  // $('#search-btn').click(async (event)=>{
-  //   event.preventDefault()
-  //   $('#results').hide()
-  //   $('#loader').removeClass('d-none')
-  //   $('#search-btn').prop("disabled",true)
+  $('#search-btn').click(async (event)=>{
+    event.preventDefault()
+    $('#results').hide()
+    $('#loader').removeClass('d-none')
+    $('#search-btn').prop("disabled",true)
 
-  //   let data = await postViaWorker($('#form-search').serialize())
+    let data = await postViaWorker($('#form-search').serialize())
     
-  //   // let data  = await fetch('../js/output_data_compare.json').then( response => {
-  //   //     return response.json()
-  //   // })
+    // let data  = await fetch('../js/output_data_compare.json').then( response => {
+    //     return response.json()
+    // })
       
-  //   await genSearchResults(data)
+    await genSearchResults(data)
     
-  //   $('#loader').addClass('d-none')
-  //   $('#results').removeClass("d-none")
-  //   $('#results').show()
-  //   $('#search-btn').removeAttr("disabled")
-  // })  
+    $('#loader').addClass('d-none')
+    $('#results').removeClass("d-none")
+    $('#results').show()
+    $('#search-btn').removeAttr("disabled")
+  })  
 
-  let data  = await fetch('../js/output_data_compare.json').then( response => {
-    return response.json()
-  })
+  // let data  = await fetch('../js/output_data.json').then( response => {
+  //   return response.json()
+  // })
   
-  await genSearchResults(data)
+  // await genSearchResults(data)
 
 
   // ! populate with seach results + charts
@@ -233,7 +233,6 @@ $(document).ready(async function(){
 
       }
     }
-    
 
     const load_avg_metrics_table = async () => {
       for(let type of Object.keys(data.media_type)){        
@@ -250,20 +249,22 @@ $(document).ready(async function(){
           }
           
           let avg_count = Math.floor(data.media_type[type].metrics[key]/data.media_type[type].count)
-          let avg_count_compare = Math.floor(compare.media_type[type].metrics[key]/compare.media_type[type].count)
-
+          
           let name = countToPlural(key)
           li.text(name+" : ")
-
+          
           let span_id = id+'-'+key          
           let span = $('<span id="'+span_id+'"class="data-hover">'+tweetCount(avg_count)+'</span>')
-          let compare_span = $('<span id="'+span_id+'-compare" class="data-hover"></span>')
           span.attr({"data-real":avg_count, "data-round":tweetCount(avg_count),"title":"Average "+name.toLowerCase()})
-
+          let compare_span = $('<span id="'+span_id+'-compare" class="data-hover"></span>')            
+          
           li.append(span).append(compare_span)
           $('#'+id+' ul#average').append(li)
-          if(compare)
+          
+          if(compare){
+            let avg_count_compare = Math.floor(compare.media_type[type].metrics[key]/compare.media_type[type].count)
             appendCompare('#'+span_id,avg_count,avg_count_compare)
+          }
         }
       }
     }
@@ -280,7 +281,8 @@ $(document).ready(async function(){
       $('#'+id).append(span).append(span_compare)
 
       id = id+"-data"
-      appendCompare('#'+id,count,compare.total.count)
+      if(compare)
+        appendCompare('#'+id,count,compare.total.count)
 
       $("#total-info-i #interval").text(msToHMS(data.total.interval))
 
@@ -324,6 +326,7 @@ $(document).ready(async function(){
       else
         await pieCharts(extractCounts(data.media_type),labels,null,id,'doughnut')
     }
+
     const load_type_Chart = async () => {
       let id = "tweets-by-type"
       let labels = ["Retweets","Replies","Quotes","Originals"]
@@ -340,16 +343,7 @@ $(document).ready(async function(){
 
       let datasets = extractMediaAndType(data.tweets_per_day,colors)
       await metricCharts(datasets,labels,id,"tweets-per-day")
-    } 
-
-    load_week_chart()
-
-    load_media_type_Chart()
-    load_type_Chart()
-    load_langs_chart()
-    load_hashtags()
-    load_mentioned_users()
-
+    }
     // load_user_datails()
     // load_followers()
     // load_followings()
@@ -372,7 +366,13 @@ $(document).ready(async function(){
       //load_tweets_by_media_type_data(),
       //load_tweets_by_type(),
       load_avg_metrics_table(),
-      load_total_info()
+      load_total_info(),
+      load_week_chart(),
+      load_media_type_Chart(),
+      load_type_Chart(),
+      load_langs_chart(),
+      load_hashtags(),
+      load_mentioned_users()
     ])
 
     //input,labels,id,type
@@ -533,26 +533,6 @@ $(document).ready(async function(){
 
     return output
   }
-
-  function fromMetricsToDatasets(data){
-    
-    let colors = ['#FFBE0B','#FB5607','#FF006E','#8338EC','#3A86FF']
-    let output = []
-    let count = 0
-
-    for(let x of Object.keys(data)){
-      let struct = {}
-      struct["data"] = normalize(data[x])
-      struct["label"] = x
-      struct["backgroundColor"] = colors[count++]      
-      struct['fill'] = false
-      struct['tension'] = 0.1
-      output.push(struct)
-    }
-
-    return output
-  }
-
   async function metricCharts(datasets,labels,id,type){
     let canvas = document.createElement("canvas")
     canvas.id = type+"-chart"
@@ -737,18 +717,6 @@ $(document).ready(async function(){
     let regex = /[^A-Za-z0-9]/g    
     return str.replace(regex," ")
   }
-
-  // custom data structure for chartsjs
-  function fromMetricsToDataset(data,skip){
-    let output = {}
-    for(let x of Object.keys(data)){
-      if(x == skip) continue
-      output[x] = data[x].count
-    }
-
-    return output
-  }
-
   function normalize(data){    
     let output = []
     let max = Math.max(...data)

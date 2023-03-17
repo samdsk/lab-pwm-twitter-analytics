@@ -21,7 +21,7 @@
                 <div id="loader"class="d-none">
                     <img src="../assets/loader.gif" />
                 </div>
-                <div id="results" class="contianer ">
+                <div id="results" class="contianer d-none">
                     <div id="account-info" class="row">
                         <div id="user-info" class="col col-sm-12 col-lg-6">
                             <div id="user-profile">
@@ -45,6 +45,12 @@
                                 Followings: 
                                 <span id="followings" class="text-primary data-hover"></span><span id="followings-compare" class="text-primary data-hover"></span>
                             </p>
+                            <div id="total-charts" class="row justify-content-center">
+                                <div id="total-info">
+                                    <h5 id="total-info-h" class="h6">Total tweets analized: </h6>
+                                    <h6 id="total-info-i" class="h6">Interval: <i class="bi bi-stopwatch"></i> <span id="interval" title="Average interval between posts"></span></h6>
+                                </div>
+                            </div>
                         </div>
                         <div id="search-interval" class="col col-sm-12 col-lg-6">
                             <div id="search-sample-new">
@@ -91,7 +97,9 @@
                             </div>
                         </div>
                     </div>
-                    <div id="highlights" class="row  justify-content-between">                    
+                    <div id="highlights" class="row  justify-content-between">
+                        <h5 class="row text-center"><a href="#Highlights">Highlights</a></h5>
+
                         <div class="col-sm-12 col-md-4 col-lg-4 col-xl-2  flex-row justify-content-center">
                             <p class="text-center mb-0">
                                 <i class="bi bi-repeat h1 text-primary"></i>
@@ -145,40 +153,41 @@
                     </div>                
                     <div id="pie-charts" class="row justify-content-between">
                         <div id="tweets-by-media-type-wrapper" class="col-sm-12 col-md-8 col-lg-4 col-xl-4">
-                            <h6 class="text-center">Tweets By Media Type</h6>
+                            <h5 class="text-center"><a href="#Tweets-by-media-type">Tweets By Media Type</a></h5>
                             <div id="tweets-by-media-type" class="row pie-chart-container ">
                             </div>
                         </div>
                         <div id="tweets-by-type-wrapper" class="col-sm-12 col-md-8 col-lg-4 col-xl-4">
-                            <h6 class="text-center">Tweets By Type</h6>   
+                            <h5 class="text-center"><a href="#Tweets-by-type">Tweets By Type</a></h5>   
                             <div id="tweets-by-type"  class="row pie-chart-container">
                             </div>
                         </div>
                         <div id="tweets-by-langs-wrapper" class="col-sm-12 col-md-8 col-lg-4 col-xl-4">
-                            <h6 class="text-center">Tweets By Language</h6>   
+                            <h5 class="text-center"><a href="#tweets-by-language">Tweets By Language</a></h5>   
                             <div id="tweets-by-langs"  class="row pie-chart-container">
                             </div>
                         </div>
                     </div>
-                    <div id="week-charts" class="row justify-content-center">
-                        <div id="week-chart-wrapper" class="col bar-chart"></div>
+                    <div id="week-charts" class="row justify-content-center mb-5">
+                        <h5 id="week-chart-h" class="row h5 text-center"><a href="#Tweets-per-day">Tweets per day</a></h5>
+                        <div id="week-chart-wrapper" class="col bar-chart height-"></div>
                     </div>
 
                     <div id="hashtags-mentioned_users-wrapper" class="row">
                         <div id="hashtags-wrapper" class="row">
-                            <h5 id="hashtags-h" class="col h5">Top 10 Hashtags</h5>
-                            <h5 id="mentioned_users-h" class="col h5">Top 10 Mentions</h5>
+                            <h5 id="hashtags-h" class="col h5"><a href="#top-hashtags">Top 10 Hashtags</a></h5>
+                            <h5 id="mentioned_users-h" class="col h5"><a href="#top-mentions">Top 10 Mentions</a></h5>
                         </div>
                         <div id="mentioned_users-wrapper" class="row align-items-end">
-                            <div id="hashtags-chart-wrapper" class="col bar-chart">    
+                            <div id="hashtags-chart-wrapper" class="col ">    
                             </div>
-                            <div id="mentioned_users-chart-wrapper" class="col bar-chart">
+                            <div id="mentioned_users-chart-wrapper" class="col ">
                             </div>
                         </div>
                     </div>
                     <div id="avg-interactions-wrapper" class="row">                    
-                        <div class="row">
-                            <h4>Average interations per tweet by media type</h4>
+                        <div class="row mb-3">
+                            <h4><a href="#average">Average interations per tweet by media type</a></h4>
                         </div>
                         <div id="avg-interactions" class="row align-items-start">                            
                             <div id="avg-interactions-text" class="col-sm-12 col-md-12 col-lg-6 col-xl-4">                            
@@ -219,12 +228,7 @@
                             </div>
                         </div>
                     </div>
-                    <div id="total-charts" class="row justify-content-center">
-                        <div id="total-info">
-                            <h5 id="total-info-h" class="h5">Total tweets analized: </h5>
-                            <h6 id="total-info-i" class="h6">Interval: <i class="bi bi-stopwatch"></i> <span id="interval" title="Average interval between posts"></span></h6>
-                        </div>
-                    </div>
+                    
                 </div>
             </div>
         </div>

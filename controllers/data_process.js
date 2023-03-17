@@ -15,43 +15,20 @@ const collectData = async (DATA) => {
 
     // console.log(">>> TWEETS ",TWEETS);
 
-    TWEETS.start_date = data[0].created_at
-    TWEETS.end_date = data[data.length-1].created_at
-    
-    let interval_start_time = new Date(Date.parse(TWEETS.start_date)).getTime()
-    // process each tweet finding media type, tweet type, time intervals and metrics
-
     // collect how many tweets of media type and type per day
     const tweets_per_day = {}
-    // collect metioned users
-    const mentioned_users = {}
-    // collect used hashtags
-    const hashtags = {}
 
-    const lang = {}
+    TWEETS.start_date = data[0].created_at
+    TWEETS.end_date = data[data.length-1].created_at
+    console.log(TWEETS.end_date);
+    let temp_date = new Date(Date.parse(TWEETS.start_date))
+    let temp_end = new Date(Date.parse(TWEETS.end_date))
+    temp_end.setDate(temp_end.getDate()+1)
 
-    data.forEach(e => {
-
-        // section - count post media types
-        let mediaType = findMediaType(media,e)
-        
-        let time = new Date(Date.parse(e.created_at))
-        let date = e.created_at.split('T')[0]
-
-        lang[e.lang] = (lang[e.lang] || 0)+1
-        
-        e?.entities?.mentions?.forEach( mention => {
-            mentioned_users[mention.username] = (mentioned_users [mention.username] || 0)+1
-        })
-
-        e?.entities?.hashtags?.forEach( hashtag => {
-            hashtags[hashtag.tag] = (hashtags[hashtag.tag] || 0)+1
-        })
-        
-
-        if(!(date in tweets_per_day))
-            tweets_per_day[date] = {
-                media:{
+    while(temp_date<=temp_end){
+        let date = temp_date.toISOString().split('T')[0]
+        tweets_per_day[date] = {
+            media:{
                 text:0,
                 video:0,
                 photo:0,
@@ -64,14 +41,67 @@ const collectData = async (DATA) => {
                 replied_to:0,
                 quoted:0,
                 original:0,
-            }}
+            }
+        }
+
+        temp_date.setDate(temp_date.getDate() + 1)
+    }
+    
+    let interval_start_time = new Date(Date.parse(TWEETS.start_date)).getTime()
+    // process each tweet finding media type, tweet type, time intervals and metrics
+
+    // collect metioned users
+    const mentioned_users = {}
+    // collect used hashtags
+    const hashtags = {}
+
+    const lang = {}
+    console.log(tweets_per_day)
+
+    data.forEach(e => {
+
+        // section - count post media types
+        let mediaType = findMediaType(media,e)
+        
+        let time = new Date(Date.parse(e.created_at))
+        let date = e.created_at.split('T')[0]
+
+        lang[e.lang] = (lang[e.lang] || 0)+1
+        
+        e?.entities?.mentions?.forEach( mention => {
+            mention = '@'+mention.username
+            mentioned_users[mention] = (mentioned_users [mention] || 0)+1
+        })
+
+        e?.entities?.hashtags?.forEach( hashtag => {
+            let tag = '#'+hashtag.tag
+            hashtags[tag] = (hashtags[tag] || 0)+1
+        })
+        
+
+        // if(!(date in tweets_per_day))
+        //     tweets_per_day[date] = {
+        //         media:{
+        //         text:0,
+        //         video:0,
+        //         photo:0,
+        //         link:0,
+        //         polls:0,
+        //         animated_gif:0
+        //     },
+        //     type:{
+        //         retweeted:0,
+        //         replied_to:0,
+        //         quoted:0,
+        //         original:0,
+        //     }}
 
         if(mediaType){
             TWEETS.media_type[mediaType].count +=1
             updateMetrics(TWEETS.media_type,mediaType,e)
             updateInterval(TWEETS.media_type[mediaType],time,interval_start_time)
-
-            tweets_per_day[date].media[mediaType]++            
+            console.log(date);
+            tweets_per_day[date].media[mediaType]++
         }else{
             throw new Error("Media type undefined! ->",mediaType)
         }
