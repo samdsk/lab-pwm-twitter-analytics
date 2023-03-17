@@ -45,19 +45,27 @@ $(document).ready(async function(){
   
   $('#search-btn').click(async (event)=>{
     event.preventDefault()
-    $('#results').hide()
+    
+    if($('#handler').val() == '') return 
+
+    $('#results').addClass('d-none')
     $('#loader').removeClass('d-none')
+    $('#loader #loader-gif').removeClass('d-none')
     $('#search-btn').prop("disabled",true)
 
     let data = await postViaWorker($('#form-search').serialize())
+    $('#loader #loader-gif').addClass('d-none')
+    $('#loader #working-gif').removeClass('d-none')
     
     // let data  = await fetch('../js/output_data_compare.json').then( response => {
     //     return response.json()
     // })
       
     await genSearchResults(data)
-    
+
+    $('#loader #working-gif').addClass('d-none')
     $('#loader').addClass('d-none')
+
     $('#results').removeClass("d-none")
     $('#results').show()
     $('#search-btn').removeAttr("disabled")
@@ -391,7 +399,8 @@ $(document).ready(async function(){
     Object.entries(langs).map( e => {
       let eng = new Intl.DisplayNames(e[0],{type:"language",fallback:'none'})
       let lang = eng.of(e[0])
-      if(lang){
+      console.log(lang);
+      if(lang && lang != "No linguistic content"){
         labels.push(lang)
         dataset.push(e[1])
       }else{

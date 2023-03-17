@@ -20,7 +20,7 @@ const collectData = async (DATA) => {
 
     TWEETS.start_date = data[0].created_at
     TWEETS.end_date = data[data.length-1].created_at
-    console.log(TWEETS.end_date);
+
     let temp_date = new Date(Date.parse(TWEETS.start_date))
     let temp_end = new Date(Date.parse(TWEETS.end_date))
     temp_end.setDate(temp_end.getDate()+1)
@@ -56,7 +56,6 @@ const collectData = async (DATA) => {
     const hashtags = {}
 
     const lang = {}
-    console.log(tweets_per_day)
 
     data.forEach(e => {
 
@@ -100,7 +99,6 @@ const collectData = async (DATA) => {
             TWEETS.media_type[mediaType].count +=1
             updateMetrics(TWEETS.media_type,mediaType,e)
             updateInterval(TWEETS.media_type[mediaType],time,interval_start_time)
-            console.log(date);
             tweets_per_day[date].media[mediaType]++
         }else{
             throw new Error("Media type undefined! ->",mediaType)
