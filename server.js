@@ -34,8 +34,8 @@ const PORT = process.env.PORT || 3000
 app.use(helmet({
     contentSecurityPolicy:{ 
         directives : {
-            "script-src":["'self'","cdn.jsdelivr.net","cdnjs.cloudflare.com"],
-            "script-src-attr":["'self'","cdn.jsdelivr.net","cdnjs.cloudflare.com"],
+            "script-src":["'self'","cdn.jsdelivr.net","cdnjs.cloudflare.com","code.jquery.com"],
+            "script-src-attr":["'self'","cdn.jsdelivr.net","cdnjs.cloudflare.com","code.jquery.com"],
             "img-src":["'self'","pbs.twimg.com"]
         }
     }
