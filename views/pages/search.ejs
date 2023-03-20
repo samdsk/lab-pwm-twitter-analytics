@@ -34,17 +34,17 @@
                             <p id="total-tweets" class="">
                                 <i class="bi bi-arrow-down-up"></i> 
                                 Total tweets: 
-                                <span id="total-tweets-data" class="text-primary data-hover"></span><span id="total-tweets-data-compare" class="text-primary data-hover"></span>
+                                <span id="total-tweets-data" class="text-primary data-hover data-clean"></span><span id="total-tweets-data-compare" class="text-primary data-hover data-clean"></span>
                             </p>                        
                             <p class="mt-0">
                                 <i class="bi bi-people-fill"></i> 
                                 Followers: 
-                                <span id="followers" class="text-primary data-hover"></span><span id="followers-compare" class="text-primary data-hover"></span>
+                                <span id="followers" class="text-primary data-hover data-clean"></span><span id="followers-compare" class="text-primary data-hover data-clean"></span>
                             </p>
                             <p class="mt-0">
                                 <i class="bi bi-person-check-fill"></i> 
                                 Followings: 
-                                <span id="followings" class="text-primary data-hover"></span><span id="followings-compare" class="text-primary data-hover"></span>
+                                <span id="followings" class="text-primary data-hover data-clean"></span><span id="followings-compare" class="text-primary data-hover data-clean"></span>
                             </p>
                             <div id="total-charts" class="row justify-content-center">
                                 <div id="total-info">
@@ -108,7 +108,7 @@
                             <p id="most-retweet_count-data" class="text-center">
                                 Most Retweets
                                 <br>
-                                <a id="most-retweet_count" class="data-hover" href="" target="_blank"></a><a id="most-retweet_count-compare" class="data-hover"  href="" target="_blank"></a>
+                                <a id="most-retweet_count" class="data-hover data-clean" href="" target="_blank"></a><a id="most-retweet_count-compare" class="data-hover data-clean"  href="" target="_blank"></a>
                             </p>
                         </div>
                         <div class="col-sm-12 col-md-4 col-lg-4 col-xl-2 flex-row justify-content-center">
@@ -118,7 +118,7 @@
                             <p id="most-reply_count-data" class="text-center">
                                 Most Replies
                                 <br>
-                                <a id="most-reply_count" class="data-hover"  href="" target="_blank"></a><a id="most-reply_count-compare" class="data-hover"  href="" target="_blank"></a>
+                                <a id="most-reply_count" class="data-hover data-clean"  href="" target="_blank"></a><a id="most-reply_count-compare" class="data-hover data-clean"  href="" target="_blank"></a>
                             </p>
                         </div>
                         <div class="col-sm-12 col-md-4 col-lg-4 col-xl-2 flex-row justify-content-center">
@@ -128,7 +128,7 @@
                             <p id="most-like_count-data" class="text-center">
                                 Most Likes 
                                 <br>
-                                <a id="most-like_count" class="data-hover"  href="" target="_blank"></a><a id="most-like_count-compare" class="data-hover"  href="" target="_blank"></a>
+                                <a id="most-like_count" class="data-hover data-clean"  href="" target="_blank"></a><a id="most-like_count-compare" class="data-hover data-clean"  href="" target="_blank"></a>
                             </p>                        
                         </div>
                         <div class="col-sm-12 col-md-6 col-lg-6 col-xl-2 flex-row justify-content-center">
@@ -138,7 +138,7 @@
                             <p id="most-quote_count-data" class="text-center">
                                 Most Quotes
                                 <br>
-                                <a id="most-quote_count" class="data-hover"  href="" target="_blank"></a><a id="most-quote_count-compare" class="data-hover"  href="" target="_blank"></a>
+                                <a id="most-quote_count" class="data-hover data-clean"  href="" target="_blank"></a><a id="most-quote_count-compare" class="data-hover data-clean"  href="" target="_blank"></a>
                             </p>
                         </div>
                         <div class="col-sm-12 col-md-6 col-lg-6 col-xl-2 flex-row justify-content-center">
@@ -148,30 +148,30 @@
                             <p id="most-impression_count-data" class="text-center">
                                 Most Impressions
                                 <br>
-                                <a id="most-impression_count" class="data-hover"  href="" target="_blank"></a><a id="most-impression_count-compare" class="data-hover"  href="" target="_blank"></a>
+                                <a id="most-impression_count" class="data-hover data-clean"  href="" target="_blank"></a><a id="most-impression_count-compare" class="data-hover data-clean"  href="" target="_blank"></a>
                             </p>
                         </div>
                     </div>                
                     <div id="pie-charts" class="row justify-content-between">
                         <div id="tweets-by-media-type-wrapper" class="col-sm-12 col-md-8 col-lg-4 col-xl-4">
                             <h5 class="text-center"><a href="#Tweets-by-media-type">Tweets By Media Type</a></h5>
-                            <div id="tweets-by-media-type" class="row pie-chart-container ">
+                            <div id="tweets-by-media-type" class="row pie-chart-container data-clean">
                             </div>
                         </div>
                         <div id="tweets-by-type-wrapper" class="col-sm-12 col-md-8 col-lg-4 col-xl-4">
                             <h5 class="text-center"><a href="#Tweets-by-type">Tweets By Type</a></h5>   
-                            <div id="tweets-by-type"  class="row pie-chart-container">
+                            <div id="tweets-by-type"  class="row pie-chart-container data-clean">
                             </div>
                         </div>
                         <div id="tweets-by-langs-wrapper" class="col-sm-12 col-md-8 col-lg-4 col-xl-4">
                             <h5 class="text-center"><a href="#tweets-by-language">Tweets By Language</a></h5>   
-                            <div id="tweets-by-langs"  class="row pie-chart-container">
+                            <div id="tweets-by-langs"  class="row pie-chart-container data-clean">
                             </div>
                         </div>
                     </div>
                     <div id="week-charts" class="row justify-content-center mb-5">
                         <h5 id="week-chart-h" class="row h5 text-center"><a href="#Tweets-per-day">Tweets per day</a></h5>
-                        <div id="week-chart-wrapper" class="col bar-chart height-"></div>
+                        <div id="week-chart-wrapper" class="col bar-chart data-clean"></div>
                     </div>
 
                     <div id="hashtags-mentioned_users-wrapper" class="row">
@@ -180,9 +180,9 @@
                             <h5 id="mentioned_users-h" class="col h5"><a href="#top-mentions">Top 10 Mentions</a></h5>
                         </div>
                         <div id="mentioned_users-wrapper" class="row align-items-end">
-                            <div id="hashtags-chart-wrapper" class="col ">    
+                            <div id="hashtags-chart-wrapper" class="col data-clean">    
                             </div>
-                            <div id="mentioned_users-chart-wrapper" class="col ">
+                            <div id="mentioned_users-chart-wrapper" class="col data-clean">
                             </div>
                         </div>
                     </div>
@@ -195,37 +195,37 @@
                                 <i class="bi bi-chat-right-text-fill"></i>
                                 Text: 
                                 <i class="bi bi-stopwatch"></i> <span id="interval" title="Average interval between text posts"></span>
-                                <ul id="average" class="list-group list-group-flush"></ul>                           
+                                <ul id="average" class="list-group list-group-flush data-clean"></ul>                           
                             </div>
                             <div id="avg-interactions-video" class="col-sm-12 col-md-12 col-lg-6 col-xl-4">                            
                                 <i class="bi bi-camera-reels-fill"></i>
                                 Video: 
                                 <i class="bi bi-stopwatch"></i> <span id="interval" title="Average interval between video posts"></span>
-                                <ul id="average" class="list-group list-group-flush"></ul>                           
+                                <ul id="average" class="list-group list-group-flush data-clean"></ul>                           
                             </div>
                             <div id="avg-interactions-photo" class="col-sm-12 col-md-12 col-lg-6 col-xl-4">                            
                                 <i class="bi bi-camera-fill"></i>
                                 Photo: 
                                 <i class="bi bi-stopwatch"></i> <span id="interval" title="Average interval between photo posts"></span>
-                                <ul id="average" class="list-group list-group-flush"></ul>                           
+                                <ul id="average" class="list-group list-group-flush data-clean"></ul>                           
                             </div>
                             <div id="avg-interactions-link" class="col-sm-12 col-md-12 col-lg-6 col-xl-4">                            
                                 <i class="bi bi-link-45deg"></i>
                                 Link:
                                 <i class="bi bi-stopwatch"></i> <span id="interval" title="Average interval between link posts"></span>
-                                <ul id="average" class="list-group list-group-flush"></ul>                           
+                                <ul id="average" class="list-group list-group-flush data-clean"></ul>                           
                             </div>
                             <div id="avg-interactions-polls" class="col-sm-12 col-md-12 col-lg-6 col-xl-4">                            
                                 <i class="bi bi-bar-chart-fill"></i>
                                 Polls:
                                 <i class="bi bi-stopwatch"></i> <span id="interval" title="Average interval between poll posts"></span>
-                                <ul id="average" class="list-group list-group-flush"></ul>                           
+                                <ul id="average" class="list-group list-group-flush data-clean"></ul>                           
                             </div>
                             <div id="avg-interactions-animated_gif" class="col-sm-12 col-md-12 col-lg-6 col-xl-4">                            
                                 <i class="bi bi-filetype-gif"></i>
                                 Animated Gif:
                                 <i class="bi bi-stopwatch"></i> <span id="interval" title="Average interval between animated_gif posts"></span>
-                                <ul id="average" class="list-group list-group-flush"></ul>                           
+                                <ul id="average" class="list-group list-group-flush data-clean"></ul>                           
                             </div>
                         </div>
                     </div>
