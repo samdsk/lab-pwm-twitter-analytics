@@ -164,6 +164,25 @@ $(document).ready(async function(){
         appendCompare("#followings",count,compare.followings)
     }
 
+    const load_total_info = async () => {
+      let id = "total-info-h"
+      let count = data.total.count
+      let count_rounded = tweetCount(count)
+
+      let span = $('<span id="'+id+'-data" class="data-hover data-clean">'+count+'</span>')
+      span.attr({"data-real":count,"data_round":count_rounded,"title":"Total tweets analized"})
+      let span_compare = $('<span id="'+id+'-data-compare" class="data-hover data-clean"></span>')
+
+      $('#'+id).append(span).append(span_compare)
+
+      id = id+"-data"
+      if(compare)
+        appendCompare('#'+id,count,compare.total.count)
+
+      $("#total-info-i #interval").text(msToHMS(data.total.interval))
+
+    }
+
     const load_sample_internal_new = async () =>{
       let id = "#search-sample-new"
       load_dateTime(id,data)
@@ -209,13 +228,13 @@ $(document).ready(async function(){
         let count = data.media_type[type].count
         let count_rounded = tweetCount(count)
         let id = "tweets-by-media-type-data-"+type
-        let span = $('<span class="data-hover"></span>')
+        let span = $('<span class="data-hover data-clean"></span>')
         span.attr({"id":id,"data-real":count, "data-round":count_rounded})
         span.text(count_rounded)
 
-        let span_compare = $('<span id="'+id+'-compare" class="data-hover"></span>')
+        let span_compare = $('<span id="'+id+'-compare" class="data-hover data-clean"></span>')
 
-        let li = $('<li class="list-group-item">'+toUpperFirstChar(cleanText(type))+': </li>').append(span).append(span_compare)
+        let li = $('<li class="list-group-item data-clean">'+toUpperFirstChar(cleanText(type))+': </li>').append(span).append(span_compare)
         $('#tweets-by-media-type-data ul').append(li)
 
         if(compare)
@@ -248,7 +267,7 @@ $(document).ready(async function(){
         $('#'+id+' #interval').text(msToHMS(data.media_type[type].interval))
         
         for(let key of Object.keys(data.media_type[type].metrics)){
-          let li = $('<a onclick="return false;" class="list-group-item"></a>')
+          let li = $('<a onclick="return false;" class="list-group-item data-clean"></a>')
           
           if(data.media_type[type].count == 0) {
             $('#'+id).remove()
@@ -261,9 +280,9 @@ $(document).ready(async function(){
           li.text(name+" : ")
           
           let span_id = id+'-'+key          
-          let span = $('<span id="'+span_id+'"class="data-hover">'+tweetCount(avg_count)+'</span>')
+          let span = $('<span id="'+span_id+'"class="data-hover data-clean">'+tweetCount(avg_count)+'</span>')
           span.attr({"data-real":avg_count, "data-round":tweetCount(avg_count),"title":"Average "+name.toLowerCase()})
-          let compare_span = $('<span id="'+span_id+'-compare" class="data-hover"></span>')            
+          let compare_span = $('<span id="'+span_id+'-compare" class="data-hover data-clean"></span>')            
           
           li.append(span).append(compare_span)
           $('#'+id+' ul#average').append(li)
@@ -274,25 +293,6 @@ $(document).ready(async function(){
           }
         }
       }
-    }
-
-    const load_total_info = async () => {
-      let id = "total-info-h"
-      let count = data.total.count
-      let count_rounded = tweetCount(count)
-
-      let span = $('<span id="'+id+'-data" class="data-hover data-clean">'+count+'</span>')
-      span.attr({"data-real":count,"data_round":count_rounded,"title":"Total tweets analized"})
-      let span_compare = $('<span id="'+id+'-data-compare" class="data-hover data-clean"></span>')
-
-      $('#'+id).append(span).append(span_compare)
-
-      id = id+"-data"
-      if(compare)
-        appendCompare('#'+id,count,compare.total.count)
-
-      $("#total-info-i #interval").text(msToHMS(data.total.interval))
-
     }
 
     const load_total_charts = async () => {
@@ -696,8 +696,8 @@ $(document).ready(async function(){
     
     if(old_data == new_data) return
 
-    let up = ["bi-caret-up-fill","text-success","node-clean"]
-    let down = ["bi-caret-down-fill","text-danger","node-clean"]
+    let up = ["bi-caret-up-fill","text-success"]
+    let down = ["bi-caret-down-fill","text-danger"]
 
     // console.log(new_data,old_data);
     
@@ -713,7 +713,8 @@ $(document).ready(async function(){
       icon.addClass(down)
       icon.attr("title","Lost")
     }
-
+    
+    icon.addClass("node-clean")
     $(id).after(icon)
 
     id = id+"-compare"
