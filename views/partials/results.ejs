@@ -1,0 +1,209 @@
+<div id="results" class="contianer d-none">
+    <div id="account-info" class="row">
+        <div id="user-info" class="col col-sm-12 col-lg-6">
+            <div id="user-profile">
+                <div id="name-username">                                
+                    <p id="name"><i class="bi bi-person"></i> </p>
+                    <p id="username"><i class="bi bi-twitter"></i> </p>
+                </div>
+            </div>
+            <p id="total-tweets" class="">
+                <i class="bi bi-arrow-down-up"></i> 
+                Total tweets: 
+                <span id="total-tweets-data" class="text-primary data-hover data-clean"></span><span id="total-tweets-data-compare" class="text-primary data-hover data-clean"></span>
+            </p>                        
+            <p class="mt-0">
+                <i class="bi bi-people-fill"></i> 
+                Followers: 
+                <span id="followers" class="text-primary data-hover data-clean"></span><span id="followers-compare" class="text-primary data-hover data-clean"></span>
+            </p>
+            <p class="mt-0">
+                <i class="bi bi-person-check-fill"></i> 
+                Followings: 
+                <span id="followings" class="text-primary data-hover data-clean"></span><span id="followings-compare" class="text-primary data-hover data-clean"></span>
+            </p>
+            <div id="total-charts" class="row justify-content-center">
+                <div id="total-info">
+                    <h5 id="total-info-h" class="h6">Total tweets analized: </h6>
+                    <h6 id="total-info-i" class="h6">Interval: <i class="bi bi-stopwatch"></i> <span id="interval" title="Average interval between posts"></span></h6>
+                </div>
+            </div>
+        </div>
+        <div id="search-interval" class="col col-sm-12 col-lg-6">
+            <div id="search-sample-new">
+                <h6 class="font-weight-bold">New Search Sample</h6>
+                <p id="search-date" class="h7 mb-0">
+                    Search results of: 
+                    <i class="bi bi-calendar4-week"></i>
+                    <span class="date text-primary mb-0">
+                    </span>
+                    <span class="time text-primary mb-0"><i class="bi bi-clock text-dark"></i> </span>
+                </p>
+                <p id="interval" class="h7 mb-0">
+                    Interval: 
+                    <i class="bi bi-calendar4-week"></i>
+                    <span id="interval-start-date" class="date text-primary mb-0"></span>
+                    <span id="interval-start-time" class="time text-primary mb-0"><i class="bi bi-clock text-dark"></i> </span>
+                    <i class="bi bi-arrow-right"></i>
+                    <i class="bi bi-calendar4-week"></i>
+                    <span id="interval-end-date" class="date text-primary mb-0"></span>
+                    <span id="interval-end-time"class="time text-primary mb-0"><i class="bi bi-clock text-dark"></i> </span>
+                </p>                        
+                <p id="sample" class="h7 mt-0">Sample size: <span class="data text-primary"></span></p>
+            </div>
+            <div id="search-sample-old">
+                <h6 class="font-weight-bold">Old Search Sample</h6>
+                <p id="search-date" class="h7 mb-0">
+                    Search results of: 
+                    <i class="bi bi-calendar4-week"></i>
+                    <span class="date text-primary">
+                    </span>
+                    <span class="time text-primary"><i class="bi bi-clock text-dark"></i> </span>
+                </p>
+                <p id="interval" class="h7 mb-0">
+                    Interval: 
+                    <i class="bi bi-calendar4-week"></i>
+                    <span id="interval-start-date" class="date text-primary"></span>
+                    <span id="interval-start-time" class="time text-primary"><i class="bi bi-clock text-dark"></i> </span>
+                    <i class="bi bi-arrow-right"></i>
+                    <i class="bi bi-calendar4-week"></i>
+                    <span id="interval-end-date" class="date text-primary"></span>
+                    <span id="interval-end-time"class="time text-primary"><i class="bi bi-clock text-dark"></i> </span>
+                </p>                        
+                <p id="sample" class="h7">Sample size: <span class="data text-primary"></span></p>
+            </div>
+        </div>
+    </div>
+    <div id="highlights" class="row  justify-content-between">
+        <h5 class="row text-center"><a href="#Highlights">Highlights</a></h5>
+
+        <div class="col-sm-12 col-md-4 col-lg-4 col-xl-2  flex-row justify-content-center">
+            <p class="text-center mb-0">
+                <i class="bi bi-repeat h1 text-primary"></i>
+            </p>
+            <p id="most-retweet_count-data" class="text-center">
+                Most Retweets
+                <br>
+                <a id="most-retweet_count" class="data-hover data-clean" href="" target="_blank"></a><a id="most-retweet_count-compare" class="data-hover data-clean"  href="" target="_blank"></a>
+            </p>
+        </div>
+        <div class="col-sm-12 col-md-4 col-lg-4 col-xl-2 flex-row justify-content-center">
+            <p class="text-center mb-0">
+                <i class="bi bi-reply-fill h1 text-success"></i>
+            </p>
+            <p id="most-reply_count-data" class="text-center">
+                Most Replies
+                <br>
+                <a id="most-reply_count" class="data-hover data-clean"  href="" target="_blank"></a><a id="most-reply_count-compare" class="data-hover data-clean"  href="" target="_blank"></a>
+            </p>
+        </div>
+        <div class="col-sm-12 col-md-4 col-lg-4 col-xl-2 flex-row justify-content-center">
+            <p class="text-center mb-0">
+                <i class="bi bi-heart-fill primary h1 text-danger"></i>
+            </p>
+            <p id="most-like_count-data" class="text-center">
+                Most Likes 
+                <br>
+                <a id="most-like_count" class="data-hover data-clean"  href="" target="_blank"></a><a id="most-like_count-compare" class="data-hover data-clean"  href="" target="_blank"></a>
+            </p>                        
+        </div>
+        <div class="col-sm-12 col-md-6 col-lg-6 col-xl-2 flex-row justify-content-center">
+            <p class="text-center mb-0">
+                <i class="bi bi-chat-right-quote-fill h1 text-warning"></i>
+            </p>
+            <p id="most-quote_count-data" class="text-center">
+                Most Quotes
+                <br>
+                <a id="most-quote_count" class="data-hover data-clean"  href="" target="_blank"></a><a id="most-quote_count-compare" class="data-hover data-clean"  href="" target="_blank"></a>
+            </p>
+        </div>
+        <div class="col-sm-12 col-md-6 col-lg-6 col-xl-2 flex-row justify-content-center">
+            <p class="text-center mb-0">
+                <i class="bi bi-bar-chart-line-fill h1 text-info" class="text-center"></i>
+            </p>
+            <p id="most-impression_count-data" class="text-center">
+                Most Impressions
+                <br>
+                <a id="most-impression_count" class="data-hover data-clean"  href="" target="_blank"></a><a id="most-impression_count-compare" class="data-hover data-clean"  href="" target="_blank"></a>
+            </p>
+        </div>
+    </div>                
+    <div id="pie-charts" class="row justify-content-between">
+        <div id="tweets-by-media-type-wrapper" class="col-sm-12 col-md-8 col-lg-4 col-xl-4">
+            <h5 class="text-center"><a href="#Tweets-by-media-type">Tweets By Media Type</a></h5>
+            <div id="tweets-by-media-type" class="row pie-chart-container data-clean">
+            </div>
+        </div>
+        <div id="tweets-by-type-wrapper" class="col-sm-12 col-md-8 col-lg-4 col-xl-4">
+            <h5 class="text-center"><a href="#Tweets-by-type">Tweets By Type</a></h5>   
+            <div id="tweets-by-type"  class="row pie-chart-container data-clean">
+            </div>
+        </div>
+        <div id="tweets-by-langs-wrapper" class="col-sm-12 col-md-8 col-lg-4 col-xl-4">
+            <h5 class="text-center"><a href="#tweets-by-language">Tweets By Language</a></h5>   
+            <div id="tweets-by-langs"  class="row pie-chart-container data-clean">
+            </div>
+        </div>
+    </div>
+    <div id="week-charts" class="row justify-content-center mb-5">
+        <h5 id="week-chart-h" class="row h5 text-center"><a href="#Tweets-per-day">Tweets per day</a></h5>
+        <div id="week-chart-wrapper" class="col bar-chart data-clean"></div>
+    </div>
+
+    <div id="hashtags-mentioned_users-wrapper" class="row">
+        <div id="hashtags-wrapper" class="row">
+            <h5 id="hashtags-h" class="col h5"><a href="#top-hashtags">Top 10 Hashtags</a></h5>
+            <h5 id="mentioned_users-h" class="col h5"><a href="#top-mentions">Top 10 Mentions</a></h5>
+        </div>
+        <div id="mentioned_users-wrapper" class="row align-items-end">
+            <div id="hashtags-chart-wrapper" class="col data-clean">    
+            </div>
+            <div id="mentioned_users-chart-wrapper" class="col data-clean">
+            </div>
+        </div>
+    </div>
+    <div id="avg-interactions-wrapper" class="row">                    
+        <div class="row mb-3">
+            <h4><a href="#average">Average interations per tweet by media type</a></h4>
+        </div>
+        <div id="avg-interactions" class="row align-items-start">                            
+            <div id="avg-interactions-text" class="col-sm-12 col-md-12 col-lg-6 col-xl-4">                            
+                <i class="bi bi-chat-right-text-fill"></i>
+                Text: 
+                <i class="bi bi-stopwatch"></i> <span id="interval" title="Average interval between text posts"></span>
+                <ul id="average" class="list-group list-group-flush data-clean"></ul>                           
+            </div>
+            <div id="avg-interactions-video" class="col-sm-12 col-md-12 col-lg-6 col-xl-4">                            
+                <i class="bi bi-camera-reels-fill"></i>
+                Video: 
+                <i class="bi bi-stopwatch"></i> <span id="interval" title="Average interval between video posts"></span>
+                <ul id="average" class="list-group list-group-flush data-clean"></ul>                           
+            </div>
+            <div id="avg-interactions-photo" class="col-sm-12 col-md-12 col-lg-6 col-xl-4">                            
+                <i class="bi bi-camera-fill"></i>
+                Photo: 
+                <i class="bi bi-stopwatch"></i> <span id="interval" title="Average interval between photo posts"></span>
+                <ul id="average" class="list-group list-group-flush data-clean"></ul>                           
+            </div>
+            <div id="avg-interactions-link" class="col-sm-12 col-md-12 col-lg-6 col-xl-4">                            
+                <i class="bi bi-link-45deg"></i>
+                Link:
+                <i class="bi bi-stopwatch"></i> <span id="interval" title="Average interval between link posts"></span>
+                <ul id="average" class="list-group list-group-flush data-clean"></ul>                           
+            </div>
+            <div id="avg-interactions-polls" class="col-sm-12 col-md-12 col-lg-6 col-xl-4">                            
+                <i class="bi bi-bar-chart-fill"></i>
+                Polls:
+                <i class="bi bi-stopwatch"></i> <span id="interval" title="Average interval between poll posts"></span>
+                <ul id="average" class="list-group list-group-flush data-clean"></ul>                           
+            </div>
+            <div id="avg-interactions-animated_gif" class="col-sm-12 col-md-12 col-lg-6 col-xl-4">                            
+                <i class="bi bi-filetype-gif"></i>
+                Animated Gif:
+                <i class="bi bi-stopwatch"></i> <span id="interval" title="Average interval between animated_gif posts"></span>
+                <ul id="average" class="list-group list-group-flush data-clean"></ul>                           
+            </div>
+        </div>
+    </div>
+    
+</div>
