@@ -8,7 +8,7 @@
             <li class="nav-item"><a class="nav-link" href="/dashboard">Dashboard</a></li>
             <li class="nav-item"><a class="nav-link" href="/about">About</a></li>
             <li class="nav-item <% if(!(locals.logout)){%> <%='d-none'%> <%}%>"><a class="nav-link" href="/logout">Logout</a></li>
-            <li class="nav-item"><a class="nav-link" href="#">Dark-Theme</a></li>
+            <li class="nav-item"><button type="button" class="btn btn-sm btn-toggle" data-toggle="button" aria-pressed="false" autocomplete="off"></li>
         </ul>
     </nav>
     <% if(locals.username){%> <h5 class="">Welcome  <%=username%> </h5> <%}%>

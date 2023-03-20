@@ -689,6 +689,8 @@ $(document).ready(async function(){
     $('#search-interval').mouseleave(()=>{
     $('#search-interval .time').hide()
     })
+
+
   }
 
   function appendCompare(id,new_data,old_data){
@@ -713,7 +715,7 @@ $(document).ready(async function(){
       icon.addClass(down)
       icon.attr("title","Lost")
     }
-    
+
     icon.addClass("node-clean")
     $(id).after(icon)
 
