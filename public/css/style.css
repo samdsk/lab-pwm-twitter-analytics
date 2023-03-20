@@ -27,19 +27,7 @@ main form{
 footer div.col {
     background-color:white ;
 }
-#dashboard .row {
 
-}
-
-#dashboard .left{
-
-}
-
-/* #dashboard .right{
-    max-width: 100%;
-    min-height: 600px;
-    overflow: hidden;
-} */
 
 #loader{
     display: flex;
@@ -136,9 +124,6 @@ footer div.col {
     height: 400px;
 }
 
-#results canvas{
-    
-}
 
 .dashboard-nav-hover:hover{
     color:#00c288
