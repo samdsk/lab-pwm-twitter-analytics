@@ -108,7 +108,7 @@ const SeachResultsSchema = new mongoose.Schema({
             count : {type:String},
         }, // tweet with most impressions
     },
-    
+
     type : {
         retweeted : {
             count : {type:Number,default:0},
@@ -146,8 +146,8 @@ const SeachResultsSchema = new mongoose.Schema({
                 quote_count:{type:Number,default:0},
                 impression_count:{type:Number,default:0}
             }
-        }, // original posts        
-         
+        }, // original posts
+
     },
     total : {// total posts
         count : {type:Number,default:0},
@@ -156,7 +156,7 @@ const SeachResultsSchema = new mongoose.Schema({
             impression_count:[{type:Number,default:0}]
         }
     }
-    
+
 })
 
 module.exports = mongoose.model('SearchResults',SeachResultsSchema)
