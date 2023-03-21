@@ -18,7 +18,7 @@ const signup = require('./routes/signup')
 const login = require('./routes/login')
 const dashboard = require('./routes/dashboard')
 const twitter = require('./routes/twitter')
-
+// const results = require('./routes/results')
 const auth_session = require('./middleware/auth_session')
 const not_found = require('./middleware/not_found')
 const error_handler = require('./middleware/error_handler')
@@ -30,16 +30,15 @@ const PORT = process.env.PORT || 3000
 //middlewares
 
 
-// reference -> https://helmetjs.github.io/ 
+// reference -> https://helmetjs.github.io/
 app.use(helmet({
-    contentSecurityPolicy:{ 
+    contentSecurityPolicy:{
         directives : {
             "script-src":["'self'","cdn.jsdelivr.net","cdnjs.cloudflare.com","code.jquery.com"],
             "script-src-attr":["'self'","cdn.jsdelivr.net","cdnjs.cloudflare.com","code.jquery.com"],
             "img-src":["'self'","pbs.twimg.com"]
         }
     }
-    
 }))
 
 app.use((req, res, next) => {
@@ -48,7 +47,8 @@ app.use((req, res, next) => {
     // res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
     res.setHeader('Cross-origin-Embedder-Policy', 'require-corp');
     res.setHeader('Cross-origin-Opener-Policy','same-origin');
- 
+    res.setHeader("Content-Security-Policy", "default-src *; style-src 'self' http://* 'unsafe-inline'; script-src 'self' http://* 'unsafe-inline' 'unsafe-eval'");
+
     if (req.method === 'OPTIONS') {
       res.sendStatus(200)
     } else {
@@ -97,13 +97,14 @@ app.get('/about',function(req,res){
 // app.use(/^\/dashboard.*/,auth_session,dashboard)
 app.use('/dashboard',auth_session,dashboard)
 
-app.use('/twitter',auth_session,twitter) 
+app.use('/twitter',auth_session,twitter)
+// app.use('/results',auth_session,results)
 
 app.use('/signup',signup)
 app.use('/login',login)
 
 app.get('/logout',(req,res)=>{
-    res.clearCookie('logout')    
+    res.clearCookie('logout')
     req.session.destroy()
     res.redirect('/')
 })
