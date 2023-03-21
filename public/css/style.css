@@ -96,9 +96,10 @@ footer div.col {
 
 #results #user-profile #name-username p:nth-child(2){
     margin-top: -1rem;
+    
 }
 
-#results #search-interval .time{
+#search-interval .time{
     display: none;
 }
 

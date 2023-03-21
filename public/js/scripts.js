@@ -74,8 +74,9 @@ $(document).ready(async function(){
     $('#results').removeClass("d-none")
     $('#results').show()
     $('#search-btn').removeAttr("disabled")
-  })  
+  })
 
+  set_data_hover()
   // let data  = await fetch('../js/output_data.json').then( response => {
   //   return response.json()
   // })
@@ -375,20 +376,23 @@ $(document).ready(async function(){
     // 
     // await metricCharts(data.metrics,'metric-charts','retweets')
 
-    set_data_hover()
+    
 
   }
-
+// FIXME check the date and time
   function load_dateTime(id,data){   
-    $(id+" #search-date .date").text((data.date).slice(0,10))
+    let date = data.date.toISOString()
+    $(id+" #search-date .date").text(date.slice(0,10))
     let span = $('<span class="time-span node-clean"></span>')
-    $(id+" #search-date .time").append(span.text((data.date).slice(11,19)))
+    $(id+" #search-date .time").append(span.text(date.slice(11,19)))
 
-    $(id+" #interval-start-date").text((data.start_date).slice(0,10))
-    $("#search-sample-new #interval-start-time").append(span.text((data.start_date).slice(11,19)))
+    let start_date = data.start_date.toISOString()
+    $(id+" #interval-start-date").text(start_date.slice(0,10))
+    $("#search-sample-new #interval-start-time").append(span.text(start_date.slice(11,19)))
 
-    $(id+" #interval-end-date").text((data.end_date).slice(0,10))
-    $(id+" #interval-end-time").append(span.text((data.end_date).slice(11,19)))
+    let end_date = data.end_date.toISOString()
+    $(id+" #interval-end-date").text(end_date.slice(0,10))
+    $(id+" #interval-end-time").append(span.text(end_date.slice(11,19)))
 
     $(id+" #sample span").text(data.total.count)
   }
@@ -683,11 +687,21 @@ $(document).ready(async function(){
       $(this).text($(this).attr("data-round"))      
     })
 
-    $('#search-interval').mouseover(()=>{
-      $('#search-interval .time').show()
+    $('.date').mouseover(function(){
+      $(this).next().show()
+    }).mouseleave(function(){
+      $(this).next().hide()
     })
-    $('#search-interval').mouseleave(()=>{
-    $('#search-interval .time').hide()
+    // NOTE mobile
+    $('.date').on('touchstart tap',(function(){
+      $(this).next().toggle()
+    }))
+     // NOTE mobile
+    $('.data-hover').on('touchstart tap',function(){
+      if($(this).text() == $(this).attr("data-real"))
+        $(this).text($(this).attr("data-round"))
+      else
+        $(this).text($(this).attr("data-real"))
     })
 
 

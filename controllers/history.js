@@ -7,20 +7,31 @@ const getSearchedResults = async (email) => {
     let user = await Auth.findOne({email:email})
     let searched = await User.findOne({_id:user._id},'searched')
     searched = searched.searched
-    const results = []
+    const search_ids = []
+    const projections = `_id date name user_img username 
+    start_date end_date followings followers total_tweets total.count`;
+
     await Promise.all(
-        searched.map( async (result)=> {
-            let temp_result = await SearchResults.findById(result)
-            results.push(temp_result)
+        searched.map( async (id) => {
+            let temp = await SearchResults.findById(id,projections)           
+            console.log(temp.total.count);
+            search_ids.push(temp)
         })
     )
 
-    console.log(results.length, searched.length)
+    return search_ids
 }
 
 const getHistory = async (req,res,next) => {
-    getSearchedResults(req.session.email)
-    res.render('pages/history',{logout:true,username:req.session.username})
+    let results = await getSearchedResults(req.session.email)
+    results = results.sort( (a,b)=>{
+        return new Date(a.date) < new Date(b.date) ? 1 : -1
+    })
+    res.render('pages/history',{
+        logout:true,
+        username:req.session.username,
+        results:results
+    })
 }
 
 module.exports = getHistory
