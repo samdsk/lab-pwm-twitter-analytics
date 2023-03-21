@@ -18,7 +18,7 @@ const signup = require('./routes/signup')
 const login = require('./routes/login')
 const dashboard = require('./routes/dashboard')
 const twitter = require('./routes/twitter')
-// const results = require('./routes/results')
+const results = require('./routes/results')
 const auth_session = require('./middleware/auth_session')
 const not_found = require('./middleware/not_found')
 const error_handler = require('./middleware/error_handler')
@@ -98,7 +98,7 @@ app.get('/about',function(req,res){
 app.use('/dashboard',auth_session,dashboard)
 
 app.use('/twitter',auth_session,twitter)
-// app.use('/results',auth_session,results)
+app.use('/results',auth_session,results)
 
 app.use('/signup',signup)
 app.use('/login',login)
