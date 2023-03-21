@@ -27,19 +27,7 @@ main form{
 footer div.col {
     background-color:white ;
 }
-#dashboard .row {
 
-}
-
-#dashboard .left{
-
-}
-
-/* #dashboard .right{
-    max-width: 100%;
-    min-height: 600px;
-    overflow: hidden;
-} */
 
 #loader{
     display: flex;
@@ -58,7 +46,7 @@ footer div.col {
 }
 
 #results .col{
-    background-color: white;    
+    background-color: white;
     margin-top:1rem;
     padding:1rem;
 }
@@ -97,20 +85,16 @@ footer div.col {
     display: inline-flex;
 }
 
-#results #user-profile img {    
-    border:1px solid #4cc9f0;
-    border-radius: 0.2rem;
-}
-
 #results #user-profile #name-username {
     padding-left :1rem
 }
 
 #results #user-profile #name-username p:nth-child(2){
     margin-top: -1rem;
+
 }
 
-#results #search-interval .time{
+#search-interval .time{
     display: none;
 }
 
@@ -126,19 +110,21 @@ footer div.col {
 }
 
 #results .pie-chart-container{
-    position: relative;     
+    position: relative;
     margin-left: auto;
-    margin-right: auto;    
+    margin-right: auto;
     width:400px;
 }
 
-#results .bar-chart{    
+#results .bar-chart{
     height: 400px;
 }
 
-#results canvas{
-    
+
+.dashboard-nav-hover:hover{
+    color:#00c288
 }
+
 
 @media screen and (max-width: 1000px){
     main form {
@@ -164,7 +150,7 @@ footer div.col {
 
     #results .pie-chart-container{
         width: 300px;
-        
+
     }
 
     #results .bar-chart{
@@ -172,4 +158,3 @@ footer div.col {
     }
 
 }
-

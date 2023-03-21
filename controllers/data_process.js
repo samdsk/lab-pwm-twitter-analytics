@@ -18,8 +18,8 @@ const collectData = async (DATA) => {
     // collect how many tweets of media type and type per day
     const tweets_per_day = {}
 
-    TWEETS.start_date = data[0].created_at
-    TWEETS.end_date = data[data.length-1].created_at
+    TWEETS.start_date = new Date(Date.parse(data[0].created_at))
+    TWEETS.end_date = new Date(Date.parse(data[data.length-1].created_at))
 
     let temp_date = new Date(Date.parse(TWEETS.start_date))
     let temp_end = new Date(Date.parse(TWEETS.end_date))

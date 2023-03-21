@@ -1,6 +1,6 @@
 // ! boostrap form validation check script
 (function () {
-    'use strict'  
+    'use strict'
     // Fetch all the forms we want to apply custom Bootstrap validation styles to
     var forms = document.querySelectorAll('.needs-validation')
     // Loop over them and prevent submission
@@ -10,7 +10,7 @@
           if (!form.checkValidity()) {
             event.preventDefault()
             event.stopPropagation()
-          }  
+          }
           form.classList.add('was-validated')
         }, false)
       })
@@ -21,7 +21,7 @@ Chart.register(ChartDataLabels)
 
 function postViaWorker(data){
   return new Promise((resolve,reject) => {
-    let worker = new Worker('../js/worker.js')    
+    let worker = new Worker('../js/worker.js')
     worker.postMessage(data)
     worker.onmessage = (event) => {
       resolve(event.data)
@@ -37,19 +37,22 @@ $(document).ready(async function(){
   function errorDisplay(){
     const errors = new URLSearchParams(document.location.search)
     if(!errors.entries().next().done){
-      $('#errors').removeClass("d-none")
-      errors.forEach((v,k)=>{
-        $('#errors').append('<p class="mb-0">'+k+" - "+v+"</p>")
-      })
+      if(errors.get('error') || errors.get('warning')){
+        errors.forEach((v,k)=>{
+          $('#errors').append('<p class="mb-0">'+k+" - "+v+"</p>")
+        })
+        $('#errors').removeClass("d-none")
+      }
     }
   }
 
   errorDisplay()
-  
+  set_data_hover()
+
   $('#search-btn').click(async (event)=>{
     event.preventDefault()
-    
-    if($('#handler').val() == '') return 
+
+    if($('#handler').val() == '') return
 
     $('#results').addClass('d-none')
     $('#loader').removeClass('d-none')
@@ -61,11 +64,12 @@ $(document).ready(async function(){
     $('#loader #loader-gif').addClass('d-none')
     // await sleep(1000)
     $('#loader #working-gif').removeClass('d-none')
-    
+
     let data  = await fetch('../js/output_data_compare.json').then( response => {
         return response.json()
     })
     //await sleep(1000)
+
     await genSearchResults(data)
 
     $('#loader #working-gif').addClass('d-none')
@@ -74,13 +78,7 @@ $(document).ready(async function(){
     $('#results').removeClass("d-none")
     $('#results').show()
     $('#search-btn').removeAttr("disabled")
-  })  
-
-  // let data  = await fetch('../js/output_data.json').then( response => {
-  //   return response.json()
-  // })
-  
-  // await genSearchResults(data)
+  })
 
   function cleanResults(){
     $('#results #user-info #user-profile img').remove()
@@ -103,16 +101,16 @@ $(document).ready(async function(){
       gen(data,1)
     }
   }
-  
+
   async function gen(INPUT,LENGTH){
 
     let data = INPUT[0]
     let compare = undefined
     if(LENGTH==2) compare = INPUT[1]
-    
+
     const load_user_datails = async () => {
       $('#results #name').text(data.name)
-    
+
       let ancor = document.createElement('a')
       ancor.href = buildTwitterUrl(data.username)
       ancor.id = "username-link"
@@ -120,18 +118,18 @@ $(document).ready(async function(){
       ancor.innerText = "@"+data.username
       ancor.target = '_blank'
       $('#results #username').empty().append(ancor)
-      
+
       let img = new Image()
       img.crossOrigin = "anonymouse"
       img.src = data.user_img
       img.width = "73"
       img.height = "73"
-      
+
       $('#results #user-info #user-profile').prepend(img)
 
       let count = data.total_tweets
       let count_rounded = tweetCount(count)
-      
+
       $('#total-tweets-data')
       .attr({"data-real":count, "data-round":count_rounded,"title":"Total tweets"})
       .text(count_rounded)
@@ -187,9 +185,9 @@ $(document).ready(async function(){
       let id = "#search-sample-new"
       load_dateTime(id,data)
     }
-    
+
     const load_sample_interval_old = async () => {
-      if(compare == null || compare == undefined){      
+      if(compare == null || compare == undefined){
         $("#search-sample-old").remove()
         return
       }
@@ -217,11 +215,11 @@ $(document).ready(async function(){
           $(id+"-compare").attr({
             "href":buildTwitterPostUrl(compare.username,compare.highlights[type].id)
           })
-          } 
+          }
 
         }
-    }   
-    
+    }
+
     const load_tweets_by_media_type_data = async () => {
       for(let type of Object.keys(data.media_type)){
 
@@ -246,7 +244,7 @@ $(document).ready(async function(){
       let id = "tweets-by-type-data"
 
       for(let type of Object.keys(data.type)){
-        
+
         let span = $('<span id="'+id+'-'+type+'" class="data-hover"></span>').text(tweetCount(data.type[type].count))
         let span_compare = $('<span id="'+id+'-'+type+'-compare" class="data-hover"></span>')
 
@@ -261,32 +259,32 @@ $(document).ready(async function(){
     }
 
     const load_avg_metrics_table = async () => {
-      for(let type of Object.keys(data.media_type)){        
+      for(let type of Object.keys(data.media_type)){
 
         let id = 'avg-interactions-'+type
         $('#'+id+' #interval').text(msToHMS(data.media_type[type].interval))
-        
+
         for(let key of Object.keys(data.media_type[type].metrics)){
           let li = $('<a onclick="return false;" class="list-group-item data-clean"></a>')
-          
+
           if(data.media_type[type].count == 0) {
             $('#'+id).remove()
             continue
           }
-          
+
           let avg_count = Math.floor(data.media_type[type].metrics[key]/data.media_type[type].count)
-          
+
           let name = countToPlural(key)
           li.text(name+" : ")
-          
-          let span_id = id+'-'+key          
+
+          let span_id = id+'-'+key
           let span = $('<span id="'+span_id+'"class="data-hover data-clean">'+tweetCount(avg_count)+'</span>')
           span.attr({"data-real":avg_count, "data-round":tweetCount(avg_count),"title":"Average "+name.toLowerCase()})
-          let compare_span = $('<span id="'+span_id+'-compare" class="data-hover data-clean"></span>')            
-          
+          let compare_span = $('<span id="'+span_id+'-compare" class="data-hover data-clean"></span>')
+
           li.append(span).append(compare_span)
           $('#'+id+' ul#average').append(li)
-          
+
           if(compare){
             let avg_count_compare = Math.floor(compare.media_type[type].metrics[key]/compare.media_type[type].count)
             appendCompare('#'+span_id,avg_count,avg_count_compare)
@@ -306,7 +304,7 @@ $(document).ready(async function(){
       let id = "hashtags-chart-wrapper"
       if(data.hashtags){
         let hashtags = Object.entries(data.hashtags).sort((a,b)=> b[1]-a[1]).slice(0,10)
-        await barChart(hashtags,id,"hashtags")        
+        await barChart(hashtags,id,"hashtags")
       }
     }
 
@@ -314,15 +312,15 @@ $(document).ready(async function(){
       let id = "mentioned_users-chart-wrapper"
       if(data.mentioned_users){
         let mentions = Object.entries(data.mentioned_users).sort((a,b)=> b[1]-a[1]).slice(0,10)
-        await barChart(mentions,id,"mentioned_users")        
+        await barChart(mentions,id,"mentioned_users")
       }
-    }    
+    }
 
     const load_langs_chart = async () => {
-      let id = "tweets-by-langs"  
+      let id = "tweets-by-langs"
       let dataset = extractLangs(data.langs)
       await pieCharts(dataset.data,dataset.labels,null,id)
-      return 
+      return
     }
 
     const load_media_type_Chart = async () => {
@@ -337,9 +335,9 @@ $(document).ready(async function(){
     const load_type_Chart = async () => {
       let id = "tweets-by-type"
       let labels = ["Retweets","Replies","Quotes","Originals"]
-      if(compare) 
+      if(compare)
         await pieCharts(extractCounts(data.type),labels,extractCounts(compare.type),id,'doughnut')
-      else 
+      else
         await pieCharts(extractCounts(data.type),labels,null,id,'doughnut')
     }
 
@@ -359,7 +357,7 @@ $(document).ready(async function(){
       load_followings(),
       load_sample_internal_new(),
       load_sample_interval_old(),
-      load_highlights(), 
+      load_highlights(),
       load_avg_metrics_table(),
       load_total_info(),
       load_week_chart(),
@@ -371,24 +369,27 @@ $(document).ready(async function(){
     ])
 
     //input,labels,id,type
-    // 
-    // 
+    //
+    //
     // await metricCharts(data.metrics,'metric-charts','retweets')
 
-    set_data_hover()
+
 
   }
-
-  function load_dateTime(id,data){   
-    $(id+" #search-date .date").text((data.date).slice(0,10))
+// FIXME check the date and time
+  function load_dateTime(id,data){
+    let date = data.date.toISOString()
+    $(id+" #search-date .date").text(date.slice(0,10))
     let span = $('<span class="time-span node-clean"></span>')
-    $(id+" #search-date .time").append(span.text((data.date).slice(11,19)))
+    $(id+" #search-date .time").append(span.text(date.slice(11,19)))
 
-    $(id+" #interval-start-date").text((data.start_date).slice(0,10))
-    $("#search-sample-new #interval-start-time").append(span.text((data.start_date).slice(11,19)))
+    let start_date = data.start_date.toISOString()
+    $(id+" #interval-start-date").text(start_date.slice(0,10))
+    $("#search-sample-new #interval-start-time").append(span.text(start_date.slice(11,19)))
 
-    $(id+" #interval-end-date").text((data.end_date).slice(0,10))
-    $(id+" #interval-end-time").append(span.text((data.end_date).slice(11,19)))
+    let end_date = data.end_date.toISOString()
+    $(id+" #interval-end-date").text(end_date.slice(0,10))
+    $(id+" #interval-end-time").append(span.text(end_date.slice(11,19)))
 
     $(id+" #sample span").text(data.total.count)
   }
@@ -426,7 +427,7 @@ $(document).ready(async function(){
   }
   // draw pie charts
   async function pieCharts(data_1,labels,data_2,id,chartType = 'pie'){
-    
+
     let canvas = document.createElement("canvas")
     canvas.id = id+"-chart"
     document.getElementById(id).appendChild(canvas)
@@ -446,7 +447,7 @@ $(document).ready(async function(){
         label:cleanText(id)+" old",
         data:data_2,
         backgroundColor:colors,
-        hoverOffset: 4        
+        hoverOffset: 4
       }
       datasets.push(dataset_2)
     }
@@ -464,7 +465,7 @@ $(document).ready(async function(){
         plugins:{
           legend:{
             position:"left",
-            labels: {           
+            labels: {
               boxWidth:10,
               borderRadius:10,
               generateLabels: (chart) => {
@@ -478,10 +479,10 @@ $(document).ready(async function(){
             }
           },
           datalabels:{
-            anchor:"center",            
-            color:'white',            
+            anchor:"center",
+            color:'white',
             formatter: (value,context)=>{
-              let total = context.dataset.data.reduce((acc,v)=> acc+v,0)              
+              let total = context.dataset.data.reduce((acc,v)=> acc+v,0)
               let perc = Math.floor(value/total *100)
               return perc>2 ? perc+"%":''
             }
@@ -500,7 +501,7 @@ $(document).ready(async function(){
 
     return struct
   }
-  
+
   function extractMediaAndType(data,colors){
     let labels = Object.keys(data)
     let count = 0
@@ -533,13 +534,13 @@ $(document).ready(async function(){
     }
 
     let output = []
-    for(let m of Object.keys(media)){      
+    for(let m of Object.keys(media)){
       output.push(toDataset(media[m],m,colors[count++],0))
     }
 
     count = 0
 
-    for(let t of Object.keys(type)){      
+    for(let t of Object.keys(type)){
       output.push(toDataset(type[t],t,colors[count++],1))
     }
 
@@ -548,8 +549,8 @@ $(document).ready(async function(){
   async function metricCharts(datasets,labels,id,type){
     let canvas = document.createElement("canvas")
     canvas.id = type+"-chart"
-    
-    document.getElementById(id).appendChild(canvas)      
+
+    document.getElementById(id).appendChild(canvas)
 
     new Chart(document.getElementById(canvas.id),{
     type:'bar',
@@ -564,7 +565,7 @@ $(document).ready(async function(){
         title:{
           display:true,
           text:cleanText(id)
-        },          
+        },
          legend: {
             display: false
          },
@@ -581,12 +582,12 @@ $(document).ready(async function(){
         },
       }
     },
-    
+
   })
 
   }
   async function barChart(data,id,type){
-    
+
     let canvas = document.createElement("canvas")
     canvas.id = type+"-chart"
     document.getElementById(id).appendChild(canvas)
@@ -601,7 +602,7 @@ $(document).ready(async function(){
 
     color = '#5634f0'
     new Chart(document.getElementById(canvas.id),{
-      type:'bar',      
+      type:'bar',
       data:{
         labels :  labels,
         datasets: [{
@@ -649,7 +650,7 @@ $(document).ready(async function(){
           data: data,
           fill: false,
           borderColor: color,
-          tension: 0.5                   
+          tension: 0.5
         }],
       },
       options: {
@@ -674,38 +675,56 @@ $(document).ready(async function(){
       return key.charAt(0).toUpperCase()+key.slice(1,-6)+"s"
   }
 
-  function set_data_hover(){   
+  function set_data_hover(){
     $(".data-hover").mouseover(function(){
       $(this).text($(this).attr("data-real"))
     })
-    
-    $('.data-hover').mouseleave(function(){      
-      $(this).text($(this).attr("data-round"))      
+
+    $('.data-hover').mouseleave(function(){
+      $(this).text($(this).attr("data-round"))
     })
 
-    $('#search-interval').mouseover(()=>{
-      $('#search-interval .time').show()
+    $('.date').mouseover(function(){
+      $(this).next().show()
+    }).mouseleave(function(){
+      $(this).next().hide()
     })
-    $('#search-interval').mouseleave(()=>{
-    $('#search-interval .time').hide()
+    // NOTE mobile
+    $('.date').on('touchstart tap',(function(){
+      $(this).next().toggle()
+    }))
+     // NOTE mobile
+    $('.data-hover').on('touchstart tap',function(){
+      if($(this).text() == $(this).attr("data-real"))
+        $(this).text($(this).attr("data-round"))
+      else
+        $(this).text($(this).attr("data-real"))
     })
   }
 
+  $('.close-icon').hover(function(){
+    $(this).removeClass('bi-x-square')
+    $(this).addClass('bi-x-square-fill')
+  },function(){
+    $(this).removeClass('bi-x-square-fill')
+    $(this).addClass('bi-x-square')
+  })
+
   function appendCompare(id,new_data,old_data){
     if(old_data == null || old_data == undefined) return
-    
+
     if(old_data == new_data) return
 
     let up = ["bi-caret-up-fill","text-success"]
     let down = ["bi-caret-down-fill","text-danger"]
 
     // console.log(new_data,old_data);
-    
+
     let diff = new_data - old_data
     let rounded_data = tweetCount(diff)
 
     let icon = $('<i class="bi ms-1 me-1"></i>')
-    
+
     if(new_data>old_data){
       icon.addClass(up)
       icon.attr("title","Gained")
@@ -713,7 +732,7 @@ $(document).ready(async function(){
       icon.addClass(down)
       icon.attr("title","Lost")
     }
-    
+
     icon.addClass("node-clean")
     $(id).after(icon)
 
@@ -727,10 +746,10 @@ $(document).ready(async function(){
   }
 
   function cleanText(str){
-    let regex = /[^A-Za-z0-9]/g    
+    let regex = /[^A-Za-z0-9]/g
     return str.replace(regex," ")
   }
-  function normalize(data){    
+  function normalize(data){
     let output = []
     let max = Math.max(...data)
     for(let i=0;i<data.length;i++){
@@ -750,10 +769,10 @@ $(document).ready(async function(){
   function tweetCount(count){
     if (count / 1000000 >= 1 || count / 1000000 <= -1)
       return (count / 1000000).toFixed(2) + "M"
-    
+
     if(count / 1000 >= 1 || count / 1000 <= -1)
       return (count / 1000).toFixed(1) + "K"
-    
+
     return count
   }
 
@@ -794,7 +813,7 @@ $(document).ready(async function(){
 
 // $('.dashboard').click((event)=>{
   //   event.preventDefault()
-  //   //if(localStorage.getItem('token')==null) return 
+  //   //if(localStorage.getItem('token')==null) return
   //   $.ajax({
     //     url:'/dashboard',
     //     headers:{'Authorization':'Bear '+localStorage.getItem('token') },
@@ -803,18 +822,18 @@ $(document).ready(async function(){
       //     }
       //   })
       // })
-      
+
       // $('#login').click((event)=>{
         //   event.preventDefault()
-  //   $.post("/login",$('#sign-in').serialize(),(data,status,xhr)=>{      
+  //   $.post("/login",$('#sign-in').serialize(),(data,status,xhr)=>{
     //     if(xhr.status == 200){
       //       window.location.href = '/dashboard'
       //     }
       //     console.log('no token received')
       //   })
       // })
-      
-      // $.post("/twitter",$('#form-search').serialize(),(data,status,xhr)=>{      
+
+      // $.post("/twitter",$('#form-search').serialize(),(data,status,xhr)=>{
       //   if(xhr.status == 200){
       //     let json_data = JSON.parse(data)
       //     build(json_data[0])
@@ -824,5 +843,5 @@ $(document).ready(async function(){
       //   }else{
       //     console.log('twitter error '+xhr.status)
       //   }
-        
+
       // })

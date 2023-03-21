@@ -4,8 +4,9 @@ const AuthSchema = new mongoose.Schema({
     _id:{type:mongoose.Schema.Types.ObjectId},
     email: {
         type:String,
+        required:true,
         unique:true,
-        required:true
+        dropDups: true
     },
     password: {type:String,required:true}
 })
