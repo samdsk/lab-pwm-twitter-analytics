@@ -46,7 +46,7 @@ footer div.col {
 }
 
 #results .col{
-    background-color: white;    
+    background-color: white;
     margin-top:1rem;
     padding:1rem;
 }
@@ -85,18 +85,13 @@ footer div.col {
     display: inline-flex;
 }
 
-#results #user-profile img {    
-    border:1px solid #4cc9f0;
-    border-radius: 0.2rem;
-}
-
 #results #user-profile #name-username {
     padding-left :1rem
 }
 
 #results #user-profile #name-username p:nth-child(2){
     margin-top: -1rem;
-    
+
 }
 
 #search-interval .time{
@@ -115,13 +110,13 @@ footer div.col {
 }
 
 #results .pie-chart-container{
-    position: relative;     
+    position: relative;
     margin-left: auto;
-    margin-right: auto;    
+    margin-right: auto;
     width:400px;
 }
 
-#results .bar-chart{    
+#results .bar-chart{
     height: 400px;
 }
 
@@ -155,7 +150,7 @@ footer div.col {
 
     #results .pie-chart-container{
         width: 300px;
-        
+
     }
 
     #results .bar-chart{
@@ -163,4 +158,3 @@ footer div.col {
     }
 
 }
-
