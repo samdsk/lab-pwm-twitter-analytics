@@ -1,111 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
-    <%- include('../partials/head') %> 
+    <%- include('../partials/head') %>
 <body>
-    <%- include('../partials/header') %> 
+    <%- include('../partials/header') %>
     <main class="container mt-5 mb-5" id="dashboard">
         <noscript>Sorry, your browser does not support JavaScript!</noscript>
         <div class="row">
             <%- include('../partials/dashboard.ejs') %>
 
-            <% 
-            const date_time = (date) => {
-                let str = date.toISOString()
-                return [str.slice(0,10),str.slice(11,19)]
-            }
-            function tweetCount(count){
-                if (count / 1000000 >= 1 || count / 1000000 <= -1)
-                return (count / 1000000).toFixed(2) + "M"
-                
-                if(count / 1000 >= 1 || count / 1000 <= -1)
-                return (count / 1000).toFixed(1) + "K"
-                
-                return count
-            }
-            %>
-
             <div class="col right border p-3">
-                <h3>History</h3>
-                <h6>Last searches</h6>
-                <div id="search-history" class="row">
-                    <% if(locals.results && results.length){ %>
-                        <% for(let data of results) {%>
-                            <div id="<%=data._id.toString() %>" class="row">
-                                <div id="user-profile" class="col">
-                                    <div id="name-username">
-                                        <img id="user-profile-image" src="<%= data.user_img %>" width="73" crossorigin="anonymous">
-                                        <p id="name"><i class="bi bi-person"></i><span><%= data.name %></span> </p>
-                                        <p id="username"><i class="bi bi-twitter"></i><span><%= data.username %></span> </p>
-                                    </div>
-                                    <p id="total-tweets" class="">
-                                        <i class="bi bi-arrow-down-up"></i> 
-                                        Total tweets: 
-                                        <% let total_tweets_r = tweetCount(data.total_tweets) %>
-                                        <span id="total-tweets-data" class="text-primary data-hover data-clean" data-real="<%= data.total_tweets %>" data-round="<%= total_tweets_r %>"><%= total_tweets_r %></span><span id="total-tweets-data-compare" class="text-primary data-hover data-clean"></span>
-                                    </p>                        
-                                    <p class="mt-0">
-                                        <i class="bi bi-people-fill"></i> 
-                                        Followers: 
-                                        <% let followers = tweetCount(data.followers) %>
-                                        <span id="followers" class="text-primary data-hover data-clean" data-real="<%= data.followers %>" data-round="<%= followers %>"><%= followers %></span><span id="followers-compare" class="text-primary data-hover data-clean"></span>
-                                    </p>
-                                    <p class="mt-0">
-                                        <i class="bi bi-person-check-fill"></i> 
-                                        Followings: 
-                                        <% let followings = tweetCount(data.followings) %>
-                                        <span id="followings" class="text-primary data-hover data-clean" data-real="<%= data.followings %>" data-round="<%= followings %>"><%= followings %></span><span id="followings-compare" class="text-primary data-hover data-clean"></span>
-                                    </p>
-                                </div>
-                                <div id="search-interval" class="col">
-                                    <p id="search-date" class="h7 mb-0">
-                                        Search results of: 
-                                        <i class="bi bi-calendar4-week"></i>
-                                        <span class="date text-primary mb-0"> 
-                                            <% let date = date_time(data.date) %>                                           
-                                            <%= date[0] %>
-                                        </span>
-                                        <span class="time text-primary mb-0"><i class="bi bi-clock text-dark"></i>
-                                            <%= date[1] %>
-                                        </span>
-                                    </p>
-                                    <p id="interval" class="h7 mb-0">
-                                        Interval: 
-                                        <i class="bi bi-calendar4-week"></i>
-                                        <span id="interval-start-date" class="date text-primary mb-0">
-                                            <% let start_date = date_time(data.start_date)
-                                            %>
-                                            <%= start_date[0] %>
-                                        </span>
-                                        <span id="interval-start-time" class="time text-primary mb-0"><i class="bi bi-clock text-dark"></i>
-                                            <%= start_date[1] %>
-                                        </span>
-                                        <i class="bi bi-arrow-right"></i>
-                                        <i class="bi bi-calendar4-week"></i>
-                                        <span id="interval-end-date" class="date text-primary mb-0">
-                                            <% let end_date = date_time(data.end_date)  %>
-                                            <%= end_date[0] %>
-                                        </span>
-                                        <span id="interval-end-time"class="time text-primary mb-0"><i class="bi bi-clock text-dark"></i>
-                                            <%= end_date[1] %>
-                                        </span>
-                                    </p>                        
-                                    <p id="sample" class="h7 mt-0">Sample size: 
-                                        <span class="data text-primary">
-                                            <%= data.total.count %>
-                                        </span>
-                                    </p>
-                        
-                                </div>
-                            </div>
-                        <% } %>
-                    <% }else{ %>
-                        <div id="no-results">404 zZZzzzZZZzz </div>
-                    <% } %>
-                </div>                
+                <%- include('../partials/search_results.ejs') %>
+                <div id="errors" class="alert alert-danger d-none"></div>
             </div>
         </div>
     </main>
-    <%- include('../partials/footer') %> 
+    <%- include('../partials/footer') %>
 </body>
 <%- include('../partials/scripts') %>
 </html>
