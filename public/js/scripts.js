@@ -19,10 +19,10 @@
 // ! chartsjs plugins
 Chart.register(ChartDataLabels)
 
-function postViaWorker(data){
+function postViaWorker(data,method,url){
   return new Promise((resolve,reject) => {
     let worker = new Worker('../js/worker.js')
-    worker.postMessage(data)
+    worker.postMessage({data:data,method:method,url:url})
     worker.onmessage = (event) => {
       resolve(event.data)
     }
@@ -49,6 +49,23 @@ $(document).ready(async function(){
   errorDisplay()
   set_data_hover()
 
+  $('.searched-entry').click(async function(){
+    let id = $(this).attr('id')
+    let url = '/results?compare=0&id='+id
+    let data = await postViaWorker(null,'GET',url)
+    // console.log(data);
+    if(data.error) return
+    await genSearchResults(data)
+
+    $('#results-wrapper').removeClass('d-none').modal('toggle')
+    $('#results').removeClass('d-none')
+
+  })
+
+  $('#results-wrapper .model-close-button').click(function(){
+    $('#results-wrapper').modal('hide')
+  })
+
   $('#search-btn').click(async (event)=>{
     event.preventDefault()
 
@@ -59,7 +76,7 @@ $(document).ready(async function(){
     $('#loader #loader-gif').removeClass('d-none')
     $('#search-btn').prop("disabled",true)
 
-    // let data = await postViaWorker($('#form-search').serialize())
+    // let data = await postViaWorker($('#form-search').serialize(),'POST','/twitter')
     //await sleep(1000)
     $('#loader #loader-gif').addClass('d-none')
     // await sleep(1000)
@@ -82,8 +99,8 @@ $(document).ready(async function(){
 
   function cleanResults(){
     $('#results #user-info #user-profile img').remove()
-    $('.data-clean').each((i,obj) => $(obj).empty())
-    $('.node-clean').each((i,obj) => $(obj).remove())
+    $('#results .data-clean').each((i,obj) => $(obj).empty())
+    $('#results .node-clean').each((i,obj) => $(obj).remove())
 
   }
   // ! populate with seach results + charts
@@ -130,36 +147,36 @@ $(document).ready(async function(){
       let count = data.total_tweets
       let count_rounded = tweetCount(count)
 
-      $('#total-tweets-data')
+      $('#results #total-tweets-data')
       .attr({"data-real":count, "data-round":count_rounded,"title":"Total tweets"})
       .text(count_rounded)
 
       if(compare)
-        appendCompare("#total-tweets-data",count,compare.total_tweets)
+        appendCompare("#results #total-tweets-data",count,compare.total_tweets)
     }
 
     const load_followers = async () => {
       let count = data.followers
       let count_rounded = tweetCount(count)
 
-      $('#followers')
+      $('#results #followers')
       .attr({"data-real":count, "data-round":count_rounded,"title":"Total followers"})
       .text(count_rounded)
 
       if(compare)
-        appendCompare("#followers",count,compare.followers)
+        appendCompare("#results #followers",count,compare.followers)
     }
 
     const load_followings = async () => {
       let count = data.followings
       let count_rounded = tweetCount(count)
 
-      $('#followings')
+      $('#results #followings')
       .attr({"data-real":count, "data-round":count_rounded,"title":"Total followings"})
       .text(count_rounded)
 
       if(compare)
-        appendCompare("#followings",count,compare.followings)
+        appendCompare("#results #followings",count,compare.followings)
     }
 
     const load_total_info = async () => {
@@ -171,18 +188,18 @@ $(document).ready(async function(){
       span.attr({"data-real":count,"data_round":count_rounded,"title":"Total tweets analized"})
       let span_compare = $('<span id="'+id+'-data-compare" class="data-hover data-clean"></span>')
 
-      $('#'+id).append(span).append(span_compare)
+      $('#results #'+id).append(span).append(span_compare)
 
       id = id+"-data"
       if(compare)
-        appendCompare('#'+id,count,compare.total.count)
+        appendCompare('#results #'+id,count,compare.total.count)
 
-      $("#total-info-i #interval").text(msToHMS(data.total.interval))
+      $("#results #total-info-i #interval").text(msToHMS(data.total.interval))
 
     }
 
     const load_sample_internal_new = async () =>{
-      let id = "#search-sample-new"
+      let id = "#results #search-sample-new"
       load_dateTime(id,data)
     }
 
@@ -193,14 +210,14 @@ $(document).ready(async function(){
       }
 
       if(compare){
-        let id = "#search-sample-old"
+        let id = "#results #search-sample-old"
         load_dateTime(id,compare)
       }
     }
 
     const load_highlights = async () => {
       for(let type of Object.keys(data.highlights)){
-        let id = '#most-'+type
+        let id = '#results  #most-'+type
         let round = tweetCount(data.highlights[type].count)
         $(id).attr({
           "data-real":data.highlights[type].count,
@@ -233,10 +250,10 @@ $(document).ready(async function(){
         let span_compare = $('<span id="'+id+'-compare" class="data-hover data-clean"></span>')
 
         let li = $('<li class="list-group-item data-clean">'+toUpperFirstChar(cleanText(type))+': </li>').append(span).append(span_compare)
-        $('#tweets-by-media-type-data ul').append(li)
+        $('#results  #tweets-by-media-type-data ul').append(li)
 
         if(compare)
-         appendCompare('#'+id,count,compare.media_type[type].count)
+         appendCompare('#results  #'+id,count,compare.media_type[type].count)
       }
     }
 
@@ -251,9 +268,9 @@ $(document).ready(async function(){
         span.attr({"data-real":data.type[type].count, "data-round":tweetCount(data.type[type].count),"title":type})
 
         let li = $('<li class="list-group-item">'+type+': </li>').append(span).append(span_compare)
-        $('#'+id+' ul').append(li)
+        $('#results #'+id+' ul').append(li)
         if(compare)
-          appendCompare('#'+id+'-'+type,data.type[type].count,compare.type[type].count)
+          appendCompare('#results #'+id+'-'+type,data.type[type].count,compare.type[type].count)
 
       }
     }
@@ -262,7 +279,7 @@ $(document).ready(async function(){
       for(let type of Object.keys(data.media_type)){
 
         let id = 'avg-interactions-'+type
-        $('#'+id+' #interval').text(msToHMS(data.media_type[type].interval))
+        $('#results #'+id+' #interval').text(msToHMS(data.media_type[type].interval))
 
         for(let key of Object.keys(data.media_type[type].metrics)){
           let li = $('<a onclick="return false;" class="list-group-item data-clean"></a>')
@@ -283,11 +300,11 @@ $(document).ready(async function(){
           let compare_span = $('<span id="'+span_id+'-compare" class="data-hover data-clean"></span>')
 
           li.append(span).append(compare_span)
-          $('#'+id+' ul#average').append(li)
+          $('#results #'+id+' ul#average').append(li)
 
           if(compare){
             let avg_count_compare = Math.floor(compare.media_type[type].metrics[key]/compare.media_type[type].count)
-            appendCompare('#'+span_id,avg_count,avg_count_compare)
+            appendCompare('#results #'+span_id,avg_count,avg_count_compare)
           }
         }
       }
@@ -299,15 +316,17 @@ $(document).ready(async function(){
         lineCharts(id+type,data.total.metrics[type],type)
       }
     }
-
+// FIXME append something then there is no hashtag graph
     const load_hashtags = async () => {
       let id = "hashtags-chart-wrapper"
       if(data.hashtags){
         let hashtags = Object.entries(data.hashtags).sort((a,b)=> b[1]-a[1]).slice(0,10)
         await barChart(hashtags,id,"hashtags")
+      }else{
+        $('#'+id).append('<h5>No data</h5>')
       }
     }
-
+// FIXME append something then there is no mentions graph
     const load_mentioned_users = async () => {
       let id = "mentioned_users-chart-wrapper"
       if(data.mentioned_users){
@@ -376,20 +395,24 @@ $(document).ready(async function(){
 
 
   }
-// FIXME check the date and time
+
   function load_dateTime(id,data){
-    let date = data.date.toISOString()
+    let date = data.date
     $(id+" #search-date .date").text(date.slice(0,10))
     let span = $('<span class="time-span node-clean"></span>')
-    $(id+" #search-date .time").append(span.text(date.slice(11,19)))
+    console.log(date.slice(11,19));
+    $(id+" #search-date .time").append(
+      $('<span class="time-span node-clean"></span>').text(date.slice(11,19)))
 
-    let start_date = data.start_date.toISOString()
+    let start_date = data.start_date
     $(id+" #interval-start-date").text(start_date.slice(0,10))
-    $("#search-sample-new #interval-start-time").append(span.text(start_date.slice(11,19)))
+    $(id+" #interval-start-time").append(
+      $('<span class="time-span node-clean"></span>').text(start_date.slice(11,19)))
 
-    let end_date = data.end_date.toISOString()
+    let end_date = data.end_date
     $(id+" #interval-end-date").text(end_date.slice(0,10))
-    $(id+" #interval-end-time").append(span.text(end_date.slice(11,19)))
+    $(id+" #interval-end-time").append(
+      $('<span class="time-span node-clean"></span>').text(end_date.slice(11,19)))
 
     $(id+" #sample span").text(data.total.count)
   }
@@ -401,7 +424,7 @@ $(document).ready(async function(){
     Object.entries(langs).map( e => {
       let eng = new Intl.DisplayNames(e[0],{type:"language",fallback:'none'})
       let lang = eng.of(e[0])
-      console.log(lang);
+      // console.log(lang);
       if(lang && lang != "No linguistic content"){
         labels.push(lang)
         dataset.push(e[1])
@@ -464,7 +487,7 @@ $(document).ready(async function(){
         maintainAspectRatio:false,
         plugins:{
           legend:{
-            position:"left",
+            position:"bottom",
             labels: {
               boxWidth:10,
               borderRadius:10,

@@ -13,6 +13,19 @@
                 <div id="errors" class="alert alert-danger d-none"></div>
             </div>
         </div>
+        <div id="results-wrapper" class="modal fade d-none"  tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+
+                    <div class="modal-body">
+                        <%- include('../partials/results.ejs') %>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn model-close-button btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
     <%- include('../partials/footer') %>
 </body>
