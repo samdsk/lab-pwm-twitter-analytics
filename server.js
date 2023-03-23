@@ -34,9 +34,9 @@ const PORT = process.env.PORT || 3000
 app.use(helmet({
     contentSecurityPolicy:{
         directives : {
-            "script-src":["'self'","cdn.jsdelivr.net","cdnjs.cloudflare.com","code.jquery.com"],
-            "script-src-attr":["'self'","cdn.jsdelivr.net","cdnjs.cloudflare.com","code.jquery.com"],
-            "img-src":["'self'","pbs.twimg.com"]
+            "script-src":["'self'","'unsafe-inline'","cdn.jsdelivr.net","cdnjs.cloudflare.com","code.jquery.com"],
+            "script-src-attr":["'self'","'unsafe-inline'","cdn.jsdelivr.net","cdnjs.cloudflare.com","code.jquery.com"],
+            "img-src":["'self'","pbs.twimg.com",'data:']
         }
     }
 }))
@@ -47,7 +47,7 @@ app.use((req, res, next) => {
     // res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
     res.setHeader('Cross-origin-Embedder-Policy', 'require-corp');
     res.setHeader('Cross-origin-Opener-Policy','same-origin');
-    res.setHeader("Content-Security-Policy", "default-src *; style-src 'self' http://* 'unsafe-inline'; script-src 'self' http://* 'unsafe-inline' 'unsafe-eval'");
+    // res.setHeader("Content-Security-Policy", "default-src *; style-src 'self' http://* 'unsafe-inline'; script-src 'self' http://* 'unsafe-inline' 'unsafe-eval'");
 
     if (req.method === 'OPTIONS') {
       res.sendStatus(200)
