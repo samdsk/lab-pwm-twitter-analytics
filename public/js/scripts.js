@@ -54,6 +54,7 @@ $(document).ready(async function(){
   errorDisplay()
   set_data_hover()
 
+  // show detailed clicked result
   $('.searched-entry').click(async function(){
     console.log("hello?");
     let id = $(this).attr('id')
@@ -68,13 +69,13 @@ $(document).ready(async function(){
 
   })
 
+  // model close button
   $('#results-wrapper .model-close-button').click(function(){
     $('#results-wrapper').modal('hide')
   })
 
+  // show detailed comparing results
   $('.compare-btn').click(async function(event){
-
-    let username = ""
 
     const id_1 =  $('.form-check-input:checked').attr('data-id')
     const id_2 =  $(this).parent().find('.form-check-input').attr('data-id')
