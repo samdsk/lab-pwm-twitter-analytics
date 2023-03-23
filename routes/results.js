@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
-const {getResults} = require('../controllers/results')
+const {getResults,removeResult} = require('../controllers/results')
 
-router.route('/').get(getResults)
+router.route('/').get(getResults).delete(removeResult)
 
 module.exports = router

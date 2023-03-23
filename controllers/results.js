@@ -2,23 +2,22 @@ const mongoose = require('mongoose')
 const Auth = require('../models/Auth')
 const User = require('../models/User')
 const SearchResults = require('../models/SearchResults')
-const path = require('path')
+
+async function validateID(id){
+    if(!mongoose.isValidObjectId(id)) return false
+
+    let user_id = await Auth.findOne({email:req.session.email})
+    let searched = await User.findById(user_id._id,'searched')
+
+    if(!searched.searched.includes(id)){
+        return false
+    }
+
+    return true
+}
 
 
 const getResults = async (req,res,next) => {
-
-    async function validateID(id){
-        if(!mongoose.isValidObjectId(id)) return false
-
-        let user_id = await Auth.findOne({email:req.session.email})
-        let searched = await User.findById(user_id._id,'searched')
-
-        if(!searched.searched.includes(id)){
-            return false
-        }
-
-        return true
-    }
 
     if(req.query.compare > 0){
 
@@ -43,4 +42,8 @@ const getResults = async (req,res,next) => {
 
 }
 
-module.exports = {getResults}
+const removeResult = async (req,res,next) => {
+    res.sendStatus(200)
+}
+
+module.exports = {getResults,removeResult}
