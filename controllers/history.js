@@ -21,10 +21,6 @@ const getSearchedResults = async (email) => {
 }
 
 const getHistory = async (req,res,next) => {
-    if(req.query.error) return res.render('pages/history',{
-        logout:true,
-        username:req.session.username,
-    })
 
     let results = await getSearchedResults(req.session.email)
 

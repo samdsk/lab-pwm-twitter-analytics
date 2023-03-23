@@ -9,14 +9,13 @@
             <%- include('../partials/dashboard.ejs') %>
 
             <div class="col right border p-3">
-                <%- include('../partials/search_results.ejs') %>
                 <div id="errors" class="alert alert-danger d-none"></div>
+                <%- include('../partials/searched_list.ejs') %>
             </div>
         </div>
         <div id="results-wrapper" class="modal fade d-none"  tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content">
-
                     <div class="modal-body">
                         <%- include('../partials/results.ejs') %>
                     </div>

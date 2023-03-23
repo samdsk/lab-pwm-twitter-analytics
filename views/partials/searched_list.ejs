@@ -12,6 +12,8 @@
 
         return count
     }
+
+
 %>
 <div id="searches">
     <h3 class="mb-0">History</h3>
@@ -19,14 +21,20 @@
 
     <div id="searched-history" class="container">
         <% if(locals.results && results.length){ %>
-            <h6>Select up-to two entries to compare</h6>
+            <div class="row justify-content-between align-items-center">
+                <h6 class="col-auto">Select up-to two entries of same username to compare</h6>
+            </div>
             <% for(let data of results) {%>
-                <div id="searched-entry-container" class="container border-top mt-1">
-                    <div id="<%=data._id.toString() %>" class="searched-entry row mt-1">
-                        <div id="block-icons" class="row justify-content-end">
-                            <i class="select-icon col-auto bi bi-check-square" title="Select this search result to compare."></i>
-                            <i class="close-icon col-auto bi bi-x-square text-danger" title="Delete this search result."></i>
+            <% const id = data._id.toString() %>
+                <div class="container searched-entry-container border-top mt-1">
+                    <div id="block-icons" class="row justify-content-end">
+                        <div class="col-auto">
+                            <button class="compare-btn btn btn-sm btn-primary col-auto d-none" name="compare">Compare</button>
+                            <input data-id="<%=id %>" data-username="<%=data.username %>" class="form-check-input" name="select-compare" type="checkbox" title="Select to compare">
+                            <i data-id="<%=id %>" data-username="<%=data.username %>" class="close-icon col-auto bi bi-x-square text-danger " title="Delete this search result."></i>
                         </div>
+                    </div>
+                    <div id="<%= id %>" data-id="<%=id %>" data-username="<%=data.username %>" class="searched-entry row mt-1">
                         <div id="user-profile" class="col-md-12 col-lg-6 border-end-lg">
                             <div id="name-username" class="row">
                                 <div class="col-auto">

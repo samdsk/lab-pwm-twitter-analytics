@@ -124,6 +124,9 @@ footer div.col {
 .dashboard-nav-hover:hover{
     color:#00c288
 }
+.searched-entry-container:hover{
+    background-color: #eee;
+}
 
 
 @media screen and (max-width: 1000px){

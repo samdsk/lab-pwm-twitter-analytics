@@ -31,7 +31,12 @@ function postViaWorker(data,method,url){
 
 const sleep = ms => new Promise(r => setTimeout(r,ms))
 
+
 $(document).ready(async function(){
+  // reset checkboxes on page ready
+  $('.form-check-input:checked').each(function(i,e){
+    $(this).click()
+  })
 
   // ! error display function
   function errorDisplay(){
@@ -50,10 +55,11 @@ $(document).ready(async function(){
   set_data_hover()
 
   $('.searched-entry').click(async function(){
+    console.log("hello?");
     let id = $(this).attr('id')
     let url = '/results?compare=0&id='+id
     let data = await postViaWorker(null,'GET',url)
-    // console.log(data);
+
     if(data.error) return
     await genSearchResults(data)
 
@@ -64,6 +70,70 @@ $(document).ready(async function(){
 
   $('#results-wrapper .model-close-button').click(function(){
     $('#results-wrapper').modal('hide')
+  })
+
+  $('.compare-btn').click(async function(event){
+
+    let username = ""
+
+    const id_1 =  $('.form-check-input:checked').attr('data-id')
+    const id_2 =  $(this).parent().find('.form-check-input').attr('data-id')
+
+    // $('.form-check-input:checked').each(function(i,e){
+    //   if(count>2)
+    //     return window.location.href = "history"+encodeURI("?error=can't compare more than 2 results")
+
+    //   count++
+
+    //   if(i == 0){
+    //     username = $(this).attr('data-username')
+    //     ids.push($(this).attr('data-id'))
+    //   }
+    //   else{
+    //     if(username == $(this).attr('data-username')){
+    //       ids.push($(this).attr('data-id'))
+    //     }else{
+
+    //       return window.location.href = "history"+encodeURI("?error=can't compare different usernames")
+    //     }
+    //   }
+    // })
+
+    let url = "/results?compare=1&id="+id_1+"&id="+id_2
+
+    let data = await postViaWorker(null,'GET',url)
+
+    await genSearchResults(data)
+    $('#results-wrapper').removeClass('d-none').modal('toggle')
+    $('#results').removeClass('d-none')
+
+  })
+
+  // disable checkboxes of other usernames
+  // and re-enable checkboxes if there is no checkboxes checked
+
+  //FIXME to test with more results per username
+  $('.form-check-input').click(function(event){
+    console.log("check");
+    let username = $(this).attr('data-username')
+    let id = $(this).attr('data-id')
+
+    $("#searched-history .form-check-input[data-username="+username+"]").each(function(i,e){
+      $('#searched-history .form-check-input:not(:checked)').addClass('d-none')
+      if($(this).attr('data-id') != id)
+        $(this).parent().find('.compare-btn').removeClass("d-none")
+
+      })
+
+    if($('.form-check-input:checked').length < 1){
+      $('.form-check-input:disabled').each( function(i,e){
+          $(this).removeAttr("disabled")
+          $(this).removeAttr('checked')
+      })
+      $('#searched-history .compare-btn').addClass('d-none')
+      $('#searched-history .form-check-input').removeClass('d-none')
+    }
+
   })
 
   $('#search-btn').click(async (event)=>{
@@ -204,13 +274,15 @@ $(document).ready(async function(){
     }
 
     const load_sample_interval_old = async () => {
+      let id = "#results #search-sample-old"
       if(compare == null || compare == undefined){
-        $("#search-sample-old").remove()
+        $(id).addClass('d-none')
         return
       }
 
       if(compare){
-        let id = "#results #search-sample-old"
+
+        $(id).removeClass('d-none')
         load_dateTime(id,compare)
       }
     }
@@ -326,12 +398,14 @@ $(document).ready(async function(){
         $('#'+id).append('<h5>No data</h5>')
       }
     }
-// FIXME append something then there is no mentions graph
+
     const load_mentioned_users = async () => {
       let id = "mentioned_users-chart-wrapper"
       if(data.mentioned_users){
         let mentions = Object.entries(data.mentioned_users).sort((a,b)=> b[1]-a[1]).slice(0,10)
         await barChart(mentions,id,"mentioned_users")
+      }else{
+        $('#'+id).append('<h5>No data</h5>')
       }
     }
 
@@ -725,6 +799,7 @@ $(document).ready(async function(){
     })
   }
 
+  // search history close button
   $('.close-icon').hover(function(){
     $(this).removeClass('bi-x-square')
     $(this).addClass('bi-x-square-fill')
