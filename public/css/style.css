@@ -113,7 +113,7 @@ footer div.col {
     position: relative;
     margin-left: auto;
     margin-right: auto;
-    width:400px;
+    width:500px;
 }
 
 #results .bar-chart{
@@ -123,6 +123,9 @@ footer div.col {
 
 .dashboard-nav-hover:hover{
     color:#00c288
+}
+.searched-entry-container:hover{
+    background-color: #eee;
 }
 
 
@@ -140,6 +143,10 @@ footer div.col {
     }
     #results .bar-chart{
         height: 300px;
+    }
+    #results .pie-chart-container{
+        width: 400px;
+
     }
 }
 
