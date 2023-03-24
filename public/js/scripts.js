@@ -42,11 +42,13 @@ $(document).ready(async function(){
   function errorDisplay(){
     const errors = new URLSearchParams(document.location.search)
     if(!errors.entries().next().done){
-      if(errors.get('error') || errors.get('warning')){
+      if(errors.get('error')){
+        $('#error-modal h5.modal-title').text("Error")
         errors.forEach((v,k)=>{
-          $('#errors').append('<p class="mb-0">'+k+" - "+v+"</p>")
+          $('#error-modal #error-msg').append('<p id="error-msg-p" class="mb-0">'+v+"</p>")
         })
-        $('#errors').removeClass("d-none")
+        $('#error-modal').removeClass('d-none')
+        $('#error-modal').modal('show')
       }
     }
   }
@@ -54,8 +56,19 @@ $(document).ready(async function(){
   errorDisplay()
   set_data_hover()
 
+  // delete a seached result
+  $('.close-icon').click(async function(){
+    if(!confirm("Are you sure you want to delete this record?")) return
+
+    let id = $(this).attr('data-id')
+    let data = "id="+encodeURIComponent(id)
+    let error = await postViaWorker(data,"DELETE","/results")
+    console.log(error);
+    if(error) window.location.href = "history?error=result entry wasn't deleted";
+  })
+
+  // show detailed clicked result
   $('.searched-entry').click(async function(){
-    console.log("hello?");
     let id = $(this).attr('id')
     let url = '/results?compare=0&id='+id
     let data = await postViaWorker(null,'GET',url)
@@ -68,42 +81,23 @@ $(document).ready(async function(){
 
   })
 
-  $('#results-wrapper .model-close-button').click(function(){
-    $('#results-wrapper').modal('hide')
+  // model close button
+  $('.model-close-button').click(function(){
+    $('.modal').modal('hide')
   })
 
+  // show detailed comparing results
   $('.compare-btn').click(async function(event){
-
-    let username = ""
 
     const id_1 =  $('.form-check-input:checked').attr('data-id')
     const id_2 =  $(this).parent().find('.form-check-input').attr('data-id')
-
-    // $('.form-check-input:checked').each(function(i,e){
-    //   if(count>2)
-    //     return window.location.href = "history"+encodeURI("?error=can't compare more than 2 results")
-
-    //   count++
-
-    //   if(i == 0){
-    //     username = $(this).attr('data-username')
-    //     ids.push($(this).attr('data-id'))
-    //   }
-    //   else{
-    //     if(username == $(this).attr('data-username')){
-    //       ids.push($(this).attr('data-id'))
-    //     }else{
-
-    //       return window.location.href = "history"+encodeURI("?error=can't compare different usernames")
-    //     }
-    //   }
-    // })
 
     let url = "/results?compare=1&id="+id_1+"&id="+id_2
 
     let data = await postViaWorker(null,'GET',url)
 
     await genSearchResults(data)
+
     $('#results-wrapper').removeClass('d-none').modal('toggle')
     $('#results').removeClass('d-none')
 
@@ -114,7 +108,7 @@ $(document).ready(async function(){
 
   //FIXME to test with more results per username
   $('.form-check-input').click(function(event){
-    console.log("check");
+
     let username = $(this).attr('data-username')
     let id = $(this).attr('data-id')
 
@@ -122,7 +116,6 @@ $(document).ready(async function(){
       $('#searched-history .form-check-input:not(:checked)').addClass('d-none')
       if($(this).attr('data-id') != id)
         $(this).parent().find('.compare-btn').removeClass("d-none")
-
       })
 
     if($('.form-check-input:checked').length < 1){
@@ -443,7 +436,6 @@ $(document).ready(async function(){
       await metricCharts(datasets,labels,id,"tweets-per-day")
     }
 
-
     Promise.all([
       load_user_datails(),
       load_followers(),
@@ -460,14 +452,6 @@ $(document).ready(async function(){
       load_hashtags(),
       load_mentioned_users()
     ])
-
-    //input,labels,id,type
-    //
-    //
-    // await metricCharts(data.metrics,'metric-charts','retweets')
-
-
-
   }
 
   function load_dateTime(id,data){
@@ -643,6 +627,7 @@ $(document).ready(async function(){
 
     return output
   }
+
   async function metricCharts(datasets,labels,id,type){
     let canvas = document.createElement("canvas")
     canvas.id = type+"-chart"
@@ -683,6 +668,7 @@ $(document).ready(async function(){
   })
 
   }
+
   async function barChart(data,id,type){
 
     let canvas = document.createElement("canvas")
@@ -883,31 +869,6 @@ $(document).ready(async function(){
   }
 
 })
-
-  // new Chart(document.getElementById(canvas.id),{
-  //   type:'line',
-  //   data:{
-  //     labels :  labels,
-  //     datasets:datasets,
-  //   },
-  //   options: {
-  //     normalized:true,
-  //     parsing:true,
-  //     plugins: {
-  //       legend: {
-  //           display: false
-  //       },
-  //       datalabels:{display:false},
-  //       },
-  //     scales: {
-  //       x: {display: true},
-  //       y: {display: true},
-  //   }
-  //   }
-  // })
-
-
-
 
 // $('.dashboard').click((event)=>{
   //   event.preventDefault()
