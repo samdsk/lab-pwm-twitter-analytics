@@ -53,8 +53,7 @@ $(document).ready(async function(){
     }
   }
 
-  errorDisplay()
-  set_data_hover()
+
 
   // delete a seached result
   $('.close-icon').click(async function(){
@@ -458,7 +457,7 @@ $(document).ready(async function(){
     let date = data.date
     $(id+" #search-date .date").text(date.slice(0,10))
     let span = $('<span class="time-span node-clean"></span>')
-    console.log(date.slice(11,19));
+
     $(id+" #search-date .time").append(
       $('<span class="time-span node-clean"></span>').text(date.slice(11,19)))
 
@@ -759,11 +758,21 @@ $(document).ready(async function(){
   }
 
   function set_data_hover(){
-    $(".data-hover").mouseover(function(){
+    console.log("hovering");
+    // $(".data-hover").mouseover(function(){
+    //   $(this).text($(this).attr("data-real"))
+    // })
+
+    // $('.data-hover').mouseleave(function(){
+    //   $(this).text($(this).attr("data-round"))
+    // })
+
+    $(document).on("mouseover",'.data-hover',function(){
+      console.log("here");
       $(this).text($(this).attr("data-real"))
     })
 
-    $('.data-hover').mouseleave(function(){
+    $(document).on("mouseleave",'.data-hover',function(){
       $(this).text($(this).attr("data-round"))
     })
 
@@ -777,7 +786,7 @@ $(document).ready(async function(){
       $(this).next().toggle()
     }))
      // NOTE mobile
-    $('.data-hover').on('touchstart tap',function(){
+    $(document).on('touchstart tap','.data-hover',function(){
       if($(this).text() == $(this).attr("data-real"))
         $(this).text($(this).attr("data-round"))
       else
@@ -868,7 +877,10 @@ $(document).ready(async function(){
     return buildTwitterUrl(user)+"/status/"+id
   }
 
+  errorDisplay()
+  set_data_hover()
 })
+
 
 // $('.dashboard').click((event)=>{
   //   event.preventDefault()
