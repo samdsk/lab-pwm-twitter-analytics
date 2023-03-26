@@ -420,14 +420,14 @@ $(document).ready(async function(){
         labels:labels
       }
 
-      // if(compare){
-      //   let dataset_compare ={
-      //     data:extractCounts(compare.media_type),
-      //     labels:labels
-      //   }
-      //   await pieCharts(dataset,dataset_compare,id,'doughnut')
-      // }
-      // else
+      if(compare){
+        let dataset_compare ={
+          data:extractCounts(compare.media_type),
+          labels:labels
+        }
+        await pieCharts(dataset,dataset_compare,id,'doughnut')
+      }
+      else
         await pieCharts(dataset,null,id)
     }
 
@@ -470,8 +470,8 @@ $(document).ready(async function(){
       load_total_info(),
       load_week_chart(),
       load_media_type_Chart(),
-      //load_type_Chart(),
-      //load_langs_chart(),
+      load_type_Chart(),
+      load_langs_chart(),
       load_hashtags(),
       load_mentioned_users()
     ])
@@ -558,109 +558,172 @@ $(document).ready(async function(){
       datasets.push(dataset_2)
     }
 
-    const pieLabelsLine = {
-      id: "pieLabelsLine",
-      afterDraw(chart) {
-        const {
-          ctx,
-          chartArea: { width, height },
-        } = chart;
-
-        const cx = chart._metasets[0].data[0].x;
-        const cy = chart._metasets[0].data[0].y;
-
-        const sum = chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
-
-        chart.data.datasets.forEach((dataset, i) => {
-          chart.getDatasetMeta(i).data.forEach((datapoint, index) => {
-            const { x: a, y: b } = datapoint.tooltipPosition();
-
-            const x = 2 * a - cx;
-            const y = 2 * b - cy;
-
-            // draw line
-            const halfwidth = width / 2;
-            const halfheight = height / 2;
-            const xLine = x >= halfwidth ? x + 20 : x - 20;
-            const yLine = y >= halfheight ? y + 20 : y - 20;
-
-            const extraLine = x >= halfwidth ? 10 : -10;
-
-            ctx.beginPath();
-            ctx.moveTo(x, y);
-            ctx.arc(x, y, 2, 0, 2 * Math.PI, true);
-            ctx.fill();
-            ctx.moveTo(x, y);
-            ctx.lineTo(xLine, yLine);
-            ctx.lineTo(xLine + extraLine, yLine);
-            // ctx.strokeStyle = dataset.backgroundColor[index];
-            ctx.strokeStyle = "black";
-            ctx.stroke();
-
-            // text
-            const textWidth = ctx.measureText(chart.data.labels[index]).width;
-            ctx.font = "12px Arial";
-            // control the position
-            const textXPosition = x >= halfwidth ? "left" : "right";
-            const plusFivePx = x >= halfwidth ? 1 : -1;
-            ctx.textAlign = textXPosition;
-            ctx.textBaseline = "middle";
-            // ctx.fillStyle = dataset.backgroundColor[index];
-            ctx.fillStyle = "black";
-              ctx.fillText(chart.data.labels[index] +" : "+ (((chart.data.datasets[0].data[index] * 100) / sum)).toFixed(2) + "%",
-              xLine + extraLine + plusFivePx, yLine)
-          //   ctx.fillText(
-          //     ((chart.data.datasets[0].data[index] * 100) / sum).toFixed(2) +
-          //       "%",
-          //     xLine + extraLine + plusFivePx,
-          //     yLine
-          //   );
-          });
-        });
+    new Chart(document.getElementById(canvas.id),{
+      type:chartType,
+      data:{
+        labels:data_1.labels,
+        datasets:datasets,
       },
-    };
+      options :{
+        responsive:true,
+        aspectRatio: 1,
+        maintainAspectRatio:false,
+        plugins:{
+          legend:{
+            display:true,
+            position:"bottom",
+            labels: {
 
-    var params = {
-      display: true,
-      // text: [
-      // '%l (%p.3) \n VALUE: (%v.3)',
-      // '%l (%p) \n VALUE: (%v)',
-      // 'SIMPLE VALUE \n => %v',
-      // 'VALUE WITH PRECISION 4 \n => %v.4',
-      // 'SIMPLE PERCENT \n => %p',
-      // 'PERCENT WITH PRECISION 3 \n => %p.3',
-      // 'JUST LABEL \n => %l',
-      // 'JUST TEXT'
-      // ],
-      borderWidth: 2,
-      lineWidth: 2,
-      padding: 3,
-      textAlign: 'center',
-      stretch: 10,
-      font: {
-          resizable: true,
-          minSize: 12,
-          maxSize: 25,
-          family: Chart.defaults.font.family,
-          size: Chart.defaults.font.size,
-          style: Chart.defaults.font.style,
-          lineHeight: Chart.defaults.font.lineHeight,
-      },
-      color: "black",
-      valuePrecision: 1,
-      percentPrecision: 2
-    };
-    var chartOption = {
-
-        maintainAspectRatio: false,
-        layout: {
-            padding: 0
-        },
-        plugins: {
-            legend:{display:false},
-            outlabels: params,
+              usePointStyle:true,
+              pointStyle:'rectRounded',
+              padding:20
+            }
+          },
+          datalabels:{
+            anchor:"center",
+            color:'white',
+            formatter: (value,context)=>{
+              let total = context.dataset.data.reduce((acc,v)=> acc+v,0)
+              let perc = Math.floor(value/total *100)
+              return perc>2 ? perc+"%":''
+            }
+          }
         }
-    };
+      },
+
+    })
+  }
+  async function pieCharts_1(data_1,data_2,id,chartType = 'pie'){
+
+    let canvas = document.createElement("canvas")
+    canvas.id = id+"-chart"
+    document.getElementById(id).appendChild(canvas)
+
+    let colors = ['#FF595E','#FFCA3A','#8AC926','#1982C4','#00B4D8','#6A4C93']
+
+    let dataset_1 = {
+      label:cleanText(id)+" new",
+      labels:data_1.labels,
+      data:data_1.data,
+      backgroundColor:colors,
+      hoverOffset: 4
+    }
+    let datasets = [dataset_1]
+
+    if(data_2){
+      let dataset_2 = {
+        label:cleanText(id)+" old",
+        labels:data_2.labels,
+        data:data_2.data,
+        backgroundColor:colors,
+        hoverOffset: 4
+      }
+      datasets.push(dataset_2)
+    }
+
+    // const pieLabelsLine = {
+    //   id: "pieLabelsLine",
+    //   afterDraw(chart) {
+    //     const {
+    //       ctx,
+    //       chartArea: { width, height },
+    //     } = chart;
+
+    //     const cx = chart._metasets[0].data[0].x;
+    //     const cy = chart._metasets[0].data[0].y;
+
+    //     const sum = chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+
+    //     chart.data.datasets.forEach((dataset, i) => {
+    //       chart.getDatasetMeta(i).data.forEach((datapoint, index) => {
+    //         const { x: a, y: b } = datapoint.tooltipPosition();
+
+    //         const x = 2 * a - cx;
+    //         const y = 2 * b - cy;
+
+    //         // draw line
+    //         const halfwidth = width / 2;
+    //         const halfheight = height / 2;
+    //         const xLine = x >= halfwidth ? x + 20 : x - 20;
+    //         const yLine = y >= halfheight ? y + 20 : y - 20;
+
+    //         const extraLine = x >= halfwidth ? 10 : -10;
+
+    //         ctx.beginPath();
+    //         ctx.moveTo(x, y);
+    //         ctx.arc(x, y, 2, 0, 2 * Math.PI, true);
+    //         ctx.fill();
+    //         ctx.moveTo(x, y);
+    //         ctx.lineTo(xLine, yLine);
+    //         ctx.lineTo(xLine + extraLine, yLine);
+    //         // ctx.strokeStyle = dataset.backgroundColor[index];
+    //         ctx.strokeStyle = "black";
+    //         ctx.stroke();
+
+    //         // text
+    //         const textWidth = ctx.measureText(chart.data.labels[index]).width;
+    //         ctx.font = "12px Arial";
+    //         // control the position
+    //         const textXPosition = x >= halfwidth ? "left" : "right";
+    //         const plusFivePx = x >= halfwidth ? 1 : -1;
+    //         ctx.textAlign = textXPosition;
+    //         ctx.textBaseline = "middle";
+    //         // ctx.fillStyle = dataset.backgroundColor[index];
+    //         ctx.fillStyle = "black";
+    //           ctx.fillText(chart.data.labels[index] +" : "+ (((chart.data.datasets[0].data[index] * 100) / sum)).toFixed(2) + "%",
+    //           xLine + extraLine + plusFivePx, yLine)
+    //       //   ctx.fillText(
+    //       //     ((chart.data.datasets[0].data[index] * 100) / sum).toFixed(2) +
+    //       //       "%",
+    //       //     xLine + extraLine + plusFivePx,
+    //       //     yLine
+    //       //   );
+    //       });
+    //     });
+    //   },
+    // };
+
+    // var params = {
+    //   display: true,
+    //   // text: [
+    //   // '%l (%p.3) \n VALUE: (%v.3)',
+    //   // '%l (%p) \n VALUE: (%v)',
+    //   // 'SIMPLE VALUE \n => %v',
+    //   // 'VALUE WITH PRECISION 4 \n => %v.4',
+    //   // 'SIMPLE PERCENT \n => %p',
+    //   // 'PERCENT WITH PRECISION 3 \n => %p.3',
+    //   // 'JUST LABEL \n => %l',
+    //   // 'JUST TEXT'
+    //   // ],
+    //   borderWidth: 2,
+    //   lineWidth: 2,
+    //   padding: 3,
+    //   textAlign: 'center',
+    //   stretch: 10,
+    //   font: {
+    //       resizable: true,
+    //       minSize: 12,
+    //       maxSize: 25,
+    //       family: Chart.defaults.font.family,
+    //       size: Chart.defaults.font.size,
+    //       style: Chart.defaults.font.style,
+    //       lineHeight: Chart.defaults.font.lineHeight,
+    //   },
+    //   color: "black",
+    //   valuePrecision: 1,
+    //   percentPrecision: 2
+    // };
+    // var chartOption = {
+
+    //     maintainAspectRatio: false,
+    //     layout: {
+    //         padding: 0
+    //     },
+    //     plugins: {
+    //         legend:{display:false},
+    //         outlabels: params,
+    //     }
+    // };
 
     new Chart(document.getElementById(canvas.id),{
       type:chartType,
@@ -716,7 +779,7 @@ $(document).ready(async function(){
       //     // }
       //   }
       // },
-      plugins:[ChartPieChartOutlabels]
+
     })
   }
 
