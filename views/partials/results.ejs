@@ -1,4 +1,5 @@
-<div id="results" class="contianer d-none">
+
+<div id="results" class="contianer ">
     <div id="account-info" class="row">
         <div id="user-info" class="col col-sm-12 col-lg-6">
             <div id="user-profile">
@@ -12,20 +13,24 @@
                 Total tweets:
                 <span id="total-tweets-data" class="text-primary data-hover data-clean"></span><span id="total-tweets-data-compare" class="text-primary data-hover data-clean"></span>
             </p>
-            <p class="mt-0">
-                <i class="bi bi-people-fill"></i>
-                Followers:
-                <span id="followers" class="text-primary data-hover data-clean"></span><span id="followers-compare" class="text-primary data-hover data-clean"></span>
-            </p>
-            <p class="mt-0">
-                <i class="bi bi-person-check-fill"></i>
-                Followings:
-                <span id="followings" class="text-primary data-hover data-clean"></span><span id="followings-compare" class="text-primary data-hover data-clean"></span>
-            </p>
+            <div class="row">
+                <p class="col-auto">
+                    <i class="bi bi-people-fill"></i>
+                    Followers:
+                    <span id="followers" class="text-primary data-hover data-clean"></span><span id="followers-compare" class="text-primary data-hover data-clean"></span>
+                </p>
+                <p class="col-auto">
+                    <i class="bi bi-person-check-fill"></i>
+                    Followings:
+                    <span id="followings" class="text-primary data-hover data-clean"></span><span id="followings-compare" class="text-primary data-hover data-clean"></span>
+                </p>
+            </div>
             <div id="total-charts" class="row justify-content-center">
                 <div id="total-info">
-                    <h5 id="total-info-h" class="h6">Total tweets analized: </h6>
-                    <h6 id="total-info-i" class="h6">Interval: <i class="bi bi-stopwatch"></i> <span id="interval" title="Average interval between posts"></span></h6>
+                    <h6 id="total-info-i" class="h6">Interval:
+                        <i class="bi bi-stopwatch"></i>
+                        <span id="total-interval"  class="data-clean" title="Average interval between posts"></span>
+                        <span id="total-interval-compare"  class="data-clean" title="Average interval between posts"></span></h6>
                 </div>
             </div>
         </div>
@@ -75,10 +80,9 @@
         </div>
     </div>
     <div class="row">
-        <div id="highlights" class=" col-md-12 col-lg-4 align-items-start">
+        <div id="highlights" class="row justify-content-between">
             <h5 class="row text-center"><a href="#Highlights">Highlights</a></h5>
-
-            <div class="col flex-row justify-content-center">
+                        <div class="col flex-row justify-content-center">
                 <p class="text-center mb-0">
                     <i class="bi bi-repeat h1 text-primary"></i>
                 </p>
@@ -129,20 +133,30 @@
                 </p>
             </div>
         </div>
-        <div id="pie-charts" class=" col-md-12 col-lg-8 align-items-center">
-            <div id="tweets-by-media-type-wrapper" class="col">
-                <h5 class="text-center"><a href="#Tweets-by-media-type">Tweets By Media Type</a></h5>
-                <div id="tweets-by-media-type" class="row pie-chart-container data-clean">
+        <div id="pie-charts" class="row">
+            <div id="tweets-by-media-type-wrapper" class="row">
+                <div id="tweets-by-media-type-data" class="col">
+                    <h5 class=""><a href="#Tweets-by-media-type">Tweets By Media Type</a></h5>
+                    <ul id="tweets-by-media-type-data-ul" class="list-group list-group-flush data-clean">
+                    </ul>
+                </div>
+                <div id="tweets-by-media-type" class="col pie-chart-container data-clean">
                 </div>
             </div>
-            <div id="tweets-by-type-wrapper" class="col">
-                <h5 class="text-center"><a href="#Tweets-by-type">Tweets By Type</a></h5>
-                <div id="tweets-by-type"  class="row pie-chart-container data-clean">
+            <div id="tweets-by-type-wrapper" class="row">
+                <div id="tweets-by-type-data"  class="col">
+                    <h5 class=""><a href="#Tweets-by-type">Tweets By Type</a></h5>
+                    <ul id="tweets-by-type-data-ul" class="list-group list-group-flush data-clean"></ul>
+                </div>
+                <div id="tweets-by-type"  class="col pie-chart-container data-clean">
                 </div>
             </div>
-            <div id="tweets-by-langs-wrapper" class="col">
-                <h5 class="text-center"><a href="#tweets-by-language">Tweets By Language</a></h5>
-                <div id="tweets-by-langs"  class="row pie-chart-container data-clean">
+            <div id="tweets-by-langs-wrapper" class="row align-items-middle">
+                <h5 class=""><a href="#tweets-by-language">Tweets By Language</a></h5>
+                <div id="tweets-by-langs-data"  class="col">
+                    <ul id="tweets-by-langs-data-ul" class="list-group list-group-flush data-clean"></ul>
+                </div>
+                <div id="tweets-by-langs"  class="col pie-chart-container data-clean">
                 </div>
             </div>
         </div>
@@ -150,21 +164,19 @@
     </div>
     <div id="week-charts" class="row justify-content-center mb-5">
         <h5 id="week-chart-h" class="row h5 text-center"><a href="#Tweets-per-day">Tweets per day</a></h5>
-        <div id="week-chart-wrapper" class="col bar-chart data-clean"></div>
+        <div id="week-chart-wrapper" class="row justify-content-center bar-chart data-clean"></div>
     </div>
-    <div class="row">
-
-            <div id="hashtags-wrapper" class="col-md-12 col-lg-6">
-                <h5 id="hashtags-h" class="h5"><a href="#top-hashtags">Top 10 Hashtags</a></h5>
-                <div id="hashtags-chart-wrapper" class="col data-clean">
-                </div>
+    <div id="top10s" class="row">
+        <div id="hashtags-wrapper" class="col-md-12 col-lg-6">
+            <h5 id="hashtags-h" class="h5"><a href="#top-hashtags">Top 10 Hashtags</a></h5>
+            <div id="hashtags-chart-wrapper" class="col data-clean">
             </div>
-            <div id="mentioned_users-wrapper" class="col-md-12 col-lg-6">
-                <h5 id="mentioned_users-h" class="h5"><a href="#top-mentions">Top 10 Mentions</a></h5>
-                <div id="mentioned_users-chart-wrapper" class="col data-clean">
-                </div>
+        </div>
+        <div id="mentioned_users-wrapper" class="col-md-12 col-lg-6">
+            <h5 id="mentioned_users-h" class="h5"><a href="#top-mentions">Top 10 Mentions</a></h5>
+            <div id="mentioned_users-chart-wrapper" class="col data-clean">
             </div>
-
+        </div>
     </div>
     <div id="avg-interactions-wrapper" class="row">
         <div class="row mb-3">
@@ -174,37 +186,49 @@
             <div id="avg-interactions-text" class="col-sm-12 col-md-12 col-lg-6 col-xl-4">
                 <i class="bi bi-chat-right-text-fill"></i>
                 Text:
-                <i class="bi bi-stopwatch"></i> <span id="interval" title="Average interval between text posts"></span>
+                <i class="bi bi-stopwatch"></i>
+                <span id="avg-interactions-interval-text" class="data-clean" title="Average interval between text posts"></span>
+                <span id="avg-interactions-interval-text-compare"  class="data-clean" title="Average interval between text posts"></span>
                 <ul id="average" class="list-group list-group-flush data-clean"></ul>
             </div>
             <div id="avg-interactions-video" class="col-sm-12 col-md-12 col-lg-6 col-xl-4">
                 <i class="bi bi-camera-reels-fill"></i>
                 Video:
-                <i class="bi bi-stopwatch"></i> <span id="interval" title="Average interval between video posts"></span>
+                <i class="bi bi-stopwatch"></i>
+                <span id="avg-interactions-interval-video" class="data-clean" title="Average interval between video posts"></span>
+                <span id="avg-interactions-interval-video-compare" class="data-clean" title="Average interval between video posts"></span>
                 <ul id="average" class="list-group list-group-flush data-clean"></ul>
             </div>
             <div id="avg-interactions-photo" class="col-sm-12 col-md-12 col-lg-6 col-xl-4">
                 <i class="bi bi-camera-fill"></i>
                 Photo:
-                <i class="bi bi-stopwatch"></i> <span id="interval" title="Average interval between photo posts"></span>
+                <i class="bi bi-stopwatch"></i>
+                <span id="avg-interactions-interval-photo" class="data-clean" title="Average interval between photo posts"></span>
+                <span id="avg-interactions-interval-photo-compare" class="data-clean" title="Average interval between photo posts"></span>
                 <ul id="average" class="list-group list-group-flush data-clean"></ul>
             </div>
             <div id="avg-interactions-link" class="col-sm-12 col-md-12 col-lg-6 col-xl-4">
                 <i class="bi bi-link-45deg"></i>
                 Link:
-                <i class="bi bi-stopwatch"></i> <span id="interval" title="Average interval between link posts"></span>
+                <i class="bi bi-stopwatch"></i>
+                <span id="avg-interactions-interval-link" class="data-clean" title="Average interval between link posts"></span>
+                <span id="avg-interactions-interval-link-compare" class="data-clean" title="Average interval between link posts"></span>
                 <ul id="average" class="list-group list-group-flush data-clean"></ul>
             </div>
             <div id="avg-interactions-polls" class="col-sm-12 col-md-12 col-lg-6 col-xl-4">
                 <i class="bi bi-bar-chart-fill"></i>
                 Polls:
-                <i class="bi bi-stopwatch"></i> <span id="interval" title="Average interval between poll posts"></span>
+                <i class="bi bi-stopwatch"></i>
+                <span id="avg-interactions-interval-polls" class="data-clean" title="Average interval between poll posts"></span>
+                <span id="avg-interactions-interval-polls-compare" class="data-clean" title="Average interval between poll posts"></span>
                 <ul id="average" class="list-group list-group-flush data-clean"></ul>
             </div>
             <div id="avg-interactions-animated_gif" class="col-sm-12 col-md-12 col-lg-6 col-xl-4">
                 <i class="bi bi-filetype-gif"></i>
                 Animated Gif:
-                <i class="bi bi-stopwatch"></i> <span id="interval" title="Average interval between animated_gif posts"></span>
+                <i class="bi bi-stopwatch"></i>
+                <span id="avg-interactions-interval-animated_gif" class="data-clean" title="Average interval between animated_gif posts"></span>
+                <span id="avg-interactions-interval-animated_gif-compare" class="data-clean" title="Average interval between animated_gif posts"></span>
                 <ul id="average" class="list-group list-group-flush data-clean"></ul>
             </div>
         </div>
