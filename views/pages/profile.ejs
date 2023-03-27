@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
-    <%- include('../partials/head') %> 
+    <%- include('../partials/head') %>
 <body>
-    <%- include('../partials/header') %> 
+    <%- include('../partials/header') %>
     <main class="container mt-5 mb-5" id="dashboard">
         <noscript>Sorry, your browser does not support JavaScript!</noscript>
         <div class="row">
@@ -23,27 +23,34 @@
                             <% if (locals.email) { %>
                             <%= email %>
                             <% } %>
-                        </p>                        
-                        <label>Change password</label>                        
+                        </p>
+                        <label>Change password</label>
                         <div class="form-floating mb-3 has-validation">
-                            <input type="password" class="form-control form-control-sm" id="signup-password" name="signup_password" placeholder="Password" required>
-                            <label for="signup-password">Password</label>
+                            <input type="password" class="form-control form-control-sm" id="change-password" name="change_password" placeholder="Password" required>
+                            <label for="change-password">Password</label>
                             <div class="valid-feedback">Looks good!</div>
                         </div>
                         <div class="form-floating mb-3 has-validation">
-                            <input type="password" class="form-control form-control-sm" id="signup-password-2" name="signup_password_2" placeholder="Password" required>
-                            <label for="signup-password-2">Repeat Password</label>
+                            <input type="password" class="form-control form-control-sm" id="change-password-2" name="change_password_2" placeholder="Password" required>
+                            <label for="change-password-2">Repeat Password</label>
                             <div class="valid-feedback">Looks good!</div>
                         </div>
 
-                        <button class="btn btn-outline-primary" type="submit">Change password</button>
+                        <button class="btn btn-primary" type="submit">Change password</button>
                     </form>
+
+                    <div class="row mt-2 justify-content-end">
+                        <div class="col-auto ">
+                            <span class="text-danger">Caution! </span><span>This action cannot be undone!</span>
+                            <button class="btn btn-danger" type="button" >Delete Profile</button>
+                        </div>
+                    </div>
                 </div>
-                
+
             </div>
         </div>
     </main>
-    <%- include('../partials/footer') %> 
+    <%- include('../partials/footer') %>
 </body>
 <%- include('../partials/scripts') %>
 </html>
