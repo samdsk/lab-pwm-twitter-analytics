@@ -1,19 +1,19 @@
 // ! boostrap form validation check script
 (function () {
-    'use strict'
-    // Fetch all the forms we want to apply custom Bootstrap validation styles to
-    var forms = document.querySelectorAll('.needs-validation')
-    // Loop over them and prevent submission
-    Array.prototype.slice.call(forms)
-      .forEach(function (form) {
-        form.addEventListener('submit', function (event) {
-          if (!form.checkValidity()) {
-            event.preventDefault()
-            event.stopPropagation()
-          }
-          form.classList.add('was-validated')
-        }, false)
-      })
+  'use strict'
+  // Fetch all the forms we want to apply custom Bootstrap validation styles to
+  var forms = document.querySelectorAll('.needs-validation')
+  // Loop over them and prevent submission
+  Array.prototype.slice.call(forms)
+    .forEach(function (form) {
+      form.addEventListener('submit', function (event) {
+        if (!form.checkValidity()) {
+          event.preventDefault()
+          event.stopPropagation()
+        }
+        form.classList.add('was-validated')
+      }, false)
+    })
 })()
 
 // ! chartsjs plugins
@@ -52,6 +52,23 @@ $(document).ready(async function(){
       }
     }
   }
+
+  // change psw
+  // FIXME error handler
+  $('#change-submit').click(async function(event){
+    event.preventDefault()
+    if($("#password").val().length <1) return
+    if($("#change-password").val().length<7 || $("#change-password-2").val().length<7) return
+    if($("#change-password").val() != $("#change-password-2").val()) return
+    let form = $('#change-form').serialize()
+    const data = await postViaWorker(form,"POST","/dashboard/profile")
+  })
+
+  $('#delete-submit').click(async function(event){
+    event.preventDefault()
+    if(!confirm("Are you sure you want to delete your account?")) return
+    postViaWorker("")
+  })
 
   // delete a seached result
   $('.close-icon').click(async function(){
@@ -94,7 +111,6 @@ $(document).ready(async function(){
 
   // show detailed comparing results
   $('.compare-btn').click(async function(event){
-
     const id_1 =  $('.form-check-input:checked').attr('data-id')
     const id_2 =  $(this).parent().find('.form-check-input').attr('data-id')
 
@@ -166,8 +182,6 @@ $(document).ready(async function(){
     $('#results').show()
     $('#search-btn').removeAttr("disabled")
   })
-
-
 
   function cleanResults(){
     $('#results #user-info #user-profile img').remove()

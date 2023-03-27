@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
-    <%- include('../partials/head') %> 
+    <%- include('../partials/head') %>
 <body>
-    <%- include('../partials/header') %> 
+    <%- include('../partials/header') %>
     <main class="container mt-5 mb-5" id="singup">
 
         <noscript>Sorry, your browser does not support JavaScript!</noscript>
@@ -19,12 +19,14 @@
                 <div class="invalid-feedback">Please choose a valid email.</div>
             </div>
             <div class="form-floating mb-3 has-validation">
-                <input type="password" class="form-control" id="signup-password" name="signup_password" placeholder="Password" required>
+                <input type="password" class="form-control"
+                onchange="if(this.checkValidity()) form.signup_password_2.pattern = this.value;"
+                minlength="8" id="signup-password" name="signup_password" placeholder="Password" required>
                 <label for="signup-password">Password</label>
                 <div class="valid-feedback">Looks good!</div>
             </div>
             <div class="form-floating mb-3 has-validation">
-                <input type="password" class="form-control" id="signup-password-2" name="signup_password_2" placeholder="Password" required>
+                <input type="password" class="form-control" minlength="8" id="signup-password-2" name="signup_password_2" placeholder="Password" required>
                 <label for="signup-password-2">Repeat Password</label>
                 <div class="valid-feedback">Looks good!</div>
             </div>
@@ -41,18 +43,18 @@
                     <svg class="col d-inline " viewBox="0 0 300 1" xmlns="http://www.w3.org/2000/svg">
                         <line x1="0" y1="0" x2="300" y2="0" stroke="#aaaaaa" />
                     </svg>
-                  
+
                     <p class="col-1 d-inline pt-2">or</p>
-    
+
                     <svg class="col d-inline " viewBox="0 0 300 1" xmlns="http://www.w3.org/2000/svg">
                         <line x1="0" y1="0" x2="300" y2="0" stroke="#aaaaaa" />
                     </svg>
                 </div>
-                <p class="">You have an account? <a href="/">Login</a></p>                
-            </div>            
+                <p class="">You have an account? <a href="/">Login</a></p>
+            </div>
         </form>
     </main>
-    <%- include('../partials/footer') %> 
+    <%- include('../partials/footer') %>
 </body>
 <%- include('../partials/scripts') %>
 </html>

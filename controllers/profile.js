@@ -11,49 +11,61 @@ const getProfile = async (req,res,next) => {
     })
 }
 
+// NOTE psw update disabled
 const postProfile = async (req,res,next) => {
     if(req.session.email){
-        if(req.body.change_psw){
-            const password = await bcrypt.hash(req.body.signup_password,10)
-            Auth.findOneAndUpdate({email:req.session.email},{password:password}).exec((err,data)=>{
-                if(err) {
-                    res.sendStatus(500)
-                    throw new Error("Profile change: Auth error")
-                }
+        const {password,change_password,change_password_2} = req.body
+        if(change_password != change_password_2)
+            throw new Error("Passwords don't match")
+
+        Auth.findOne({email:req.session.email},async function(err,auth){
+            bcrypt.compare(password,auth.password).then(async (check)=>{
+
+                if(!check) throw new Error("Credentials are not valid")
+                const password = await bcrypt.hash(change_password,10)
+                //await Auth.findByIdAndUpdate(auth._id,{password:password})
+
+                return res.sendStatus(200)
             })
-            res.sendStatus(200)
-        }
+
+        })
+    }else{
+        return res.sendStatus(500)
     }
+
+
 }
+
 const deleteProfile = async (req,res,next) => {
     if(req.session.email){
 
-        let id = await Auth.findOne({email:req.session.email},'_id')
-        let searched = await User.findById(_id,'searched')
-        await Promise.all(
-            searched.searched.map(async(x)=>{
-                SearchResults.findByIdAndRemove(x).exec((err,data)=>{
-                    if(err) {
-                        res.sendStatus(500)
-                        throw new Error("Profile delete: SearchResults error")
-                    }
-                })
-            })
-        )
+        console.log(req.body);
 
-        Auth.findByIdAndRemove(id._id).exec((err,data)=>{
-            if(err) {
-                res.sendStatus(500)
-                throw new Error("Profile delete: Auth error")
-            }
-        })
+        // let id = await Auth.findOne({email:req.session.email},'_id')
+        // let searched = await User.findById(_id,'searched')
 
-        User.findByIdAndRemove(id._id).exec((err,data)=>{
-            if(err) {
-                res.sendStatus(500)
-                throw new Error("Profile delete: User error")
-            }
-        })
+        // await Promise.all(
+        //     searched.searched.map(async(x)=>{
+        //         SearchResults.findByIdAndRemove(x).exec((err,data)=>{
+        //             if(err) {
+
+        //                 throw new Error("Profile delete: SearchResults error")
+        //             }
+        //         })
+        //     })
+        // )
+
+        // Auth.findByIdAndRemove(id._id).exec((err,data)=>{
+        //     if(err) {
+        //         throw new Error("Profile delete: Auth error")
+        //     }
+        // })
+
+        // User.findByIdAndRemove(id._id).exec((err,data)=>{
+        //     if(err) {
+        //         throw new Error("Profile delete: User error")
+        //     }
+        // })
 
         res.sendStatus(200)
 

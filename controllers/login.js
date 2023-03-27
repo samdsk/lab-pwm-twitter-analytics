@@ -1,6 +1,5 @@
 const Auth = require('../models/Auth')
 const bcrypt = require('bcrypt')
-const {createError} = require('../errors/customError')
 const jwt = require('jsonwebtoken')
 const User = require('../models/User')
 const SessionDuration = 1000 * 60 * 60 * 60
@@ -10,11 +9,11 @@ const login = async (req,res,next) => {
     const {login_email, login_password, login_remember } = req.body
 
     Auth.findOne({email:login_email}, async (err,auth)=> {
-        if(auth === null) return res.redirect("/?error=Credentials are not valid")
+        if(auth === null) throw new Error("Credentials are not valid")
 
         await bcrypt.compare(login_password,auth.password).then(async (check)=>{
 
-            if(!check) return res.redirect("/?error=Credentials are not valid")
+            if(!check) throw new Error("Credentials are not valid")
 
             //const token = jwt.sign({email:login_email},process.env.Server_Secret,{expiresIn:"20s"})
 
