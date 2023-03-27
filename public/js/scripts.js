@@ -136,7 +136,7 @@ $(document).ready(async function(){
   })
 
   // search page search button
-/*   $('#search-btn').click(async (event)=>{
+  $('#search-btn').click(async (event)=>{
     event.preventDefault()
 
     if($('#handler').val() == '') return
@@ -165,13 +165,9 @@ $(document).ready(async function(){
     $('#results').removeClass("d-none")
     $('#results').show()
     $('#search-btn').removeAttr("disabled")
-  }) */
-
-  let data  = await fetch('../js/output_data_compare.json').then( response => {
-    return response.json()
   })
 
-  await genSearchResults(data)
+
 
   function cleanResults(){
     $('#results #user-info #user-profile img').remove()
