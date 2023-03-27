@@ -31,7 +31,8 @@ const getHistory = async (req,res,next) => {
     res.render('pages/history',{
         logout:true,
         username:req.session.username,
-        results:results
+        email_hash:req.session.gravatar,
+        results:results,
     })
 }
 
