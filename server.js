@@ -37,7 +37,7 @@ app.use(helmet({
         directives : {
             "script-src":["'self'","'unsafe-inline'","cdn.jsdelivr.net","cdnjs.cloudflare.com","code.jquery.com"],
             "script-src-attr":["'self'","'unsafe-inline'","cdn.jsdelivr.net","cdnjs.cloudflare.com","code.jquery.com"],
-            "img-src":["'self'","pbs.twimg.com",'data:']
+            "img-src":["'self'","pbs.twimg.com",'data:','https://www.gravatar.com']
         }
     }
 }))
