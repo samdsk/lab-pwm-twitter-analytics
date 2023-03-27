@@ -1,15 +1,15 @@
 const fs = require('fs')
 const pathToJsonObj = "./tweets_data.json"
 
-const collectData = async (DATA) => { 
-      
+const collectData = async (DATA) => {
+
     DATA = JSON.parse(DATA)
     let jsonObj = fs.readFileSync(require.resolve(pathToJsonObj),"utf-8")
     const TWEETS = JSON.parse(jsonObj)
 
     let data = DATA._realData.data
     let media = DATA._realData.includes?.media
-    
+
     // sort tweets in ascending order
     data = data.sort((a,b) => {if(a.created_at > b.created_at) return 1 ;else return -1})
 
@@ -46,7 +46,7 @@ const collectData = async (DATA) => {
 
         temp_date.setDate(temp_date.getDate() + 1)
     }
-    
+
     let interval_start_time = new Date(Date.parse(TWEETS.start_date)).getTime()
     // process each tweet finding media type, tweet type, time intervals and metrics
 
@@ -61,12 +61,12 @@ const collectData = async (DATA) => {
 
         // section - count post media types
         let mediaType = findMediaType(media,e)
-        
+
         let time = new Date(Date.parse(e.created_at))
         let date = e.created_at.split('T')[0]
 
         lang[e.lang] = (lang[e.lang] || 0)+1
-        
+
         e?.entities?.mentions?.forEach( mention => {
             mention = '@'+mention.username
             mentioned_users[mention] = (mentioned_users [mention] || 0)+1
@@ -76,24 +76,6 @@ const collectData = async (DATA) => {
             let tag = '#'+hashtag.tag
             hashtags[tag] = (hashtags[tag] || 0)+1
         })
-        
-
-        // if(!(date in tweets_per_day))
-        //     tweets_per_day[date] = {
-        //         media:{
-        //         text:0,
-        //         video:0,
-        //         photo:0,
-        //         link:0,
-        //         polls:0,
-        //         animated_gif:0
-        //     },
-        //     type:{
-        //         retweeted:0,
-        //         replied_to:0,
-        //         quoted:0,
-        //         original:0,
-        //     }}
 
         if(mediaType){
             TWEETS.media_type[mediaType].count +=1
@@ -103,33 +85,33 @@ const collectData = async (DATA) => {
         }else{
             throw new Error("Media type undefined! ->",mediaType)
         }
-        
+
         // post subtypes: retweet, reply, quote, original
         // for each type except for retweets count public metrics and time interval between posts
         // interval accumulate the difference between two posts
-        
+
         let type = findTweetType(e)
-        
+
         if(type) {
-            if(type != "retweeted"){                
+            if(type != "retweeted"){
                 updateMetrics(TWEETS.type,type,e)
                 updateMetricsTotal(TWEETS,e)
                 updateInterval(TWEETS.type[type],time,interval_start_time)
             }
-            tweets_per_day[date].type[type]++ 
+            tweets_per_day[date].type[type]++
         }else{
             throw new Error("Type undefined! ->",type)
         }
 
         TWEETS.type[type].count +=1
-        
+
         // count total posts and interval between tweets
         updateInterval(TWEETS.total,time,interval_start_time)
         TWEETS.total.count += 1;
     });
     // console.log(hashtags_count);
     TWEETS.tweets_per_day = tweets_per_day
-    TWEETS.mentioned_users  = mentioned_users 
+    TWEETS.mentioned_users  = mentioned_users
     TWEETS.hashtags = hashtags
     TWEETS.langs = lang
     return TWEETS
@@ -137,7 +119,7 @@ const collectData = async (DATA) => {
 
 function findTweetType(e){
     let type = undefined
-    if(e?.referenced_tweets){            
+    if(e?.referenced_tweets){
         type = (e?.referenced_tweets[0].type)
     }else{
         // if a post doesn't contain references means it's a original tweet from the user
@@ -167,7 +149,7 @@ function avgInterval(data){
     })
     delete data.last
 }
-function avgIntervalTotal(data){    
+function avgIntervalTotal(data){
     data.interval = calcAvg(data.count,data.interval)
     delete data.last
 }
@@ -176,7 +158,7 @@ function calcAvg(count,sum) {
     return Math.floor(sum/count)
 }
 // accumulate public metrics for each type
-function updateMetrics(data,type,e){    
+function updateMetrics(data,type,e){
     Object.keys(data[type].metrics).forEach(key => {
         data[type].metrics[key] += e.public_metrics[key];
     })
@@ -198,10 +180,10 @@ function updateHighlights(data,key,e){
 }
 
 // accumulate interval for the given type
-function updateInterval(data,time,interval_start_time){    
-    if(data.last == 0){        
+function updateInterval(data,time,interval_start_time){
+    if(data.last == 0){
         data.interval = time - interval_start_time
-    }else{         
+    }else{
         data.interval += time - data.last
     }
     data.last = time
