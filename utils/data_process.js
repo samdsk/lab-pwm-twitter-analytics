@@ -20,10 +20,13 @@ const collectData = async (DATA) => {
 
     TWEETS.start_date = new Date(Date.parse(data[0].created_at))
     TWEETS.end_date = new Date(Date.parse(data[data.length-1].created_at))
-
-    let temp_date = new Date(Date.parse(TWEETS.start_date))
     let temp_end = new Date(Date.parse(TWEETS.end_date))
+    let temp_date = new Date()
+
+    temp_date.setDate(temp_end.getDate()-7)
     temp_end.setDate(temp_end.getDate()+1)
+
+    TWEETS.interval = temp_end.getTime() - temp_date.getTime()
 
     while(temp_date<=temp_end){
         let date = temp_date.toISOString().split('T')[0]
@@ -90,13 +93,14 @@ const collectData = async (DATA) => {
         tweets_per_day[date].media[mediaType]++
         tweets_per_day[date].type[type]++
 
+
         if(type != "retweeted"){
+            //updateInterval(TWEETS.media_type[mediaType],time,interval_start_time)
             updateMetrics(TWEETS.media_type,mediaType,e)
-            updateInterval(TWEETS.media_type[mediaType],time,interval_start_time)
 
             updateMetrics(TWEETS.type,type,e)
             updateMetricsTotal(TWEETS,e)
-            updateInterval(TWEETS.type[type],time,interval_start_time)
+            //updateInterval(TWEETS.type[type],time,interval_start_time)
         }
 
         // count total posts and interval between tweets
@@ -140,14 +144,14 @@ function findMediaType(media,e){
 }
 // calculate intervals by dividing the accumulated interval by count for each subtype
 // requires TWEETS data type
-function avgInterval(data){
+function avgInterval(data,interval){
     Object.keys(data).forEach( key => {
-        data[key].interval = calcAvg(data[key].count,data[key].interval)
+        data[key].interval = calcAvg(data[key].count,interval)
     })
     delete data.last
 }
-function avgIntervalTotal(data){
-    data.interval = calcAvg(data.count,data.interval)
+function avgIntervalTotal(data,interval){
+    data.interval = calcAvg(data.count,interval)
     delete data.last
 }
 function calcAvg(count,sum) {
@@ -160,6 +164,7 @@ function updateMetrics(data,type,e){
         data[type].metrics[key] += e.public_metrics[key];
     })
 }
+
 function updateMetricsTotal(data,e){
     let total = data.total.metrics
     Object.keys(total).forEach(key => {
@@ -200,13 +205,13 @@ const process_data = (async (filename) => {
 
     let FILE = fs.readFileSync(filename)
     let data =  await collectData(FILE).then( data => {
-        avgInterval(data.media_type)
-        avgInterval(data.type)
-        avgIntervalTotal(data.total)
+        avgInterval(data.media_type,data.interval)
+        avgInterval(data.type,data.interval)
+        avgIntervalTotal(data.total,data.interval)
         return data
     })
 
-    //console.log(data);
+    // console.log(data);
     return data
 })
 
