@@ -1,6 +1,7 @@
 // ! boostrap form validation check script
-(function () {
+function formValidator() {
   'use strict'
+  console.log("asd");
   // Fetch all the forms we want to apply custom Bootstrap validation styles to
   var forms = document.querySelectorAll('.needs-validation')
   // Loop over them and prevent submission
@@ -9,12 +10,14 @@
       form.addEventListener('submit', function (event) {
         if (!form.checkValidity()) {
           event.preventDefault()
-          event.stopPropagation()
+          // event.stopPropagation()
         }
         form.classList.add('was-validated')
       }, false)
     })
-})()
+}
+
+formValidator()
 
 // ! chartsjs plugins
 Chart.register(ChartDataLabels)
@@ -31,43 +34,97 @@ function postViaWorker(data,method,url){
 
 const sleep = ms => new Promise(r => setTimeout(r,ms))
 
-
 $(document).ready(async function(){
   // reset checkboxes on page ready
   $('.form-check-input:checked').each(function(i,e){
     $(this).click()
   })
 
-  // ! error display function
-  function errorDisplay(){
-    const errors = new URLSearchParams(document.location.search)
-    if(!errors.entries().next().done){
-      if(errors.get('error')){
-        $('#error-modal h5.modal-title').text("Error")
-        errors.forEach((v,k)=>{
-          $('#error-modal #error-msg').append('<p id="error-msg-p" class="mb-0">'+v+"</p>")
-        })
-        $('#error-modal').removeClass('d-none')
-        $('#error-modal').modal('show')
-      }
+  function errorParamDisplay(){
+    const params = new URLSearchParams(document.location.search)
+
+    if(params.get('error')){
+      errorDisplay({error:params.get('error')})
     }
+
+    if(params.get('success')){
+      errorDisplay({success:params.get('success')})
+    }
+    var newURL = location.href.split("?")[0];
+    window.history.pushState('object', document.title, newURL);
   }
+  errorParamDisplay()
+
+  // ! error display function
+  function errorDisplay(data){
+    $('#error-modal .modal-header').removeClass("bg-danger bg-success")
+    $('#error-modal #error-msg').removeClass("text-danger text-success")
+
+    if(data.error){
+      $('#error-modal .modal-header').addClass('bg-danger')
+      $('#error-modal h5.modal-title').text("Error")
+      $('#error-modal #error-msg').addClass('text-danger').text(data.error)
+    }
+    else if(data.success){
+      $('#error-modal .modal-header').addClass('bg-success')
+      $('#error-modal h5.modal-title').text("Success")
+      $('#error-modal #error-msg').addClass('text-success').text(data.success)
+    }
+
+    $('#error-modal').modal('show')
+
+  }
+
+  $('#signup #signup-btn').click(async function(event){
+    let input = $('#signup #signup-psw-confirm input')[0]
+    if($('#signup #signup-psw-confirm input').val() !=  $('#signup #signup-psw input').val()){
+      $('#signup #signup-psw-confirm .invalid-feedback').show()
+      input.setCustomValidity("Passwords don't match")
+
+      return
+    }
+
+    $('#signup #signup-psw-confirm .invalid-feedback').hide()
+    input.setCustomValidity("")
+    event.preventDefault()
+    let form = $('#signup-form').serialize()
+    let data = await postViaWorker(form,'POST',"/signup")
+    errorDisplay(data)
+  })
 
   // change psw
   // FIXME error handler
   $('#change-submit').click(async function(event){
     event.preventDefault()
-    if($("#password").val().length <1) return
-    if($("#change-password").val().length<7 || $("#change-password-2").val().length<7) return
-    if($("#change-password").val() != $("#change-password-2").val()) return
+    if($("#password").val().length <1)
+      return errorDisplay({error:"Please insert the old password to proceed!"})
+
+    if($("#change-password").val().length<7 || $("#change-password-2").val().length<7)
+      return errorDisplay({error:"Password must have at least 8 characters!"})
+
+    if($("#change-password").val() != $("#change-password-2").val())
+      return errorDisplay({error:"Passwords don't match!"})
+
     let form = $('#change-form').serialize()
     const data = await postViaWorker(form,"POST","/dashboard/profile")
+    return errorDisplay(data)
   })
 
-  $('#delete-submit').click(async function(event){
+  $('#profile-delete-submit').click(async function(event){
     event.preventDefault()
-    if(!confirm("Are you sure you want to delete your account?")) return
-    postViaWorker("")
+
+    if($('#profile-delete-password').val().length <1)
+      return errorDisplay({error:"Please insert the old password to proceed!"})
+
+    let data = await postViaWorker($('#profile-delete-form').serialize(),"DELETE","/dashboard/profile")
+
+    console.log(data)
+    return errorDisplay(data)
+
+  })
+
+  $('#profile-delete-btn').click(async function(){
+    $('#profile-delete-modal').modal('show')
   })
 
   // delete a seached result
@@ -76,9 +133,14 @@ $(document).ready(async function(){
 
     let id = $(this).attr('data-id')
     let data = "id="+encodeURIComponent(id)
-    let error = await postViaWorker(data,"DELETE","/results")
-    console.log(error);
-    if(error) window.location.href = "history?error=result entry wasn't deleted";
+    let response = await postViaWorker(data,"DELETE","/results")
+
+    if(response.error)
+      return errorDisplay(response)
+
+    $(this).parent().parent().parent().remove()
+    if($("#searches .searched-entry-container").length < 1) window.location.reload()
+
   })
 
   // show detailed clicked result
@@ -87,12 +149,10 @@ $(document).ready(async function(){
     let url = '/results?compare=0&id='+id
     let data = await postViaWorker(null,'GET',url)
 
-    if(data.error) return
+    if(data.error) return errorDisplay(data)
     await genSearchResults(data)
-
     $('#results-wrapper').removeClass('d-none').modal('toggle')
     $('#results').removeClass('d-none')
-
   })
 
   // search history close button
@@ -162,20 +222,20 @@ $(document).ready(async function(){
     $('#loader #loader-gif').removeClass('d-none')
     $('#search-btn').prop("disabled",true)
 
-    // let data = await postViaWorker($('#form-search').serialize(),'POST','/twitter')
+    let data = await postViaWorker($('#form-search').serialize(),'POST','/twitter')
     //await sleep(1000)
-    $('#loader #loader-gif').addClass('d-none')
     // await sleep(1000)
-    $('#loader #working-gif').removeClass('d-none')
+    // $('#loader #working-gif').removeClass('d-none')
 
-    let data  = await fetch('../js/output_data_compare.json').then( response => {
-        return response.json()
-    })
-    //await sleep(1000)
+    // let data  = await fetch('../js/output_data_compare.json').then( response => {
+      //     return response.json()
+      // })
+      //await sleep(1000)
 
-    await genSearchResults(data)
+      await genSearchResults(data)
 
-    $('#loader #working-gif').addClass('d-none')
+    $('#loader #loader-gif').addClass('d-none')
+    // $('#loader #working-gif').addClass('d-none')
     $('#loader').addClass('d-none')
 
     $('#results').removeClass("d-none")
@@ -192,7 +252,7 @@ $(document).ready(async function(){
   // ! populate with seach results + charts
   async function genSearchResults(data){
     cleanResults()
-
+    if(data.error) return
     if(data.length==2 && data[1] != null){
       if(data[0].username == data[1].username){
         console.log("Ok: comparing mode");
@@ -1158,7 +1218,6 @@ $(document).ready(async function(){
     return buildTwitterUrl(user)+"/status/"+id
   }
 
-  errorDisplay()
   set_data_hover()
 })
 
