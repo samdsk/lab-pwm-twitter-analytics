@@ -9,11 +9,11 @@ const login = async (req,res,next) => {
     const {login_email, login_password, login_remember } = req.body
 
     Auth.findOne({email:login_email}, async (err,auth)=> {
-        if(auth == null) return res.json(JSON.stringify({error:"Credentials are not valid"}))
+        if(auth == null) return res.redirect("/?error="+encodeURIComponent("Invalid credentials"))
+
 
         await bcrypt.compare(login_password,auth.password).then(async (check)=>{
-
-            if(!check) return res.json(JSON.stringify({error:"Credentials are not valid"}))
+            if(!check) return res.redirect("/?error="+encodeURIComponent("Invalid credentials"))
 
             //const token = jwt.sign({email:login_email},process.env.Server_Secret,{expiresIn:"20s"})
 
