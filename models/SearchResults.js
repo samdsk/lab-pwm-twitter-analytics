@@ -88,23 +88,23 @@ const SeachResultsSchema = new mongoose.Schema({
 
     highlights : {
         retweet_count : {
-            id : {type:Number,default:0},
+            id : {type:String,default:""},
             count : {type:String},
         }, // tweet with most retweets
         reply_count : {
-            id : {type:Number,default:0},
+            id : {type:String,default:""},
             count : {type:String},
         }, // tweet with most replies
         like_count : {
-            id : {type:Number,default:0},
+            id : {type:String,default:""},
             count : {type:String},
         },
         quote_count : {
-            id : {type:Number,default:0},
+            id : {type:String,default:""},
             count : {type:String},
         }, // tweet with most likes
         impression_count : {
-            id : {type:Number,default:0},
+            id : {type:String,default:""},
             count : {type:String},
         }, // tweet with most impressions
     },
