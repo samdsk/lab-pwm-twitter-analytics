@@ -11,7 +11,7 @@
             <div class="col right border p-3">
                 <h3>Profile</h3>
                 <div>
-                    <form id="change-form" class="form-controll needs-validation" action="profile" method="POST" novalidate>
+                    <form id="change-form" class="form-controll needs-validation" action="" method="POST" novalidate>
                         <label>Username:</label>
                         <p>
                             <% if (locals.username) { %>
@@ -47,9 +47,34 @@
                     <div class="row mt-2 justify-content-end">
                         <div class="col-auto ">
                             <span class="text-danger">Caution! </span><span>This action cannot be undone!</span>
-                            <button id="delete-submit" class="btn btn-danger" type="button" >Delete Profile</button>
+                            <button id="profile-delete-btn" class="btn btn-danger" type="button" >Delete Profile</button>
                         </div>
                     </div>
+
+                    <div id="profile-delete-modal" class="modal" tabindex="-1">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title">Please confirm</h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                              <form id="profile-delete-form" class="form-controll needs-validation" action="" method="POST">
+                                <label>Confirm with your password</label>
+                                <div class="form-floating mb-3 has-validation">
+                                    <input id="profile-delete-password" name="delete_password" type="password" class="form-control form-control-sm" minlength="8" placeholder="Password" required>
+                                    <label for="delete_password">Insert Password</label>
+                                    <div class="invalid-feedback">Can't be empty.</div>
+                                </div>
+                              </form>
+                            </div>
+                            <div class="modal-footer">
+                              <button id="profile-delete-submit" class="btn btn-danger" type="submit" data-bs-dismiss="modal">Confirm</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
                 </div>
 
             </div>

@@ -1,9 +1,7 @@
 const Auth = require('../models/Auth')
 const User = require('../models/User')
-const required_params = require('../utils/required_params')
 const bcrypt = require('bcrypt')
 const mongoose = require('mongoose')
-const {createError} = require('../errors/customError')
 
 const createUser = async (req,res,next) => {
 
