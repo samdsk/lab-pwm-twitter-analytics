@@ -135,10 +135,12 @@ $(document).ready(async function(){
     let data = "id="+encodeURIComponent(id)
     let response = await postViaWorker(data,"DELETE","/results")
 
-    if(response.error)
+    if(response?.error)
       return errorDisplay(response)
 
-    $(this).parent().parent().parent().remove()
+    $(this).parent().parent().parent().fadeOut(function(){
+      $(this).remove()
+    })
     if($("#searches .searched-entry-container").length < 1) window.location.reload()
 
   })
@@ -155,7 +157,7 @@ $(document).ready(async function(){
     $('#results').removeClass('d-none')
   })
 
-  // search history close button
+  // search history close button icon hovering effect
   $('.close-icon').hover(function(){
     $(this).removeClass('bi-x-square')
     $(this).addClass('bi-x-square-fill')
@@ -370,10 +372,10 @@ $(document).ready(async function(){
         let sub_id = id+'-'+type
         let intv_id = id+'-interval-'+type
 
-        // if(data.media_type[type].count == 0) {
-        //   $('#'+sub_id).hide()
-        //   continue
-        // }
+        if(data.media_type[type].count == 0) {
+          $('#'+sub_id).hide()
+          continue
+        }
 
         $('#results #'+intv_id).text(msToHMS(data.media_type[type].interval))
         if(compare)
@@ -400,6 +402,8 @@ $(document).ready(async function(){
             appendCompare('#results #'+span_id,avg_count,avg_count_compare)
           }
         }
+
+        $('#'+sub_id).show()
       }
     }
 
@@ -1087,7 +1091,6 @@ $(document).ready(async function(){
 
   function set_data_hover(){
     $(document).on("mouseover ",'.data-hover',function(){
-      console.log("here");
       $(this).text($(this).attr("data-real"))
     })
 
@@ -1194,7 +1197,7 @@ $(document).ready(async function(){
     let h = m/60;
     m = m%60;
 
-    if(h<1 && m<1 && s<1) return ""
+    if(h<1 && m<1 && s<1) return "0s"
     if(h<1 && m<1) return Math.floor(s)+"s"
     if(h<1) return Math.floor(m)+"m "+Math.floor(s)+"s"
 
