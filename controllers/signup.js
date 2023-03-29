@@ -7,36 +7,35 @@ const {createError} = require('../errors/customError')
 
 const createUser = async (req,res,next) => {
 
-    if(!(res.body.signup_email &&
-        res.body.signup_password &&
-        res.body.signup_name &&
-        res.body.signup_terms)) return res.redirect("signup/?error=Missing fields")
+    if( !req.body.signup_email ||
+        !req.body.signup_password ||
+        !req.body.signup_name ||
+        !req.body.signup_terms) return res.json(JSON.stringify({error:"Missing fields"}))
 
     Auth.findOne({email:req.body.signup_email}, async (err,auth)=>{
 
-        if(auth != null) return res.redirect("signup/?error=User already exists!")
+        if(auth != null) return res.json(JSON.stringify({error:"User already exists!"}))
 
         const password = await bcrypt.hash(req.body.signup_password,10)
         const id = new mongoose.Types.ObjectId()
 
-        Auth.create({_id:id,email:req.body.signup_email,password : password}).exec((err,data)=>{
+        Auth.create({_id:id,email:req.body.signup_email,password : password},(err,data)=>{
             if(err) {
-                res.sendStatus(500)
-                throw new Error("Singup: Auth error")
-            }
-        })
-        User.create({_id:id,name:req.body.signup_name}).exec((eerr,data)=>{
-            if(err) {
-                res.sendStatus(500)
-                throw new Error("Singup: User error")
+                return res.json(JSON.stringify({error:"Internal Auth error"}))
             }
 
+            User.create({_id:id,name:req.body.signup_name},(err,data)=>{
+                if(err) {
+                    return res.json(JSON.stringify({error:"Interval User error"}))
+                }
+            })
         })
 
-        res.status(200).send('Ok')
+        if(req.session)
+            req.session.destroy()
+
+        return res.json(JSON.stringify({success:"User created successfully!"}))
     })
-
-    res.json(req.body)
 }
 
 const signupPage = async (req,res) => {

@@ -32,7 +32,7 @@ const getResults = async (req,res,next) => {
         let result_1 = await SearchResults.findById(req.query.id[0])
         let result_2 = await SearchResults.findById(req.query.id[1])
 
-        res.json(JSON.stringify([result_1,result_2]))
+        return res.json(JSON.stringify([result_1,result_2]))
 
     }else{
         if(!(await validateID(req.query.id,email)))
@@ -40,7 +40,7 @@ const getResults = async (req,res,next) => {
 
         let result = await SearchResults.findById(req.query.id)
 
-        res.json(JSON.stringify([result]))
+        return res.json(JSON.stringify([result]))
     }
 
 }
@@ -51,11 +51,11 @@ const removeResult = async (req,res,next) => {
     if(!req.body.id) return res.sendStatus(400)
     if(! await validateID(req.body.id,req.session.email)) return res.sendStatus(400)
 
-    // SearchResults.findByIdRemove(req.body.id).exec(function(err,item){
-    //     if(err) return res.sendStatus(400)
-    //     if(!item) return res.sendStatus(404)
-
-    // })
+    SearchResults.findByIdAndRemove(req.body.id).exec(function(err,item){
+        if(err) return res.sendStatus(400)
+        if(!item) return res.sendStatus(404)
+// FIXME remove also from user searched array
+    })
 
     return res.sendStatus(200)
 }

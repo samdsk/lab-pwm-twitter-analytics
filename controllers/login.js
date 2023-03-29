@@ -9,11 +9,11 @@ const login = async (req,res,next) => {
     const {login_email, login_password, login_remember } = req.body
 
     Auth.findOne({email:login_email}, async (err,auth)=> {
-        if(auth === null) throw new Error("Credentials are not valid")
+        if(auth == null) return res.json(JSON.stringify({error:"Credentials are not valid"}))
 
         await bcrypt.compare(login_password,auth.password).then(async (check)=>{
 
-            if(!check) throw new Error("Credentials are not valid")
+            if(!check) return res.json(JSON.stringify({error:"Credentials are not valid"}))
 
             //const token = jwt.sign({email:login_email},process.env.Server_Secret,{expiresIn:"20s"})
 
@@ -27,7 +27,7 @@ const login = async (req,res,next) => {
             // ! session maxage
             if(login_remember === "on") req.session.cookie.maxAge = SessionDuration
 
-            res.redirect('/dashboard/profile')
+            return res.redirect('/dashboard/profile')
 
         }).catch((err)=>{console.log(err)})
     })
