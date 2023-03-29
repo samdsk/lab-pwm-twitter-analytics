@@ -1,3 +1,4 @@
+
 <header class="container">
     <nav class="navbar justify-content-end">
         <ul class="nav ml-auto">
@@ -11,5 +12,13 @@
             <li class="nav-item  light-switch row align-items-center"><i class="light-switch-icon h5 bi bi-lamp-fill "></i></li>
         </ul>
     </nav>
-    <% if(locals.username){%> <h5 class="">Welcome  <%=username%> </h5> <%}%>
+    <% if(locals.username){%>
+        <div class="row align-items-center">
+        <% if(locals.email_hash){%>
+            <img class="col-auto" src="https://www.gravatar.com/avatar/<%= email_hash %>?s=64&r=g" crossorigin="anonymous">
+        <%}%>
+        <h5 class="col">Welcome  <%=username%> </h5>
+
+        </div>
+    <%}%>
 </header>
