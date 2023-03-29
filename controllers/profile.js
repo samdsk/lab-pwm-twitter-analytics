@@ -1,6 +1,8 @@
 const bcrypt = require('bcrypt')
 const Auth = require("../models/Auth")
+const User = require("../models/User")
 const SearchResults = require('../models/SearchResults')
+
 const getProfile = async (req,res,next) => {
 
     res.render('pages/profile',{
@@ -11,7 +13,6 @@ const getProfile = async (req,res,next) => {
     })
 }
 
-// NOTE psw update disabled
 const postProfile = async (req,res,next) => {
     if(req.session.email){
         const {password,change_password,change_password_2} = req.body
@@ -23,7 +24,7 @@ const postProfile = async (req,res,next) => {
 
                 if(!check) return res.json(JSON.stringify({error:"Credentials are not valid"}))
                 const password = await bcrypt.hash(change_password,10)
-                //await Auth.findByIdAndUpdate(auth._id,{password:password})
+                await Auth.findByIdAndUpdate(auth._id,{password:password})
 
                 return res.json(JSON.stringify({success:"Password updated"}))
             })
@@ -38,9 +39,8 @@ const postProfile = async (req,res,next) => {
 
 const deleteProfile = async (req,res,next) => {
     if(req.session.email){
-
         Auth.findOne({email:req.session.email},async function(err,auth){
-            bcrypt.compare(req.body.delete_password,auth.password).then(async (check)=>{
+            await bcrypt.compare(req.body.delete_password,auth.password).then(async (check)=>{
                 if(!check) return res.json(JSON.stringify({error:"Credentials are not valid"}))
                 console.log("pass: psw");
 
@@ -59,8 +59,7 @@ const deleteProfile = async (req,res,next) => {
 
                 Auth.findByIdAndRemove(auth._id).exec((err,data)=>{
                     if(err) {
-                        throw new Error("Profile delete: Auth error")
-
+                        return res.json(JSON.stringify({error:"Profile delete: Auth error"}))
                     }
                     console.log("pass: delete auth");
                 })
@@ -73,10 +72,13 @@ const deleteProfile = async (req,res,next) => {
                     console.log("pass: delete user");
                 })
 
-                return res.sendStatus(200)
+                req.session.destroy()
+                return res.json(JSON.stringify({success:"Profile has been delete successfully"}))
             })
 
         })
+    }else{
+        return res.sendStatus(500)
     }
 }
 
