@@ -1,5 +1,5 @@
 require('dotenv').config()
-// require('express-async-errors')
+require('express-async-errors')
 
 const express = require('express')
 const app = express()
@@ -87,7 +87,9 @@ app.set('view engine','ejs')
 
 //handling requests
 app.get('/',function(req,res){
-    res.render('pages/index')
+    if(!req.session.username || !req.session.email) return res.render('pages/index')
+    else return res.redirect('/dashboard')
+
 })
 
 app.get('/about',function(req,res){
