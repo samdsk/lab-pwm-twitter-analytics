@@ -61,6 +61,7 @@ const collectData = async (DATA) => {
 
         // section - count post media types
         let mediaType = findMediaType(media,e)
+        let type = findTweetType(e)
 
         let time = new Date(Date.parse(e.created_at))
         let date = e.created_at.split('T')[0]
@@ -77,43 +78,39 @@ const collectData = async (DATA) => {
             hashtags[tag] = (hashtags[tag] || 0)+1
         })
 
-        if(mediaType){
-            TWEETS.media_type[mediaType].count +=1
-            updateMetrics(TWEETS.media_type,mediaType,e)
-            updateInterval(TWEETS.media_type[mediaType],time,interval_start_time)
-            tweets_per_day[date].media[mediaType]++
-        }else{
-            throw new Error("Media type undefined! ->",mediaType)
-        }
-
+        // post media types: text,photo,video,link,polls,animated_gif
         // post subtypes: retweet, reply, quote, original
         // for each type except for retweets count public metrics and time interval between posts
         // interval accumulate the difference between two posts
 
-        let type = findTweetType(e)
+        TWEETS.media_type[mediaType].count++
+        TWEETS.type[type].count++
+        TWEETS.total.count++
 
-        if(type) {
-            if(type != "retweeted"){
-                updateMetrics(TWEETS.type,type,e)
-                updateMetricsTotal(TWEETS,e)
-                updateInterval(TWEETS.type[type],time,interval_start_time)
-            }
-            tweets_per_day[date].type[type]++
-        }else{
-            throw new Error("Type undefined! ->",type)
+        tweets_per_day[date].media[mediaType]++
+        tweets_per_day[date].type[type]++
+
+        if(type != "retweeted"){
+            updateMetrics(TWEETS.media_type,mediaType,e)
+            updateInterval(TWEETS.media_type[mediaType],time,interval_start_time)
+
+            updateMetrics(TWEETS.type,type,e)
+            updateMetricsTotal(TWEETS,e)
+            updateInterval(TWEETS.type[type],time,interval_start_time)
         }
-
-        TWEETS.type[type].count +=1
 
         // count total posts and interval between tweets
         updateInterval(TWEETS.total,time,interval_start_time)
-        TWEETS.total.count += 1;
+        // console.log(e.id,mediaType,type);
     });
     // console.log(hashtags_count);
     TWEETS.tweets_per_day = tweets_per_day
     TWEETS.mentioned_users  = mentioned_users
     TWEETS.hashtags = hashtags
     TWEETS.langs = lang
+
+
+
     return TWEETS
 }
 
@@ -208,7 +205,8 @@ const process_data = (async (filename) => {
         avgIntervalTotal(data.total)
         return data
     })
-    console.log(data);
+
+    //console.log(data);
     return data
 })
 

@@ -1,5 +1,3 @@
-
-
 const getSearch = async (req,res,next) => {
 
     res.render('pages/search',{
