@@ -133,6 +133,11 @@ footer div.col {
 }
 
 
+.dashboard-nav-hover:hover{
+    color:#00c288
+}
+
+
 @media screen and (max-width: 1000px){
     main form {
         width: 70% !important;
