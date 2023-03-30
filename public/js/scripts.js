@@ -1116,6 +1116,8 @@ $(document).ready(async function(){
       else
         $(this).text($(this).attr("data-real"))
     })
+
+
   }
 
   function appendCompare(id,new_data,old_data){
