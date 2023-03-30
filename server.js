@@ -1,12 +1,11 @@
 require('dotenv').config()
 require('express-async-errors')
-
 const express = require('express')
 const app = express()
 
+//const cookie_signature = require('cookie-signature')
 const cookie_parser = require('cookie-parser')
 const express_session = require('express-session')
-//const cookie_signature = require('cookie-signature')
 const genid = require('genid')
 const helmet = require('helmet')
 const MongoStore = require('connect-mongo')(express_session)
@@ -19,6 +18,7 @@ const login = require('./routes/login')
 const dashboard = require('./routes/dashboard')
 const twitter = require('./routes/twitter')
 const results = require('./routes/results')
+const forgot_psw = require('./routes/forgot_psw')
 const auth_session = require('./middleware/auth_session')
 const not_found = require('./middleware/not_found')
 const error_handler = require('./middleware/error_handler')
@@ -28,7 +28,6 @@ const error_handler = require('./middleware/error_handler')
 const PORT = process.env.PORT || 3000
 
 //middlewares
-
 
 // reference -> https://helmetjs.github.io/
 app.use(helmet({
@@ -89,7 +88,6 @@ app.set('view engine','ejs')
 app.get('/',function(req,res){
     if(!req.session.username || !req.session.email) return res.render('pages/index')
     else return res.redirect('/dashboard')
-
 })
 
 app.get('/about',function(req,res){
@@ -110,6 +108,8 @@ app.get('/logout',(req,res)=>{
     req.session.destroy()
     res.redirect('/')
 })
+
+app.use('/forgot-password',forgot_psw)
 
 app.use(not_found)
 app.use(error_handler)
