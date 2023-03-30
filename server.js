@@ -19,6 +19,7 @@ const dashboard = require('./routes/dashboard')
 const twitter = require('./routes/twitter')
 const results = require('./routes/results')
 const forgot_psw = require('./routes/forgot_psw')
+const reset_psw = require('./routes/reset_psw')
 const auth_session = require('./middleware/auth_session')
 const not_found = require('./middleware/not_found')
 const error_handler = require('./middleware/error_handler')
@@ -110,6 +111,7 @@ app.get('/logout',(req,res)=>{
 })
 
 app.use('/forgot-password',forgot_psw)
+app.use('/reset-password',reset_psw)
 
 app.use(not_found)
 app.use(error_handler)
