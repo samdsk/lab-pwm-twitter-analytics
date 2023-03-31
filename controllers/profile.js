@@ -15,15 +15,15 @@ const getProfile = async (req,res,next) => {
 
 const postProfile = async (req,res,next) => {
     if(req.session.email){
-        const {password,change_password,change_password_2} = req.body
-        if(change_password != change_password_2)
+        const {password,new_password,new_password_confirm} = req.body
+        if(new_password !== new_password_confirm)
             return res.json(JSON.stringify({error:"Passwords don't match"}))
 
         Auth.findOne({email:req.session.email},async function(err,auth){
             bcrypt.compare(password,auth.password).then(async (check)=>{
 
                 if(!check) return res.json(JSON.stringify({error:"Credentials are not valid"}))
-                const password = await bcrypt.hash(change_password,10)
+                const password = await bcrypt.hash(new_password,10)
                 await Auth.findByIdAndUpdate(auth._id,{password:password})
 
                 return res.json(JSON.stringify({success:"Password updated"}))
@@ -40,7 +40,9 @@ const postProfile = async (req,res,next) => {
 const deleteProfile = async (req,res,next) => {
     if(req.session.email){
         Auth.findOne({email:req.session.email},async function(err,auth){
-            await bcrypt.compare(req.body.delete_password,auth.password).then(async (check)=>{
+            console.log(req.body.password);
+            await bcrypt.compare(req.body.password,auth.password).then(async (check)=>{
+
                 if(!check) return res.json(JSON.stringify({error:"Credentials are not valid"}))
                 console.log("pass: psw");
 
