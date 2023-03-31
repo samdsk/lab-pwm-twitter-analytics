@@ -9,7 +9,7 @@
       form.addEventListener('submit', function (event) {
         if (!form.checkValidity()) {
           event.preventDefault()
-          // event.stopPropagation()
+          event.stopPropagation()
         }
         form.classList.add('was-validated')
       }, false)
@@ -73,6 +73,7 @@ $(document).ready(async function(){
     }
 
     event.preventDefault()
+    event.stopPropagation()
 
     const method = form.attr('method')
     if(!method) return errorDisplay({error:"Must specify method in form"})
@@ -80,13 +81,17 @@ $(document).ready(async function(){
     let url = form.attr('action')
     if(!url) url = window.location.href
 
-    console.log(form_id,method,url);
-
     let form_data = form.serialize()
+
     let data = await postViaWorker(form_data,method,url)
+
+    console.log(data);
 
     if(data.error || data.success)
       return errorDisplay(data)
+
+    // if(data.redirect)
+    //   return window.location.href = data.redirect
 
   })
 
