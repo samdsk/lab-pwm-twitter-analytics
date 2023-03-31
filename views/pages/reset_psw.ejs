@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--header-->
+<%- include('../partials/head') %>
+
+<body class="container-fluid blue">
+    <!--navigation-->
+    <%- include('../partials/header') %>
+
+    <main class="container mt-5 mb-5" id="dashboard">
+        <noscript>Sorry, your browser does not support JavaScript!</noscript>
+        <form id="reset-psw-form" class="container-sm p-3 needs-validation" action="/reset-password" method="POST" novalidate>
+            <h4 class="text-star">Enter a new password</h4>
+            <div class="form-floating mb-3">
+                <input type="email" class="form-control" id="floatingInput" name="email"
+                value="
+                    <%if(locals.email) {%>
+                    <%= email %>
+                    <% } %>" readonly required>
+                <label for="floatingInput">Email address</label>
+
+            </div>
+            <div class="form-floating mb-3">
+                <input type="password" class="form-control" name="password" id="floatingPassword" placeholder="Password" required>
+                <label for="password">Password</label>
+            </div>
+            <div class="form-floating mb-3 has-validation">
+                <input type="password" class="form-control" name="password_confirm" id="floatingPassword" placeholder="Password" required>
+                <label for="password_confirm">Repeat Password</label>
+            </div>
+            <button id="reset" class="form-submit btn btn-outline-primary" data-form="reset-psw-form" type="submit">Reset Password</button>
+        </form>
+
+    </main>
+    <!--footer-->
+    <%- include('../partials/footer') %>
+</body>
+<%- include('../partials/scripts') %>
+</html>

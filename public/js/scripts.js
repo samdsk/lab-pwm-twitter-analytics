@@ -1,7 +1,6 @@
 // ! boostrap form validation check script
-function formValidator() {
+(function formValidator() {
   'use strict'
-  console.log("asd");
   // Fetch all the forms we want to apply custom Bootstrap validation styles to
   var forms = document.querySelectorAll('.needs-validation')
   // Loop over them and prevent submission
@@ -15,16 +14,14 @@ function formValidator() {
         form.classList.add('was-validated')
       }, false)
     })
-}
-
-formValidator()
+})()
 
 // ! chartsjs plugins
 Chart.register(ChartDataLabels)
 
 function postViaWorker(data,method,url){
   return new Promise((resolve,reject) => {
-    let worker = new Worker('../js/worker.js')
+    let worker = new Worker('/js/worker.js')
     worker.postMessage({data:data,method:method,url:url})
     worker.onmessage = (event) => {
       resolve(event.data)
@@ -35,6 +32,64 @@ function postViaWorker(data,method,url){
 const sleep = ms => new Promise(r => setTimeout(r,ms))
 
 $(document).ready(async function(){
+  // forgot psw
+  $('.show-modal-btn').click(function(){
+    let modal = $(this).attr('data-modal')
+    $('#'+modal).modal('show')
+  })
+
+  $('.form-submit').click(async function(event){
+
+    const form_id = $(this).attr('data-form')
+    const form = $('#'+form_id)
+    if(!form) return errorDisplay({error:"Frontend error: Form must be specified"})
+
+    let inputcheck = true;
+
+    form.find('input').each((i,e)=>{
+      if($(e).val().length <1) {
+        inputcheck = false
+      }
+    })
+
+    if(!inputcheck) return errorDisplay({error:"Input can't be empty!"})
+
+    const psw = form.find('input.password')
+    const psw_confirm = form.find('input.password-confirm')
+
+    if(psw.length == 1 && psw_confirm.length == 1){
+
+      const input = psw[0]
+      const input_confirm = psw_confirm[0]
+
+      if(input.value !== input_confirm.value) {
+        input_confirm.setCustomValidity("Passwords don't match")
+        $(input_confirm).parent().find('.invalid-feedback').show()
+
+        return
+      }
+      input_confirm.setCustomValidity("")
+      $(input_confirm).parent().find('.invalid-feedback').hide()
+    }
+
+    event.preventDefault()
+
+    const method = form.attr('method')
+    if(!method) return errorDisplay({error:"Must specify method in form"})
+
+    let url = form.attr('action')
+    if(!url) url = window.location.href
+
+    console.log(form_id,method,url);
+
+    let form_data = form.serialize()
+    let data = await postViaWorker(form_data,method,url)
+
+    if(data.error || data.success)
+      return errorDisplay(data)
+
+  })
+
   // reset checkboxes on page ready
   $('.form-check-input:checked').each(function(i,e){
     $(this).click()
@@ -72,60 +127,7 @@ $(document).ready(async function(){
     }
 
     $('#error-modal').modal('show')
-
   }
-
-  $('#signup #signup-btn').click(async function(event){
-    let input = $('#signup #signup-psw-confirm input')[0]
-    if($('#signup #signup-psw-confirm input').val() !=  $('#signup #signup-psw input').val()){
-      $('#signup #signup-psw-confirm .invalid-feedback').show()
-      input.setCustomValidity("Passwords don't match")
-
-      return
-    }
-
-    $('#signup #signup-psw-confirm .invalid-feedback').hide()
-    input.setCustomValidity("")
-    event.preventDefault()
-    let form = $('#signup-form').serialize()
-    let data = await postViaWorker(form,'POST',"/signup")
-    errorDisplay(data)
-  })
-
-  // change psw
-  // FIXME error handler
-  $('#change-submit').click(async function(event){
-    event.preventDefault()
-    if($("#password").val().length <1)
-      return errorDisplay({error:"Please insert the old password to proceed!"})
-
-    if($("#change-password").val().length<7 || $("#change-password-2").val().length<7)
-      return errorDisplay({error:"Password must have at least 8 characters!"})
-
-    if($("#change-password").val() != $("#change-password-2").val())
-      return errorDisplay({error:"Passwords don't match!"})
-
-    let form = $('#change-form').serialize()
-    const data = await postViaWorker(form,"POST","/dashboard/profile")
-    return errorDisplay(data)
-  })
-
-  $('#profile-delete-submit').click(async function(event){
-    event.preventDefault()
-
-    if($('#profile-delete-password').val().length <1)
-      return errorDisplay({error:"Please insert the old password to proceed!"})
-
-    let data = await postViaWorker($('#profile-delete-form').serialize(),"DELETE","/dashboard/profile")
-
-    console.log(data)
-    return errorDisplay(data)
-
-  })
-
-  $('#profile-delete-btn').click(async function(){
-    $('#profile-delete-modal').modal('show')
-  })
 
   // delete a seached result
   $('.close-icon').click(async function(){
