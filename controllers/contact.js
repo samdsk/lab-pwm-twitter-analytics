@@ -5,7 +5,6 @@ const getContact = async (req,res,next) =>{
 }
 
 const postContact = async (req,res,next) =>{
-    console.log(req.body);
 
     if(req.body['g-recaptcha-response']){
         let captcha = req.body['g-recaptcha-response']
