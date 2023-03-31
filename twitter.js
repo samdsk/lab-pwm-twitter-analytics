@@ -10,6 +10,4 @@ const app = new TwitterApi({
 })
 */
 const twitter = new TwitterApi(process.env.Bearer_Token)
-//const twitter = app.readOnly
 module.exports = twitter.readOnly
-

@@ -10,9 +10,13 @@ const genid = require('genid')
 const helmet = require('helmet')
 const MongoStore = require('connect-mongo')(express_session)
 
-//importing project modules
+// ===================== Modules
+
+// importing DB modules
 const db_connect = require('./db/connect')
 const db_url = require('./db/db_params')
+
+// importing routes
 const signup = require('./routes/signup')
 const login = require('./routes/login')
 const dashboard = require('./routes/dashboard')
@@ -23,13 +27,15 @@ const reset_psw = require('./routes/reset_psw')
 const auth_session = require('./middleware/auth_session')
 const not_found = require('./middleware/not_found')
 const error_handler = require('./middleware/error_handler')
+const contact = require('./routes/contact')
 
 
-//port
+// ===================== Port
 const PORT = process.env.PORT || 3000
 
-//middlewares
+// ===================== Middlewares
 
+// CSP rules
 // reference -> https://helmetjs.github.io/
 app.use(helmet({
     contentSecurityPolicy:{
@@ -61,6 +67,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cookie_parser())
 
+// express session
 app.use('/',express_session({
     name:process.env.Session_name,
     secret:process.env.Session_secret,
@@ -82,10 +89,11 @@ app.use('/',express_session({
 
 }))
 
-//setting render engine ejs
+// ===================== Render Engine EJS
 app.set('view engine','ejs')
 
-//handling requests
+
+// ===================== Handling requests
 app.get('/',function(req,res){
     if(!req.session.username || !req.session.email) return res.render('pages/index')
     else return res.redirect('/dashboard')
@@ -103,6 +111,7 @@ app.use('/results',auth_session,results)
 
 app.use('/signup',signup)
 app.use('/login',login)
+app.use('/contact',contact)
 
 app.get('/logout',(req,res)=>{
     res.clearCookie('logout')
@@ -116,6 +125,7 @@ app.use('/reset-password',reset_psw)
 app.use(not_found)
 app.use(error_handler)
 
+// ===================== Start Server
 // connecting to db and starting the server
 const start = async (connection_url) => {
     try{
