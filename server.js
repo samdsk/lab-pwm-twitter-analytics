@@ -37,22 +37,49 @@ const PORT = process.env.PORT || 3000
 
 // CSP rules
 // reference -> https://helmetjs.github.io/
+
+const script_src = [
+    "'self'",
+    "'unsafe-inline'",
+    "*.popupsmart.com",
+    "unpkg.com",
+    "cdn.jsdelivr.net",
+    "cdnjs.cloudflare.com",
+    "code.jquery.com",
+    "*.google.com",
+    "*.gstatic.com",
+    "*.popupsmart.com",
+    "'unsafe-hashes'"
+]
+
+//"script-src-attr":["'self'","'unsafe-inline'","cdn.jsdelivr.net","cdnjs.cloudflare.com","code.jquery.com"],
+
+const img_src = [
+    "'self'",
+    'data:',
+    "pbs.twimg.com",
+    '*.gravatar.com',
+]
+
 app.use(helmet({
     contentSecurityPolicy:{
         useDefaults: true,
         directives : {
-            "script-src":["'self'","'unsafe-inline'","cdn.jsdelivr.net","cdnjs.cloudflare.com","code.jquery.com"],
-            "script-src-attr":["'self'","'unsafe-inline'","cdn.jsdelivr.net","cdnjs.cloudflare.com","code.jquery.com"],
-            "img-src":["'self'","pbs.twimg.com",'data:','https://www.gravatar.com']
-        }
-    }
+            "script-src":script_src,
+            "img-src":img_src,
+            "frame-src":["*.google.com"]
+        },
+    },
+    crossOriginEmbedderPolicy: {policy: "credentialless"},
+    crossOriginOpenerPolicy: {policy:"same-origin"},
 }))
 
+
 // app.use((req, res, next) => {
-//     res.setHeader('Access-Control-Allow-Origin', '*');
-//     res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
-//     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-//     res.setHeader('Cross-origin-Embedder-Policy', 'require-corp');
+//     // res.setHeader('Access-Control-Allow-Origin', '*');
+//     // res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
+//     // res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+//     res.setHeader('Cross-origin-Embedder-Policy', 'same-origin');
 //     res.setHeader('Cross-origin-Opener-Policy','same-origin');
 
 //     if (req.method === 'OPTIONS') {
@@ -78,8 +105,8 @@ app.use('/',express_session({
     },
     cookie:{
         httpOnly:true,
-        secure:false,
-        sameSite:true,
+        secure:true,
+        sameSite:'None',
         path:'/'
     },
     store: new MongoStore({
@@ -112,6 +139,9 @@ app.use('/results',auth_session,results)
 app.use('/signup',signup)
 app.use('/login',login)
 app.use('/contact',contact)
+app.get('/terms',function(req,res){
+    res.render('pages/terms')
+})
 
 app.get('/logout',(req,res)=>{
     res.clearCookie('logout')
