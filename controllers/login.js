@@ -1,6 +1,6 @@
 const Auth = require('../models/Auth')
 const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
+
 const User = require('../models/User')
 const SessionDuration = 1000 * 60 * 60 * 60
 const md5 = require('md5')
@@ -14,8 +14,6 @@ const login = async (req,res,next) => {
 
         await bcrypt.compare(login_password,auth.password).then(async (check)=>{
             if(!check) return res.redirect("/?error="+encodeURIComponent("Invalid credentials"))
-
-            //const token = jwt.sign({email:login_email},process.env.Server_Secret,{expiresIn:"20s"})
 
             const username = await User.findOne({_id:auth._id}).populate('_id')
             const email_hash = md5(login_email.trim().toLowerCase())

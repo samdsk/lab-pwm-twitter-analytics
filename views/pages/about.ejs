@@ -2,11 +2,25 @@
 <html lang="en">
     <%- include('../partials/head') %>
 <body>
-    <%- include('../partials/header') %> 
+    <%- include('../partials/header') %>
     <main class="container mt-5 mb-5" id="about">
-        <h1>About</h1>
+        <div class="row">
+            <h1><a id="#about" href="#about">About</a></h1>
+            <p>Hello welcome to Twitter Analytics App.</p>
+            <p>This app let you analyze twitter accounts' recent activity and compare them.</p>
+            <p>Search results will be stored and let you compare them in a second moment.</p>
+            <p>Some of the possible metrics are:</p>
+            <ul class="ul ps-5">
+                <li>Tweets by Media Type</li>
+                <li>Tweets by Tweet Type</li>
+                <li>Highlights like the tweet with most likes</li>
+                <li>Used Languages</li>
+                <li>Average metrics per tweet type</li>
+            </ul>
+            <p>Powered by TWITTER REST API v2.</p>
+        </div>
     </main>
-    
+
     <%- include('../partials/footer') %>
 </body>
 <%- include('../partials/scripts') %>

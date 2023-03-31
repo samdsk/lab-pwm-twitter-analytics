@@ -11,7 +11,7 @@
             <div class="col right border p-3">
                 <h3>Profile</h3>
                 <div>
-                    <form id="change-form" class="form-controll needs-validation" action="" method="POST" novalidate>
+                    <form id="change-psw-form" class="form-controll needs-validation" action="/dashboard/profile" method="POST" novalidate>
                         <label>Username:</label>
                         <p>
                             <% if (locals.username) { %>
@@ -26,28 +26,28 @@
                         </p>
                         <label>Change password</label>
                         <div class="form-floating mb-3 has-validation">
-                            <input type="password" class="form-control form-control-sm" minlength="8" id="password" name="password" placeholder="Old Password" required>
+                            <input type="password" class="form-control form-control-sm" id="password" name="password" placeholder="Old Password" required>
                             <label for="password">Old Password</label>
                             <div class="invalid-feedback">Can't be empty.</div>
                         </div>
                         <div class="form-floating mb-3 has-validation">
-                            <input type="password" class="form-control form-control-sm" minlength="8" id="change-password" name="change_password" placeholder="New Password" required>
-                            <label for="change_password">New Password</label>
-                            <div class="invalid-feedback">Can't be empty.</div>
+                            <input type="password" name="new_password" class="form-control form-control-sm password" minlength="8" id="new-password"  placeholder="New Password" required>
+                            <label for="new_password">New Password</label>
+                            <div class="invalid-feedback">Must have at least 8 characters.</div>
                         </div>
                         <div class="form-floating mb-3 has-validation">
-                            <input type="password" class="form-control form-control-sm" minlength="8" id="change-password-2" name="change_password_2" placeholder="Repeate Password" required>
-                            <label for="change_password_2">Repeat Password</label>
+                            <input type="password" name="new_password_confirm" class="form-control form-control-sm password-confirm" id="new_password_confirm" placeholder="Repeate Password" required>
+                            <label for="new_password_confirm">Repeat Password</label>
                             <div class="invalid-feedback">Must match to new password</div>
                         </div>
 
-                        <button id="change-submit" class="btn btn-primary" type="submit">Change password</button>
+                        <button id="change-submit" class="btn btn-primary form-submit" data-form="change-psw-form" type="submit">Change password</button>
                     </form>
 
                     <div class="row mt-2 justify-content-end">
                         <div class="col-auto ">
                             <span class="text-danger">Caution! </span><span>This action cannot be undone!</span>
-                            <button id="profile-delete-btn" class="btn btn-danger" type="button" >Delete Profile</button>
+                            <button id="profile-delete-btn" class="show-modal-btn btn btn-danger" data-modal="profile-delete-modal" type="button" >Delete Profile</button>
                         </div>
                     </div>
 
@@ -59,17 +59,17 @@
                               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                              <form id="profile-delete-form" class="form-controll needs-validation" action="" method="POST">
+                              <form id="profile-delete-form" class="form-controll needs-validation" action="" method="DELETE">
                                 <label>Confirm with your password</label>
                                 <div class="form-floating mb-3 has-validation">
-                                    <input id="profile-delete-password" name="delete_password" type="password" class="form-control form-control-sm" minlength="8" placeholder="Password" required>
-                                    <label for="delete_password">Insert Password</label>
+                                    <input id="profile-delete-password" name="password" type="password" class="form-control form-control-sm" placeholder="Password" required>
+                                    <label for="password">Insert Password</label>
                                     <div class="invalid-feedback">Can't be empty.</div>
                                 </div>
                               </form>
                             </div>
                             <div class="modal-footer">
-                              <button id="profile-delete-submit" class="btn btn-danger" type="submit" data-bs-dismiss="modal">Confirm</button>
+                              <button id="profile-delete-submit" class="btn btn-danger form-submit" data-form="profile-delete-form" type="submit" data-bs-dismiss="modal">Confirm</button>
                             </div>
                           </div>
                         </div>
