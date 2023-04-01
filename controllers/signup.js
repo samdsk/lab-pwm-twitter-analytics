@@ -4,25 +4,26 @@ const bcrypt = require('bcrypt')
 const mongoose = require('mongoose')
 
 const createUser = async (req,res,next) => {
+    if( !req.body.email ||
+        !req.body.password ||
+        !req.body.name ||
+        !req.body.terms) return res.json(JSON.stringify({error:"Missing fields"}))
 
-    if( !req.body.signup_email ||
-        !req.body.signup_password ||
-        !req.body.signup_name ||
-        !req.body.signup_terms) return res.json(JSON.stringify({error:"Missing fields"}))
+    if((req.body.password != req.body.password_confirm)) return res.json(JSON.stringify({error:"Passwords don't match!"}))
 
-    Auth.findOne({email:req.body.signup_email}, async (err,auth)=>{
+    Auth.findOne({email:req.body.email}, async (err,auth)=>{
 
         if(auth != null) return res.json(JSON.stringify({error:"User already exists!"}))
 
-        const password = await bcrypt.hash(req.body.signup_password,10)
+        const password = await bcrypt.hash(req.body.password,10)
         const id = new mongoose.Types.ObjectId()
 
-        Auth.create({_id:id,email:req.body.signup_email,password : password},(err,data)=>{
+        Auth.create({_id:id,email:req.body.email,password : password},(err,data)=>{
             if(err) {
                 return res.json(JSON.stringify({error:"Internal Auth error"}))
             }
 
-            User.create({_id:id,name:req.body.signup_name},(err,data)=>{
+            User.create({_id:id,name:req.body.name},(err,data)=>{
                 if(err) {
                     return res.json(JSON.stringify({error:"Interval User error"}))
                 }

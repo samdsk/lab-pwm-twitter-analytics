@@ -1,5 +1,5 @@
 const getDashboard = async (req,res,next) =>{
-    res.redirect('/dashboard/profile')
+    res.redirect('/dashboard/search')
 }
 
 module.exports = getDashboard
