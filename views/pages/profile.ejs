@@ -5,33 +5,42 @@
     <%- include('../partials/header') %>
     <main class="container mt-5 mb-5" id="dashboard">
         <noscript>Sorry, your browser does not support JavaScript!</noscript>
-        <div class="row">
-            <%- include('../partials/dashboard.ejs') %>
-
-            <div class="col right border p-3">
-                <h3>Profile</h3>
-                <div>
-                    <form id="change-psw-form" class="form-controll needs-validation" action="/dashboard/profile" method="POST" novalidate>
-                        <label>Username:</label>
-                        <p>
-                            <% if (locals.username) { %>
-                            <%= username %>
-                            <% } %>
-                        </p>
-                        <label>Email:</label>
-                        <p>
-                            <% if (locals.email) { %>
-                            <%= email %>
-                            <% } %>
-                        </p>
+        <div class="row align-items-center justify-content-center">
+            <div class="col-sm-12 col-md-8 pt-3 pb-3 rounded border">
+                <div class="row justify-content-center">
+                    <form id="change-psw-form" class="col-12 form-controll needs-validation" action="/dashboard/profile" method="POST" novalidate>
+                        <% if(locals.username){%>
+                            <h3 class="text-center">Profile</h3>
+                            <div class="row">
+                                <% if(locals.email_hash){%>
+                                    <img class="col-auto rounded" src="https://www.gravatar.com/avatar/<%= email_hash %>?s=64&r=g" width="64" height="64" crossorigin="anonymous">
+                                    <div class="col">
+                                        <label class="m-1">Username:</label>
+                                        <span>
+                                            <% if (locals.username) { %>
+                                            <%= username %>
+                                            <% } %>
+                                        </span>
+                                        <br>
+                                        <label class="m-1">Email:</label>
+                                        <span>
+                                            <% if (locals.email) { %>
+                                            <%= email %>
+                                            <% } %>
+                                        </span>
+                                    </div>
+                                <% } %>
+                            </div>
+                        <%}%>
+                        <br>
                         <label>Change password</label>
                         <div class="form-floating mb-3 has-validation">
-                            <input type="password" class="form-control form-control-sm" id="password" name="password" placeholder="Old Password" required>
+                            <input type="password" name="password" class="form-control form-control-sm" autocomplete="current-password" id="password"  placeholder="Old Password" required>
                             <label for="password">Old Password</label>
                             <div class="invalid-feedback">Can't be empty.</div>
                         </div>
                         <div class="form-floating mb-3 has-validation">
-                            <input type="password" name="new_password" class="form-control form-control-sm password" minlength="8" id="new-password"  placeholder="New Password" required>
+                            <input type="password" name="new_password" autocomplete="new-password" class="form-control form-control-sm password" minlength="8" id="new-password"  placeholder="New Password" required>
                             <label for="new_password">New Password</label>
                             <div class="invalid-feedback">Must have at least 8 characters.</div>
                         </div>
@@ -40,45 +49,48 @@
                             <label for="new_password_confirm">Repeat Password</label>
                             <div class="invalid-feedback">Must match to new password</div>
                         </div>
-
                         <button id="change-submit" class="btn btn-primary form-submit" data-form="change-psw-form" type="submit">Change password</button>
                     </form>
-
-                    <div class="row mt-2 justify-content-end">
-                        <div class="col-auto ">
-                            <span class="text-danger">Caution! </span><span>This action cannot be undone!</span>
+                    <div class="col-8" >
+                        <div class="col-12 justify-content-center">
+                            <svg class="col d-inline " viewBox="0 0 300 1" xmlns="http://www.w3.org/2000/svg">
+                                <line x1="0" y1="0" x2="300" y2="0" stroke="#aaaaaa" />
+                            </svg>
+                            <p class="text-center"><span class="text-danger">Caution! </span>This action cannot be undone!</p>
+                        </div>
+                        <div class="d-flex col-12 justify-content-center">
                             <button id="profile-delete-btn" class="show-modal-btn btn btn-danger" data-modal="profile-delete-modal" type="button" >Delete Profile</button>
                         </div>
                     </div>
-
+                    <!-- DELETE Profile Modal -->
                     <div id="profile-delete-modal" class="modal" tabindex="-1">
                         <div class="modal-dialog">
-                          <div class="modal-content">
+                            <div class="modal-content">
                             <div class="modal-header">
-                              <h5 class="modal-title">Please confirm</h5>
-                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <h5 class="modal-title">Please confirm</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                              <form id="profile-delete-form" class="form-controll needs-validation" action="" method="DELETE">
+                                <form id="profile-delete-form" class="form-controll needs-validation" action="" method="DELETE">
                                 <label>Confirm with your password</label>
                                 <div class="form-floating mb-3 has-validation">
-                                    <input id="profile-delete-password" name="password" type="password" class="form-control form-control-sm" placeholder="Password" required>
+                                    <input id="profile-delete-password" name="password" autocomplete="current-password" type="password" class="form-control form-control-sm" placeholder="Password" required>
                                     <label for="password">Insert Password</label>
                                     <div class="invalid-feedback">Can't be empty.</div>
                                 </div>
-                              </form>
+                                </form>
                             </div>
                             <div class="modal-footer">
-                              <button id="profile-delete-submit" class="btn btn-danger form-submit" data-form="profile-delete-form" type="submit" data-bs-dismiss="modal">Confirm</button>
+                                <button id="profile-delete-submit" class="btn btn-danger form-submit" data-form="profile-delete-form" type="submit" data-bs-dismiss="modal">Confirm</button>
                             </div>
-                          </div>
+                            </div>
                         </div>
-                      </div>
-
+                    </div>
                 </div>
 
             </div>
         </div>
+
     </main>
     <%- include('../partials/footer') %>
 </body>

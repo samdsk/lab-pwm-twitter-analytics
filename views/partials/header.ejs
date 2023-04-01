@@ -1,25 +1,41 @@
 
-<header class="container">
-    <nav class="navbar justify-content-end">
-        <ul class="nav ml-auto">
-            <li class="nav-item"><a class="nav-link" href="/"></a></li>
-            <li id="user" class="nav-item d-none"><a class="nav-link dashboard" href="/dashboard">Welcome </a></li>
-            <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-            <li class="nav-item"><a class="nav-link" href="/signup">Sign up</a></li>
-            <li class="nav-item"><a class="nav-link" href="/dashboard">Dashboard</a></li>
-            <li class="nav-item"><a class="nav-link" href="/about">About</a></li>
-            <li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
-            <li class="nav-item <% if(!(locals.logout)){%> <%='d-none'%> <%}%>"><a class="nav-link" href="/logout">Logout</a></li>
-            <li class="nav-item  light-switch row align-items-center"><i class="light-switch-icon h5 bi bi-lamp-fill "></i></li>
-        </ul>
-    </nav>
-    <% if(locals.username){%>
-        <div class="row align-items-center">
-        <% if(locals.email_hash){%>
-            <img class="col-auto" src="https://www.gravatar.com/avatar/<%= email_hash %>?s=64&r=g" crossorigin="anonymous">
-        <%}%>
-        <h5 class="col">Welcome  <%=username%> </h5>
+<header class="container-fluid ps-0 pe-0">
+        <nav class="navbar navbar-expand-md bg-light ps-2 pe-2 align-items-center">
+            <div class="container-fluid ">
+                <a class="navbar-brand" href="/">Twitter Analytics</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-        </div>
-    <%}%>
+                <div id="navbarToggle" class="collapse navbar-collapse mt-1">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link" href="/" title="Home"><i class="bi bi-house"></i></a></li>
+                        <li class="nav-item"><a class="nav-link" href="/signup">Sign up</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="/dashboard" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                              Dashboard
+                            </a>
+                            <ul class="dropdown-menu">
+                              <li><a class="dropdown-item" href="/dashboard/profile">Profile</a></li>
+                              <li><a class="dropdown-item" href="/dashboard/history">History</a></li>
+                              <li><a class="dropdown-item" href="/dashboard/search">Search</a></li>
+                            </ul>
+                          </li>
+                        <li class="nav-item"><a class="nav-link" href="/about">About</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
+                        <li class="nav-item <% if(!(locals.logout)){%> <%='d-none'%> <%}%>"><a class="nav-link" href="/logout">Logout</a></li>
+                        <!-- <li class="nav-item  light-switch row align-items-center"><i class="light-switch-icon h5 bi bi-lamp-fill "></i></li> -->
+                    </ul>
+                    <% if(locals.username && locals.email_hash){%>
+                        <div class="col-sm-12 col-md-auto ">
+                            <a class="row text-decoration-none align-items-center justify-content-end" href="/dashboard/profile" title="profile">
+                                <p class="col-auto mt-2"><%= username %></p>
+                                <img class="col-auto rounded" src="https://www.gravatar.com/avatar/<%= email_hash %>?s=48&r=g" width="48" height="48" crossorigin="anonymous">
+                            </a>
+                        </div>
+                    <%}%>
+                </div>
+
+            </div>
+        </nav>
 </header>
