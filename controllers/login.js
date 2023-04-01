@@ -6,28 +6,31 @@ const SessionDuration = 1000 * 60 * 60 * 60
 const md5 = require('md5')
 
 const login = async (req,res,next) => {
-    const {login_email, login_password, login_remember } = req.body
+    console.log(req.body);
+    const {email, password, remember} = req.body
 
-    Auth.findOne({email:login_email}, async (err,auth)=> {
+    Auth.findOne({email:email}, async (err,auth)=> {
         if(auth == null) return res.redirect("/?error="+encodeURIComponent("Invalid credentials"))
 
-
-        await bcrypt.compare(login_password,auth.password).then(async (check)=>{
-            if(!check) return res.redirect("/?error="+encodeURIComponent("Invalid credentials"))
-
+        await bcrypt.compare(password,auth.password).then(async (check)=>{
+            if(!check) return res.json("/?error="+encodeURIComponent("Invalid credentials"))
+            console.log("here");
             const username = await User.findOne({_id:auth._id}).populate('_id')
-            const email_hash = md5(login_email.trim().toLowerCase())
+            const email_hash = md5(email.trim().toLowerCase())
 
             req.session.username = username.name
             req.session.email = username._id.email
             req.session.gravatar = email_hash
-
+            console.log(req.session);
             // ! session maxage
-            if(login_remember === "on") req.session.cookie.maxAge = SessionDuration
+            if(remember === "on") req.session.cookie.maxAge = SessionDuration
 
+            req.session.save()
             return res.redirect('/dashboard/profile')
 
-        }).catch((err)=>{console.log(err)})
+        }).catch((err)=>{
+            res.sendStatus(500)
+        })
     })
 
 }

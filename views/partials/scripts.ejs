@@ -7,3 +7,25 @@
 <!-- <script defer type="application/javascript" src="https://unpkg.com/@popperjs/core@2"></script> -->
 <!-- <script type="application/javascript" src="/js/chartjs-plugin-piechart-outlabels.js"></script> -->
 <script defer type="application/javascript" src="/js/scripts.js"></script>
+<script src="https://www.google.com/recaptcha/api.js?render=6Lfjt0klAAAAADKCfeCdpvCgojqD4eqLIrDw9zZV"></script>
+
+
+<script type="module" src="https://cookieconsent.popupsmart.com/js/CookieConsent.js" ></script>
+<script type="text/javascript" src="https://cookieconsent.popupsmart.com/js/App.js" ></script>
+<script defer type="text/javascript" >
+    popupsmartCookieConsentPopup({
+        "siteName" : "My twitter analytics app" ,
+        "notice_banner_type": "bottom-dialog",
+        "consent_type": "gdpr",
+        "palette": "dark",
+        "language": "English",
+        "privacy_policy_url" : "localhost:3000/terms" ,
+        "preferencesId" : "#" ,
+
+    });
+</script>
+<script>
+    function onSubmit(token) {
+      document.getElementById("contact-form").submit();
+    }
+  </script>
