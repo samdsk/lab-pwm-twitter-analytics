@@ -1,6 +1,5 @@
 header{
-    background-color:white ;
-    max-height: 10%;
+    background-color:white;
 }
 
 footer{
@@ -11,8 +10,6 @@ footer{
 
 html,body{
     height: 100%;
-    /* display: flex;
-    flex-direction: column; */
 }
 
 main{
@@ -121,22 +118,11 @@ footer div.col {
 
 
 .dashboard-nav-hover:hover{
-    color:#00c288
+    color:#10005588
 }
 .searched-entry-container:hover{
     background-color: #eee;
 }
-
-
-.dashboard-nav-hover:hover{
-    color:#00c288
-}
-
-
-.dashboard-nav-hover:hover{
-    color:#00c288
-}
-
 
 @media screen and (max-width: 1000px){
     main form {

@@ -48,7 +48,6 @@ const script_src = [
     "code.jquery.com",
     "*.google.com",
     "*.gstatic.com",
-    "*.popupsmart.com",
     "'unsafe-hashes'"
 ]
 
@@ -59,6 +58,7 @@ const img_src = [
     'data:',
     "pbs.twimg.com",
     '*.gravatar.com',
+    "*.popupsmart.com",
 ]
 
 app.use(helmet({
@@ -105,8 +105,7 @@ app.use('/',express_session({
     },
     cookie:{
         httpOnly:true,
-        secure:true,
-        sameSite:'None',
+        secure:false,
         path:'/'
     },
     store: new MongoStore({
