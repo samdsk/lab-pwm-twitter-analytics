@@ -33,6 +33,7 @@ const getHistory = async (req,res,next) => {
         username:req.session.username,
         email_hash:req.session.gravatar,
         results:results,
+        history:true
     })
 }
 

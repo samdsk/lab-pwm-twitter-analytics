@@ -9,7 +9,8 @@ const getProfile = async (req,res,next) => {
         logout:true,
         username:req.session.username,
         email: req.session.email,
-        email_hash:req.session.gravatar
+        email_hash:req.session.gravatar,
+        profile:true
     })
 }
 

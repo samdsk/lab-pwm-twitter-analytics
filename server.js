@@ -67,6 +67,7 @@ app.use(helmet({
         directives : {
             "script-src":script_src,
             "img-src":img_src,
+            "script-src-attr":["'self'","'unsafe-inline'"],
             "frame-src":["*.google.com"]
         },
     },
@@ -126,7 +127,7 @@ app.get('/',function(req,res){
 })
 
 app.get('/about',function(req,res){
-    res.render('pages/about')
+    res.render('pages/about',{about:true})
 })
 
 // app.use(/^\/dashboard.*/,auth_session,dashboard)
@@ -139,7 +140,7 @@ app.use('/signup',signup)
 app.use('/login',login)
 app.use('/contact',contact)
 app.get('/terms',function(req,res){
-    res.render('pages/terms')
+    res.render('pages/terms',{terms:true})
 })
 
 app.get('/logout',(req,res)=>{

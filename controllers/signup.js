@@ -38,7 +38,7 @@ const createUser = async (req,res,next) => {
 }
 
 const signupPage = async (req,res) => {
-    res.render('pages/singup')
+    res.render('pages/singup',{signup:true})
 }
 
 

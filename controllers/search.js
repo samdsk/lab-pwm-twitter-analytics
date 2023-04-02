@@ -4,6 +4,7 @@ const getSearch = async (req,res,next) => {
         logout:true,
         username:req.session.username,
         email_hash:req.session.gravatar,
+        search:true
     })
 }
 
