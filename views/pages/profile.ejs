@@ -5,8 +5,13 @@
     <%- include('../partials/header') %>
     <main class="container mt-5 mb-5" id="dashboard">
         <noscript>Sorry, your browser does not support JavaScript!</noscript>
+
         <div class="row align-items-center justify-content-center">
-            <div class="col-sm-12 col-md-8 pt-3 pb-3 rounded border">
+            <div class="col-sm-12 col-md-8 m-0 p-0">
+
+                <%- include('../partials/dashboard') %>
+            </div>
+            <div class="col-sm-12 col-md-8 pt-3 pb-3 rounded-bottom border">
                 <div class="row justify-content-center">
                     <form id="change-psw-form" class="col-12 form-controll needs-validation" action="/dashboard/profile" method="POST" novalidate>
                         <% if(locals.username){%>

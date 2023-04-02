@@ -160,7 +160,7 @@ $(document).ready(async function(){
 
     if(data.error) return errorDisplay(data)
     await genSearchResults(data)
-    $('#results-wrapper').removeClass('d-none').modal('toggle')
+    $('#results-modal').removeClass('d-none').modal('toggle')
     $('#results').removeClass('d-none')
   })
 
@@ -186,10 +186,10 @@ $(document).ready(async function(){
     let url = "/results?compare=1&id="+id_1+"&id="+id_2
 
     let data = await postViaWorker(null,'GET',url)
-
+    console.log(data);
     await genSearchResults(data)
 
-    $('#results-wrapper').removeClass('d-none').modal('toggle')
+    $('#results-modal').removeClass('d-none').modal('toggle')
     $('#results').removeClass('d-none')
 
   })
@@ -231,7 +231,7 @@ $(document).ready(async function(){
     $('#loader #loader-gif').removeClass('d-none')
     $('#search-btn').prop("disabled",true)
 
-    let data = await postViaWorker($('#form-search').serialize(),'POST','/twitter')
+    // let data = await postViaWorker($('#form-search').serialize(),'POST','/twitter')
     //await sleep(1000)
     // await sleep(1000)
     // $('#loader #working-gif').removeClass('d-none')
@@ -251,6 +251,11 @@ $(document).ready(async function(){
     $('#results').show()
     $('#search-btn').removeAttr("disabled")
   })
+
+  let data  = await fetch('../js/output_data_compare.json').then( response => {
+      return response.json()
+  })
+  await genSearchResults(data)
 
   function cleanResults(){
     $('#results #user-info #user-profile img').remove()
@@ -281,7 +286,7 @@ $(document).ready(async function(){
     if(LENGTH==2) compare = INPUT[1]
 
     const load_user_datails = async () => {
-      $('#results #name').text(data.name)
+      $('#results #name span').text(data.name)
 
       let ancor = document.createElement('a')
       ancor.href = buildTwitterUrl(data.username)
@@ -289,13 +294,15 @@ $(document).ready(async function(){
       ancor.title = "Twitter link"
       ancor.innerText = "@"+data.username
       ancor.target = '_blank'
-      $('#results #username').empty().append(ancor)
+      $('#results #username span').empty().append(ancor)
 
       let img = new Image()
       img.crossOrigin = "anonymouse"
       img.src = data.user_img
       img.width = "73"
       img.height = "73"
+      img.classList = 'rounded col-auto p-0'
+      img.alt = "Profile image"
 
       $('#results #user-info #user-profile').prepend(img)
 
@@ -555,8 +562,8 @@ $(document).ready(async function(){
 
       let span_compare = $('<span id="'+sub_id+'-compare" class="data-hover data-clean"></span>')
 
-      let li = $('<li class="list-group-item data-clean">'+toUpperFirstChar(cleanText(type))+': </li>').append(span).append(span_compare)
-      $('#results  #'+id+' ul').append(li)
+      let a = $('<a class="list-group-item list-group-item-action data-clean">'+toUpperFirstChar(cleanText(type))+': </a>').append(span).append(span_compare)
+      $('#results  #'+id+' ul').append(a)
 
       if(compare && compare[type]){
         appendCompare('#results #'+id+' #'+sub_id,count,compare[type].count)
@@ -664,10 +671,15 @@ $(document).ready(async function(){
         responsive:true,
         aspectRatio: 1,
         maintainAspectRatio:false,
+
         plugins:{
+          title:{
+            display:true,
+            text:title
+          },
           legend:{
             display:true,
-            position:"bottom",
+            position:"right",
             labels: {
 
               usePointStyle:true,

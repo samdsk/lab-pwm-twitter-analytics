@@ -2,6 +2,10 @@ header{
     background-color:white;
 }
 
+#navbar-items-wrapper{
+    min-height: 64px;
+}
+
 footer{
     background-color:white ;
     border-color: #aaaaaa;
@@ -42,11 +46,6 @@ footer div.col {
     margin: auto;
 }
 
-#results .col{
-    background-color: white;
-    margin-top:1rem;
-    padding:1rem;
-}
 
 #results .h7{
     font-size:0.9rem;
@@ -56,29 +55,19 @@ footer div.col {
 
 }
 
-#results #user-info{
-    border-right:1px solid;
-    border-color: #cccccc;
-}
 
-#results #highlights{
+
+/* #results #highlights{
     margin-top: 1rem;
     border-top:1px solid;
     border-bottom:1px solid;
     border-color: #cccccc;
-}
+} */
 
-#results #metrics{
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top:1px solid;
-    border-bottom:1px solid;
-    border-color: #cccccc;
-}
 
-#results #user-profile {
+/* #results #user-profile {
     display: inline-flex;
-}
+} */
 
 #results #user-profile #name-username {
     padding-left :1rem
@@ -97,11 +86,6 @@ footer div.col {
     display: block;
     position: relative;
     top:-1rem;
-}
-
-
-#results #tweets-by-type-wrapper{
-    border-left: 1px solid #cccccc;
 }
 
 #results .pie-chart-container{

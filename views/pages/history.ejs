@@ -6,14 +6,13 @@
     <main class="container mt-5 mb-5" id="dashboard">
         <noscript>Sorry, your browser does not support JavaScript!</noscript>
         <div class="row">
-            <%- include('../partials/dashboard.ejs') %>
-
-            <div class="col right border p-3">
+            <%- include('../partials/dashboard') %>
+            <div class="col right rounded-bottom border p-3">
                 <div id="errors" class="alert alert-danger d-none"></div>
                 <%- include('../partials/searched_list.ejs') %>
             </div>
         </div>
-        <div id="results-wrapper" class="modal fade d-none"  tabindex="-1" role="dialog" aria-hidden="true">
+        <div id="results-modal" class="modal fade d-none"  tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
