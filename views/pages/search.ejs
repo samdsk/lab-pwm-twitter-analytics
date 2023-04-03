@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
     <%- include('../partials/head') %>
-<body class="wrapper">
+<body>
     <%- include('../partials/header') %>
-    <main class="container mb-5" id="dashboard">
+
+    <main class="container-lg mb-5" id="dashboard">
         <noscript>Sorry, your browser does not support JavaScript!</noscript>
 
         <div class="row mt-5 mb-5 container">
@@ -11,11 +12,21 @@
             <div class="col right border p-3 ">
                 <h3><i class="bi bi-twitter"></i> New Search</h3>
                 <form id="form-search" class="form-controll needs-validation d-inline" action="/twitter" method="POST">
-                    <div class="input-group">
-                        <input type="text" class="form-control" id="handler" name="handler" placeholder="@handler" required>
-                        <button id="search-btn" class="btn btn-primary " type="submit"><i class="bi bi-search"></i></button>
+
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="handler" name="handler" placeholder="@handler" required>
+                                <button id="search-btn" class="btn btn-primary " type="submit"><i class="bi bi-search"></i></button>
+                                <div class="invalid-feedback">Please choose a valid twitter handler.</div>
+
+                            </div>
+                        </div>
+                        <div class="col-auto justify-content-center align-items-center">
+                            <div class="col g-recaptcha" data-sitekey="6LelT0olAAAAAENj2D8op4_dpePjY1iMyl5Luo4b"></div>
+                        </div>
+
                     </div>
-                    <div class="invalid-feedback">Please choose a valid twitter handler.</div>
                 </form>
                 <div id="loader"class="d-none">
                     <img id="loader-gif" class="d-none" width="64" height="64" src="../assets/loader.gif" />

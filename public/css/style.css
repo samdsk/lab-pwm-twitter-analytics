@@ -100,6 +100,10 @@ footer div.col {
     height: 400px;
 }
 
+.modal-xl {
+    max-width: 80% !important;
+}
+
 
 .dashboard-nav-hover:hover{
     color:#10005588
@@ -112,6 +116,9 @@ footer div.col {
     main form {
         width: 70% !important;
     }
+    .sector-title{
+        text-align: center;
+    }
 
     #dashboard .icon-text{
         display: none;
@@ -120,27 +127,23 @@ footer div.col {
     #tweets-by-type-wrapper{
         border-left: none !important;
     }
-    #results .bar-chart{
-        height: 300px;
-    }
+
     #results .pie-chart-container{
         width: 400px;
 
     }
 }
 
+
 @media screen and (max-width: 750px){
     main form {
         width: 100% !important;
     }
 
+
     #results .pie-chart-container{
         width: 300px;
 
-    }
-
-    #results .bar-chart{
-        height: 200px;
     }
 
 }
