@@ -6,6 +6,7 @@ const mongoose = require('mongoose')
 const SearchResults = require('../models/SearchResults')
 const User = require('../models/User')
 const Auth = require('../models/Auth')
+const recaptcha = require('../utils/recaptcha')
 
 const testing_filename = './test.json'
 const filename = './data.json'
@@ -64,6 +65,8 @@ const search = async (ID) => {
 }
 
 const postTwitter = async(req,res,next) => {
+    let catpcha = await recaptcha(req.body['g-recaptcha-response'])
+    if(!catpcha) return res.json(JSON.stringify({error:"Invalid captcha!"}))
 
     console.log("New Twitter search for handler: "+req.body.handler)
 

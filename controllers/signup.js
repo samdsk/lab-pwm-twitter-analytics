@@ -2,6 +2,7 @@ const Auth = require('../models/Auth')
 const User = require('../models/User')
 const bcrypt = require('bcrypt')
 const mongoose = require('mongoose')
+const recaptcha = require('../utils/recaptcha')
 
 const createUser = async (req,res,next) => {
     if( !req.body.email ||
@@ -10,6 +11,10 @@ const createUser = async (req,res,next) => {
         !req.body.terms) return res.json(JSON.stringify({error:"Missing fields"}))
 
     if((req.body.password != req.body.password_confirm)) return res.json(JSON.stringify({error:"Passwords don't match!"}))
+
+    let catpcha = await recaptcha(req.body['g-recaptcha-response'])
+    if(!catpcha) return res.json(JSON.stringify({error:"Invalid captcha!"}))
+
 
     Auth.findOne({email:req.body.email}, async (err,auth)=>{
 
