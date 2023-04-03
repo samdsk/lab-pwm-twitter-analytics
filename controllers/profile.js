@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt')
 const Auth = require("../models/Auth")
 const User = require("../models/User")
 const SearchResults = require('../models/SearchResults')
+const recaptcha = require('../utils/recaptcha')
 
 const getProfile = async (req,res,next) => {
 
@@ -16,6 +17,10 @@ const getProfile = async (req,res,next) => {
 
 const postProfile = async (req,res,next) => {
     if(req.session.email){
+
+        let catpcha = await recaptcha(req.body['g-recaptcha-response'])
+        if(!catpcha) return res.json(JSON.stringify({error:"Invalid captcha!"}))
+
         const {password,new_password,new_password_confirm} = req.body
         if(new_password !== new_password_confirm)
             return res.json(JSON.stringify({error:"Passwords don't match"}))
