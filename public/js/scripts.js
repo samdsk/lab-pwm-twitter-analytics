@@ -160,7 +160,7 @@ $(document).ready(async function(){
 
     if(data.error) return errorDisplay(data)
     await genSearchResults(data)
-    $('#results-wrapper').removeClass('d-none').modal('toggle')
+    $('#results-modal').removeClass('d-none').modal('toggle')
     $('#results').removeClass('d-none')
   })
 
@@ -186,10 +186,10 @@ $(document).ready(async function(){
     let url = "/results?compare=1&id="+id_1+"&id="+id_2
 
     let data = await postViaWorker(null,'GET',url)
-
+    console.log(data);
     await genSearchResults(data)
 
-    $('#results-wrapper').removeClass('d-none').modal('toggle')
+    $('#results-modal').removeClass('d-none').modal('toggle')
     $('#results').removeClass('d-none')
 
   })
@@ -231,7 +231,7 @@ $(document).ready(async function(){
     $('#loader #loader-gif').removeClass('d-none')
     $('#search-btn').prop("disabled",true)
 
-    let data = await postViaWorker($('#form-search').serialize(),'POST','/twitter')
+    // let data = await postViaWorker($('#form-search').serialize(),'POST','/twitter')
     //await sleep(1000)
     // await sleep(1000)
     // $('#loader #working-gif').removeClass('d-none')
@@ -251,6 +251,11 @@ $(document).ready(async function(){
     $('#results').show()
     $('#search-btn').removeAttr("disabled")
   })
+
+  let data  = await fetch('../js/output_data.json').then( response => {
+      return response.json()
+  })
+  await genSearchResults(data)
 
   function cleanResults(){
     $('#results #user-info #user-profile img').remove()
@@ -280,8 +285,13 @@ $(document).ready(async function(){
     let compare = undefined
     if(LENGTH==2) compare = INPUT[1]
 
+    const colors_1 = ['#6a4c93','#1982c4','#8ac926','#ffca3a','#ff595e','#778da9']
+    const colors_2 = ['#26547c','#ef476f','#ffd166','#06d6a0','#FAA307','#7d8597']
+    const colors_3 = ['#33a8c7','#52e3e1','#a0e426','#00a878','#f77976','#d883ff','#d883ff','#147DF5','#9336fd','#BE0AFF']
+
+
     const load_user_datails = async () => {
-      $('#results #name').text(data.name)
+      $('#results #name span').text(data.name)
 
       let ancor = document.createElement('a')
       ancor.href = buildTwitterUrl(data.username)
@@ -289,13 +299,15 @@ $(document).ready(async function(){
       ancor.title = "Twitter link"
       ancor.innerText = "@"+data.username
       ancor.target = '_blank'
-      $('#results #username').empty().append(ancor)
+      $('#results #username span').empty().append(ancor)
 
       let img = new Image()
       img.crossOrigin = "anonymouse"
       img.src = data.user_img
       img.width = "73"
       img.height = "73"
+      img.classList = 'rounded col-auto p-0'
+      img.alt = "Profile image"
 
       $('#results #user-info #user-profile').prepend(img)
 
@@ -425,7 +437,7 @@ $(document).ready(async function(){
         let hashtags = Object.entries(data.hashtags).sort((a,b)=> b[1]-a[1]).slice(0,10)
         await top10Chart(hashtags,id,"Top 10 hashtags")
       }else{
-        $('#'+id).append('<h5>No data</h5>')
+        await top10Chart([],id,"Top 10 hashtags")
       }
     }
 
@@ -438,7 +450,7 @@ $(document).ready(async function(){
         let mentions = Object.entries(data.mentioned_users).sort((a,b)=> b[1]-a[1]).slice(0,10)
         await top10Chart(mentions,id,"Top 10 mentiones")
       }else{
-        $('#'+id).append('<h5>No data</h5>')
+        await top10Chart([],id,"Top 10 mentiones")
       }
     }
 
@@ -457,12 +469,13 @@ $(document).ready(async function(){
         dataset_compare.labels.forEach((key,i)=> {
           data_langs_compare[key] = {count:dataset_compare.data[i]}
         })
-
+        console.log(data_langs,data_langs_compare);
         load_type(id+"-data",data_langs,data_langs_compare)
+        await pieCharts(dataset,dataset_compare,id,"Tweets by languages",colors_3)
       }else{
         load_type(id+"-data",data_langs,null)
+        await pieCharts(dataset,null,id,"Tweets by languages",colors_3)
       }
-      await pieCharts(dataset,null,id,"Tweets by languages")
 
     }
 
@@ -479,10 +492,10 @@ $(document).ready(async function(){
           data:extractCounts(compare.media_type),
           labels:labels
         }
-        await pieCharts(dataset,dataset_compare,id,"Tweets by Media Type compare",'doughnut')
+        await pieCharts(dataset,dataset_compare,id,"Tweets by Media Type compare",colors_1,'doughnut')
       }
       else
-        await pieCharts(dataset,null,id,"Tweets by Media Type")
+        await pieCharts(dataset,null,id,"Tweets by Media Type",colors_1)
     }
 
     const load_type_Chart = async () => {
@@ -498,16 +511,14 @@ $(document).ready(async function(){
           data:extractCounts(compare.type),
           labels:labels
         }
-        await pieCharts(dataset,dataset_compare,id,"Tweets by Tweet Type compare",'doughnut')
+        await pieCharts(dataset,dataset_compare,id,"Tweets by Tweet Type compare",colors_2,'doughnut')
       }
       else
-        await pieCharts(dataset,null,id,"Tweets by Tweet Type")
+        await pieCharts(dataset,null,id,"Tweets by Tweet Type",colors_2)
     }
 
     const load_week_chart = async () => {
       let id = "week-chart-wrapper"
-
-      let colors = ['#FFBE0B','#FB5607','#FF006E','#8338EC','#3A86FF','#3A6CFF']
 
       if(compare){
         let labels = [...Array(7).keys()]
@@ -516,7 +527,7 @@ $(document).ready(async function(){
         await lineChart(dataset,labels,dataset_compare,id,"daily-tweets-compare","Daily tweets")
       }else{
         let labels = Object.keys(data.tweets_per_day)
-        let datasets = extractMediaAndType(data.tweets_per_day,colors)
+        let datasets = extractMediaAndType(data.tweets_per_day,colors_1,colors_2)
         await dailyChartByType(datasets,labels,id,"Daily tweets by Media Type and Tweet Type")
       }
     }
@@ -555,8 +566,8 @@ $(document).ready(async function(){
 
       let span_compare = $('<span id="'+sub_id+'-compare" class="data-hover data-clean"></span>')
 
-      let li = $('<li class="list-group-item data-clean">'+toUpperFirstChar(cleanText(type))+': </li>').append(span).append(span_compare)
-      $('#results  #'+id+' ul').append(li)
+      let a = $('<a class="list-group-item list-group-item-action data-clean">'+toUpperFirstChar(cleanText(type))+': </a>').append(span).append(span_compare)
+      $('#results  #'+id+' ul').append(a)
 
       if(compare && compare[type]){
         appendCompare('#results #'+id+' #'+sub_id,count,compare[type].count)
@@ -628,13 +639,11 @@ $(document).ready(async function(){
     return dataset
   }
   // draw pie charts
-  async function pieCharts(data_1,data_2,id,title,chartType = 'pie'){
+  async function pieCharts(data_1,data_2,id,title,colors,chartType = 'pie'){
 
     let canvas = document.createElement("canvas")
     canvas.id = id+"-chart"
     document.getElementById(id).appendChild(canvas)
-
-    let colors = ['#FF595E','#FFCA3A','#8AC926','#1982C4','#00B4D8','#6A4C93']
 
     let dataset_1 = {
       label:title,
@@ -664,10 +673,15 @@ $(document).ready(async function(){
         responsive:true,
         aspectRatio: 1,
         maintainAspectRatio:false,
+
         plugins:{
+          title:{
+            display:true,
+            text:title
+          },
           legend:{
             display:true,
-            position:"bottom",
+            position:"right",
             labels: {
 
               usePointStyle:true,
@@ -689,6 +703,74 @@ $(document).ready(async function(){
 
     })
   }
+
+  async function pieChartsLang(data_1,data_2,id,title,chartType = 'pie'){
+
+    let canvas = document.createElement("canvas")
+    canvas.id = id+"-chart"
+    document.getElementById(id).appendChild(canvas)
+
+    let colors = ['#FF595E','#FFCA3A','#8AC926','#1982C4','#00B4D8','#6A4C93']
+
+    let dataset_1 = {
+      label:title,
+      labels:data_1.labels,
+      data:data_1.data,
+      backgroundColor:colors,
+      hoverOffset: 4
+    }
+    let datasets = [dataset_1]
+
+    if(data_2){
+      let dataset_2 = {
+        label:title+" compare",
+        labels:data_2.labels,
+        data:data_2.data,
+        backgroundColor:colors,
+        hoverOffset: 4
+      }
+      datasets.push(dataset_2)
+    }
+
+    new Chart(document.getElementById(canvas.id),{
+      type:chartType,
+      data:{
+        datasets:datasets,
+      },
+      options :{
+        responsive:true,
+        aspectRatio: 1,
+        maintainAspectRatio:false,
+
+        plugins:{
+          title:{
+            display:true,
+            text:title
+          },
+          legend:{
+            display:true,
+            position:"right",
+            labels: {
+              usePointStyle:true,
+              pointStyle:'rectRounded',
+              padding:20
+            }
+          },
+          datalabels:{
+            anchor:"center",
+            color:'white',
+            formatter: (value,context)=>{
+              let total = context.dataset.data.reduce((acc,v)=> acc+v,0)
+              let perc = Math.floor(value/total *100)
+              return perc>2 ? perc+"%":''
+            }
+          }
+        }
+      },
+
+    })
+  }
+
   async function pieCharts_1(data_1,data_2,id,chartType = 'pie'){
 
     let canvas = document.createElement("canvas")
@@ -833,46 +915,46 @@ $(document).ready(async function(){
       //   maintainAspectRatio:false,
 
       //   plugins:{
-      //     // legend:{
-      //     //   position:"bottom",
-      //     //   labels: {
-      //     //     boxWidth:10,
-      //     //     borderRadius:10,
-      //     //     generateLabels: (chart) => {
-      //     //       console.log(chart.data);
-      //     //       const datasets = chart.data.datasets;
-      //     //       let labelset_1 = datasets[0].data.map((data, i) => ({
-      //     //         text: `${datasets[0].labels[i]} : ${data}`,
-      //     //         fillStyle: datasets[0].backgroundColor[i],
-      //     //         index: i
-      //     //       }))
-      //     //       let labelset_2 = datasets[1].data.map((data, i) => ({
-      //     //         text: `compare - ${datasets[1].labels[i]} : ${data}`,
-      //     //         fillStyle: datasets[1].backgroundColor[i],
-      //     //         index: i
-      //     //       }))
+          // legend:{
+          //   position:"bottom",
+          //   labels: {
+          //     boxWidth:10,
+          //     borderRadius:10,
+          //     generateLabels: (chart) => {
+          //       console.log(chart.data);
+          //       const datasets = chart.data.datasets;
+          //       let labelset_1 = datasets[0].data.map((data, i) => ({
+          //         text: `${datasets[0].labels[i]} : ${data}`,
+          //         fillStyle: datasets[0].backgroundColor[i],
+          //         index: i
+          //       }))
+          //       let labelset_2 = datasets[1].data.map((data, i) => ({
+          //         text: `compare - ${datasets[1].labels[i]} : ${data}`,
+          //         fillStyle: datasets[1].backgroundColor[i],
+          //         index: i
+          //       }))
 
-      //     //       return labelset_1.concat(labelset_2)
-      //     //     }
-      //     //   }
-      //     // },
-      //     // tooltip: {
-      //     //   callbacks: {
-      //     //       label: function(context) {
-      //     //         var index = context.dataIndex;
-      //     //         return context.dataset.labels[index] + ': ' + context.dataset.data[index];
-      //     //       }
-      //     //   }
-      //     // },
-      //     // datalabels:{
-      //     //   anchor:"center",
-      //     //   color:'white',
-      //     //   formatter: (value,context)=>{
-      //     //     let total = context.dataset.data.reduce((acc,v)=> acc+v,0)
-      //     //     let perc = Math.floor(value/total *100)
-      //     //     return perc>2 ? perc+"%":''
-      //     //   }
-      //     // }
+          //       return labelset_1.concat(labelset_2)
+          //     }
+          //   }
+          // },
+          // tooltip: {
+          //   callbacks: {
+          //       label: function(context) {
+          //         var index = context.dataIndex;
+          //         return context.dataset.labels[index] + ': ' + context.dataset.data[index];
+          //       }
+          //   }
+          // },
+          // datalabels:{
+          //   anchor:"center",
+          //   color:'white',
+          //   formatter: (value,context)=>{
+          //     let total = context.dataset.data.reduce((acc,v)=> acc+v,0)
+          //     let perc = Math.floor(value/total *100)
+          //     return perc>2 ? perc+"%":''
+          //   }
+          // }
       //   }
       // },
 
@@ -889,7 +971,7 @@ $(document).ready(async function(){
     return struct
   }
 
-  function extractMediaAndType(data,colors){
+  function extractMediaAndType(data,colors_1,colors_2){
     let labels = Object.keys(data)
     let count = 0
 
@@ -922,13 +1004,13 @@ $(document).ready(async function(){
 
     let output = []
     for(let m of Object.keys(media)){
-      output.push(toDataset(media[m],m,colors[count++],0))
+      output.push(toDataset(media[m],m,colors_1[count++],0))
     }
 
     count = 0
 
     for(let t of Object.keys(type)){
-      output.push(toDataset(type[t],t,colors[count++],1))
+      output.push(toDataset(type[t],t,colors_2[count++],1))
     }
 
     return output
@@ -969,18 +1051,25 @@ $(document).ready(async function(){
           display:true,
           text:title
         },
-         legend: {
-            display: false
-         },
+        legend:{
+          display:true,
+          position:"bottom",
+          labels: {
+
+            usePointStyle:true,
+            pointStyle:'rectRounded',
+            padding:20
+          }
+        },
          datalabels:{display:false},
       },
       scales: {
         x: {
-          display:true,
+          title:{text:'Day',display:true,position:'center'},
           stacked:true
         },
         y: {
-          display:true,
+          title:{text:'#tweets',display:true,position:'center'},
           stacked:true
         },
       }

@@ -2,7 +2,7 @@ const fetch = require('node-fetch')
 const sendEmail = require('../utils/sendEmail')
 
 const getContact = async (req,res,next) =>{
-    res.render('pages/contact')
+    res.render('pages/contact',{contact:true})
 }
 
 const postContact = async (req,res,next) =>{
