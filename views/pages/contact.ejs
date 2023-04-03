@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%- include('../partials/head') %>
+<body>
+    <%- include('../partials/header') %>
+    <main class="container mt-5 mb-5" id="about">
+        <div class="row align-items-center justify-content-center">
+            <div class="col-sm-12 col-md-10 pt-3 pb-3 rounded border">
+                <form id="contact-form" class="container-sm p-3 needs-validation" method="POST" action="/contact" novalidate>
+                    <h4 class="text-star">Contact us</h4>
+                    <div class="form-floating mb-3 has-validation">
+                        <input type="text" class="form-control" id="contact-name" name="name" placeholder="First Name" required>
+                        <label for="name">Name</label>
+                        <div class="valid-feedback">Looks good!</div>
+                    </div>
+                    <div class="form-floating mb-3 has-validation">
+                        <input type="email" class="form-control" id="contact-email" name="email" placeholder="name@example.com" required>
+                        <label for="email">Email</label>
+                        <div class="invalid-feedback">Please choose a valid email.</div>
+                    </div>
+                    <div class="form-floating mb-3 has-validation">
+                        <input type="text" class="form-control" id="contact-subject" name="subject" placeholder="Reason" required>
+                        <label for="contact-subject">Subject</label>
+                        <div class="valid-feedback">Please provide a subject</div>
+                    </div>
+                    <div id="message"  class="form-floating mb-3 has-validation">
+                        <textarea class="form-control" id="contact-msg" name="message" type="text" rows="10" style="height:100%;"  placeholder="Message here..." required></textarea>
+                        <label for="contact-msg">Message</label>
+                        <div class="invalid-feedback">Message can't be empty</div>
+                    </div>
+                    <div class="row justify-content-center align-items-center">
+                        <div class="col g-recaptcha" data-sitekey="6LelT0olAAAAAENj2D8op4_dpePjY1iMyl5Luo4b"></div>
+                    </div>
+                    <div class="row p-2">
+                        <button id="contact-btn" class="col-12 form-submit btn btn-primary"  data-form="contact-form" type="submit">Send <i class="bi bi-send-fill"></i></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <%- include('../partials/footer') %>
+</body>
+<%- include('../partials/scripts') %>
+</html>

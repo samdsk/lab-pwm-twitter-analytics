@@ -1,32 +1,36 @@
 const Auth = require('../models/Auth')
 const bcrypt = require('bcrypt')
-const {createError} = require('../errors/customError')
-const jwt = require('jsonwebtoken')
-const User = require('../models/User')
 
+const User = require('../models/User')
 const SessionDuration = 1000 * 60 * 60 * 60
+const md5 = require('md5')
 
 const login = async (req,res,next) => {
-    const {login_email, login_password, login_remember } = req.body
-    
-    Auth.findOne({email:login_email}, async (err,auth)=> {        
-        if(auth === null) return res.redirect("/?error=Credentials are not valid")
+    console.log(req.body);
+    const {email, password, remember} = req.body
 
-        await bcrypt.compare(login_password,auth.password).then(async (check)=>{
-            
-            if(!check) return res.redirect("/?error=Credentials are not valid")
+    Auth.findOne({email:email}, async (err,auth)=> {
+        if(auth == null) return res.redirect("/?error="+encodeURIComponent("Invalid credentials"))
 
-            //const token = jwt.sign({email:login_email},process.env.Server_Secret,{expiresIn:"20s"}) 
+        await bcrypt.compare(password,auth.password).then(async (check)=>{
+            if(!check) return res.json("/?error="+encodeURIComponent("Invalid credentials"))
+            console.log("here");
+            const username = await User.findOne({_id:auth._id}).populate('_id')
+            const email_hash = md5(email.trim().toLowerCase())
 
-            const username = await User.findOne({_id:auth._id}).populate('_id')           
             req.session.username = username.name
             req.session.email = username._id.email
+            req.session.gravatar = email_hash
+            console.log(req.session);
             // ! session maxage
-            if(login_remember === "on") req.session.cookie.maxAge = SessionDuration
+            if(remember === "on") req.session.cookie.maxAge = SessionDuration
 
-            res.redirect('/dashboard/profile')
-            
-        }).catch((err)=>{console.log(err)})
+            req.session.save()
+            return res.redirect('/dashboard/profile')
+
+        }).catch((err)=>{
+            res.sendStatus(500)
+        })
     })
 
 }

@@ -1,6 +1,9 @@
 header{
-    background-color:white ;
-    max-height: 10%;
+    background-color:white;
+}
+
+#navbar-items-wrapper{
+    min-height: 64px;
 }
 
 footer{
@@ -11,8 +14,6 @@ footer{
 
 html,body{
     height: 100%;
-    /* display: flex;
-    flex-direction: column; */
 }
 
 main{
@@ -27,19 +28,7 @@ main form{
 footer div.col {
     background-color:white ;
 }
-#dashboard .row {
 
-}
-
-#dashboard .left{
-
-}
-
-/* #dashboard .right{
-    max-width: 100%;
-    min-height: 600px;
-    overflow: hidden;
-} */
 
 #loader{
     display: flex;
@@ -57,50 +46,28 @@ footer div.col {
     margin: auto;
 }
 
-#results .col{
-    background-color: white;    
-    margin-top:1rem;
-    padding:1rem;
-}
 
 #results .h7{
     font-size:0.9rem;
 }
 
 #results #account-info{
-    margin-top: 1rem;
-    border-top:1px solid;
-    border-color: #cccccc;
+
 }
 
-#results #user-info{
-    border-right:1px solid;
-    border-color: #cccccc;
-}
 
-#results #highlights{
+
+/* #results #highlights{
     margin-top: 1rem;
     border-top:1px solid;
     border-bottom:1px solid;
     border-color: #cccccc;
-}
+} */
 
-#results #metrics{
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top:1px solid;
-    border-bottom:1px solid;
-    border-color: #cccccc;
-}
 
-#results #user-profile {
+/* #results #user-profile {
     display: inline-flex;
-}
-
-#results #user-profile img {    
-    border:1px solid #4cc9f0;
-    border-radius: 0.2rem;
-}
+} */
 
 #results #user-profile #name-username {
     padding-left :1rem
@@ -108,9 +75,10 @@ footer div.col {
 
 #results #user-profile #name-username p:nth-child(2){
     margin-top: -1rem;
+
 }
 
-#results #search-interval .time{
+#search-interval .time{
     display: none;
 }
 
@@ -120,30 +88,36 @@ footer div.col {
     top:-1rem;
 }
 
-
-#results #tweets-by-type-wrapper{
-    border-left: 1px solid #cccccc;
-}
-
 #results .pie-chart-container{
-    position: relative;     
+    position: relative;
     margin-left: auto;
-    margin-right: auto;    
-    width:350px;
+    margin-right: auto;
+    width:400px;
+    min-height: 300px;
 }
 
 #results .bar-chart{
-    
     height: 400px;
 }
 
-#results canvas{
-    
+.modal-xl {
+    max-width: 80% !important;
+}
+
+
+.dashboard-nav-hover:hover{
+    color:#10005588
+}
+.searched-entry-container:hover{
+    background-color: #eee;
 }
 
 @media screen and (max-width: 1000px){
     main form {
         width: 70% !important;
+    }
+    .sector-title{
+        text-align: center;
     }
 
     #dashboard .icon-text{
@@ -153,24 +127,23 @@ footer div.col {
     #tweets-by-type-wrapper{
         border-left: none !important;
     }
-    #results .bar-chart{
-        height: 300px;
+
+    #results .pie-chart-container{
+        width: 400px;
+
     }
 }
+
 
 @media screen and (max-width: 750px){
     main form {
         width: 100% !important;
     }
 
+
     #results .pie-chart-container{
         width: 300px;
-        
-    }
 
-    #results .bar-chart{
-        height: 200px;
     }
 
 }
-

@@ -1,17 +1,19 @@
-const User = require('../models/User')
+const Auth = require('../models/Auth')
 
 const auth_session = async (req,res,next)=>{
-    if(req.session.username){
-        console.log('username set ok')
-        const user = await User.findOne({name:req.session.username})
-        if(user){
-            //console.log('user found')
+    // console.log(req.session);
+    if(req.session.username && req.session.email){
+        const email = await Auth.findOne({email:req.session.email})
+        if(email){
+            console.log('session ok')
             return next()
+        }else{
+            req.session.destroy()
+            return res.redirect('/?error=Please Login first')
         }
-        else console.log('no user')
-    }else{        
+    }else{
         return res.redirect('/?error=Please Login first')
-    }    
+    }
 
 }
 
