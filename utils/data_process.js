@@ -21,14 +21,16 @@ const collectData = async (DATA) => {
     TWEETS.start_date = new Date(Date.parse(data[0].created_at))
     TWEETS.end_date = new Date(Date.parse(data[data.length-1].created_at))
     let temp_end = new Date(Date.parse(TWEETS.end_date))
-    let temp_date = new Date()
+    let temp_date = new Date(temp_end)
 
     temp_date.setDate(temp_end.getDate()-7)
     temp_end.setDate(temp_end.getDate()+1)
 
+    console.log(temp_date,temp_end);
     TWEETS.interval = temp_end.getTime() - temp_date.getTime()
 
     while(temp_date<=temp_end){
+        console.log("test");
         let date = temp_date.toISOString().split('T')[0]
         tweets_per_day[date] = {
             media:{
@@ -61,6 +63,8 @@ const collectData = async (DATA) => {
     const lang = {}
 
     data.forEach(e => {
+
+        console.log(tweets_per_day)
 
         // section - count post media types
         let mediaType = findMediaType(media,e)
