@@ -10,6 +10,8 @@ const getContact = async (req,res,next) =>{
 }
 
 const postContact = async (req,res,next) =>{
+    console.log("Contact: new message received.");
+
     const {name,email,subject,message} = req.body
     let catpcha = await recaptcha(req.body['g-recaptcha-response'])
     if(!catpcha) return res.json(JSON.stringify({error:"Invalid captcha!"}))
