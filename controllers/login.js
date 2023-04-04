@@ -26,7 +26,7 @@ const login = async (req,res,next) => {
             if(remember === "on") req.session.cookie.maxAge = SessionDuration
 
             req.session.save()
-            return res.redirect('/dashboard/profile')
+            return res.redirect('/dashboard/history')
 
         }).catch((err)=>{
             res.sendStatus(500)

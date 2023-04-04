@@ -51,8 +51,6 @@ const script_src = [
     "'unsafe-hashes'"
 ]
 
-//"script-src-attr":["'self'","'unsafe-inline'","cdn.jsdelivr.net","cdnjs.cloudflare.com","code.jquery.com"],
-
 const img_src = [
     "'self'",
     'data:',
