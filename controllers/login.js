@@ -6,14 +6,14 @@ const SessionDuration = 1000 * 60 * 60 * 60
 const md5 = require('md5')
 
 const login = async (req,res,next) => {
-    console.log(req.body);
+
     const {email, password, remember} = req.body
 
     Auth.findOne({email:email}, async (err,auth)=> {
-        if(auth == null) return res.redirect("/?error="+encodeURIComponent("Invalid credentials"))
+        if(auth == null) return res.redirect("/?error=Invalid credentials")
 
         await bcrypt.compare(password,auth.password).then(async (check)=>{
-            if(!check) return res.json("/?error="+encodeURIComponent("Invalid credentials"))
+            if(!check) return res.redirect("/?error=Invalid credentials")
             console.log("here");
             const username = await User.findOne({_id:auth._id}).populate('_id')
             const email_hash = md5(email.trim().toLowerCase())

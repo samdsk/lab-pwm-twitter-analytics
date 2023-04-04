@@ -2,6 +2,8 @@ const Auth = require('../models/Auth')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const recaptcha = require('../utils/recaptcha')
+const sendEmail = require('../utils/sendEmail')
+const JWT_EXP = '30m'
 
 const getReset = async (req,res,next) => {
     const {email,token} = req.params
@@ -44,6 +46,34 @@ const postReset = async (req,res,next) =>{
         const password_new = await bcrypt.hash(password,10)
         Auth.findByIdAndUpdate(auth._id,{password:password_new}).exec(function(err,auth){
             if(err) return res.sendStatus(500)
+        })
+
+        const secret = process.env.Server_Secret + password_new
+
+        const token = jwt.sign({
+            email:auth.email
+        },secret,{expiresIn:JWT_EXP})
+
+        const link = `http://${process.env.HOSTNAME}/reset-password/${auth.email}/${token}`
+
+        const mail_opt = {
+            from:"My Twitter Analytics",
+            to:email,
+            subject:"Password Reset | My Twitter Analytics",
+            text:`You have resetted your account's password recently ${email}`,
+            html:`
+                <h4 class="h4">Password Reset - My Twitter Analytics</h4>
+                <p>You have resetted your account's password recently ${email}</p>
+                <p>Password: ${password}</p>
+                <p>If you haven't request a password reset please change your password!</p>
+                <a href="${link}">${link}</a>
+                `
+        }
+
+        await sendEmail(mail_opt).then(()=>{
+            console.log("Reset Psw: email sent.");
+        }).catch((err)=>{
+            console.log("Reset Psw: email error - ",err);
         })
 
         return res.json(JSON.stringify({success:"Password was changed successfully!"}))
