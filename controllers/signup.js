@@ -3,8 +3,11 @@ const User = require('../models/User')
 const bcrypt = require('bcrypt')
 const mongoose = require('mongoose')
 const recaptcha = require('../utils/recaptcha')
+const sendEmail = require('../utils/sendEmail')
 
 const createUser = async (req,res,next) => {
+    console.log("Signup: request recieved");
+
     if( !req.body.email ||
         !req.body.password ||
         !req.body.name ||
@@ -37,6 +40,25 @@ const createUser = async (req,res,next) => {
 
         if(req.session)
             req.session.destroy()
+
+        const mail_opt = {
+            from:"My Twitter Analytics",
+            to:req.body.email,
+            subject:"Welcome to My Twitter Analytics App",
+            text:`Welcome ${req.body.name} to My Twitter Analytics App, you've successfully created an account!`,
+            html:`
+                <h4 class="h4">Welcome ${req.body.name}</h4>
+                <p>You've successfully created an account!</p>
+                <p>Email ${req.body.email}</p>
+                <p>Email ${req.body.password}</p>
+                `
+        }
+
+        await sendEmail(mail_opt).then(()=>{
+            console.log("Signup: email sent.");
+        }).catch((err)=>{
+            console.log("Signup: email error - ",err);
+        })
 
         return res.json(JSON.stringify({success:"User created successfully!"}))
     })

@@ -16,7 +16,9 @@ const getProfile = async (req,res,next) => {
     })
 }
 
-const postProfile = async (req,res,next) => {
+const updateProfile = async (req,res,next) => {
+    console.log("Profile: update psw request received.");
+
     if(req.session.email){
 
         let catpcha = await recaptcha(req.body['g-recaptcha-response'])
@@ -45,6 +47,8 @@ const postProfile = async (req,res,next) => {
 }
 
 const deleteProfile = async (req,res,next) => {
+    console.log("Profile: profile delete request received!");
+
     if(req.session.email){
         Auth.findOne({email:req.session.email},async function(err,auth){
             console.log(req.body.password);
@@ -93,4 +97,4 @@ const deleteProfile = async (req,res,next) => {
 
 
 
-module.exports = {getProfile,postProfile,deleteProfile}
+module.exports = {getProfile,updateProfile,deleteProfile}
