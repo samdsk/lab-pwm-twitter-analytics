@@ -32,6 +32,23 @@ function postViaWorker(data,method,url){
 const sleep = ms => new Promise(r => setTimeout(r,ms))
 
 $(document).ready(async function(){
+  // dark-mode
+  $('#dark-mode').click(function(){
+
+  })
+
+  $('#dark-mode').hover(function(){
+    if($('i',this).hasClass('bi-sun-fill'))
+      $('i',this).removeClass('bi-sun-fill').addClass('bi-moon-stars-fill')
+    else
+      $('i',this).addClass('bi-sun-fill').removeClass('bi-moon-stars-fill')
+  },function(){
+    if($('i',this).hasClass('bi-sun-fill'))
+      $('i',this).removeClass('bi-sun-fill').addClass('bi-moon-stars-fill')
+    else
+      $('i',this).addClass('bi-sun-fill').removeClass('bi-moon-stars-fill')
+  })
+
   // forgot psw
   $('.show-modal-btn').click(function(){
     let modal = $(this).attr('data-modal')
