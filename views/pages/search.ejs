@@ -28,9 +28,13 @@
 
                     </div>
                 </form>
-                <div id="loader"class="d-none">
-                    <img id="loader-gif" class="d-none" width="64" height="64" src="../assets/loader.gif" />
-                    <img id="working-gif" class="d-none" width="44" height="64" src="../assets/working.gif" />
+                <div id="loader" class="row mt-2 justify-content-center align-items-center ">
+                    <div id="spinner" class="col-auto spinner-border d-none" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <div id="progress-bar" class="progress mt-3 d-none" role="progressbar" aria-valuenow="50"  style="height: 5px" aria-label="5px high" aria-valuemin="0" aria-valuemax="100">
+                        <div class="progress-bar"></div>
+                    </div>
                 </div>
                 <%- include('../partials/results.ejs') %>
             </div>
