@@ -1,6 +1,6 @@
 
 <header class="container-fluid bg-primary">
-        <nav class="navbar navbar-expand-md ps-2 pe-2 align-items-center navbar-dark bg-primary">
+        <nav class="navbar navbar-expand-md ps-2 pe-2 align-items-center bg-primary">
             <div id="navbar-items-wrapper" class="container-fluid">
                 <a class="navbar-brand text-white" href="/"><i class="bi bi-twitter"></i> Twitter Analytics</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
@@ -14,13 +14,28 @@
                             <%= "active" %>
                             <% } %>" href="/signup">Sign up</a></li>
                         <li class="nav-item dropdown ">
-                            <a class="nav-link dropdown-toggle" href="/dashboard" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle
+                            <% if (locals.dashboard) { %>
+                                <%= "active" %>
+                            <% } %>" href="/dashboard" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                               Dashboard
                             </a>
                             <ul class="dropdown-menu">
-                              <li><a class="dropdown-item" href="/dashboard/profile">Profile</a></li>
-                              <li><a class="dropdown-item" href="/dashboard/history">History</a></li>
-                              <li><a class="dropdown-item" href="/dashboard/search">Search</a></li>
+                                <li class="nav-item">
+                                    <a class="nav-link
+                                    <% if (locals.profile) { %>
+                                        <%= "active" %>
+                                    <% } %>" href="/dashboard/profile">Profile</a></li>
+                                <li class="nav-item">
+                                    <a class="nav-link
+                                    <% if (locals.history) { %>
+                                        <%= "active" %>
+                                    <% } %>" href="/dashboard/history">History</a></li>
+                                <li class="nav-item">
+                                    <a class="nav-link
+                                    <% if (locals.search) { %>
+                                        <%= "active" %>
+                                    <% } %>" href="/dashboard/search">Search</a></li>
                             </ul>
                           </li>
                         <li class="nav-item"><a class="nav-link
@@ -32,12 +47,10 @@
                                 <%= "active" %>
                             <% } %>" href="/contact">Contact</a></li>
                         <li class="nav-item <% if(!(locals.logout)){%> <%='d-none'%> <%}%>"><a class="nav-link" href="/logout">Logout</a></li>
-
-                        <!-- <li class="nav-item  light-switch row align-items-center"><i class="light-switch-icon h5 bi bi-lamp-fill "></i></li> -->
                     </ul>
 
                     <a id="dark-mode" title="change theme" class="nav-link me-4 ms-2 pb-1 text-white text-decoration-none">
-                        <i class="bi bi-sun-fill"></i>
+                        <i class="bi"></i>
                     </a>
 
 
