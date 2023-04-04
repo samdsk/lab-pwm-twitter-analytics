@@ -37,7 +37,10 @@
     "genid": "^0.1.0",
     "helmet": "^6.0.0",
     "jsonwebtoken": "^9.0.0",
+    "md5": "^2.3.0",
     "mongoose": "^6.7.3",
+    "node-fetch": "^2.6.9",
+    "nodemailer": "^6.9.1",
     "npm": "^9.6.0",
     "twitter-api-v2": "^1.12.9"
   },

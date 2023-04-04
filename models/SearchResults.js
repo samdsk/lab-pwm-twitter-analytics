@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
 
-// FIXME adapt the scheme for new structure
 const SeachResultsSchema = new mongoose.Schema({
     _id:{type:mongoose.Schema.Types.ObjectId},
     date : {type:Date,required:true},
@@ -89,27 +88,27 @@ const SeachResultsSchema = new mongoose.Schema({
 
     highlights : {
         retweet_count : {
-            id : {type:Number,default:0},
+            id : {type:String,default:""},
             count : {type:String},
         }, // tweet with most retweets
         reply_count : {
-            id : {type:Number,default:0},
+            id : {type:String,default:""},
             count : {type:String},
         }, // tweet with most replies
         like_count : {
-            id : {type:Number,default:0},
+            id : {type:String,default:""},
             count : {type:String},
         },
         quote_count : {
-            id : {type:Number,default:0},
+            id : {type:String,default:""},
             count : {type:String},
         }, // tweet with most likes
         impression_count : {
-            id : {type:Number,default:0},
+            id : {type:String,default:""},
             count : {type:String},
         }, // tweet with most impressions
     },
-    
+
     type : {
         retweeted : {
             count : {type:Number,default:0},
@@ -147,21 +146,17 @@ const SeachResultsSchema = new mongoose.Schema({
                 quote_count:{type:Number,default:0},
                 impression_count:{type:Number,default:0}
             }
-        }, // original posts        
-         
+        }, // original posts
+
     },
     total : {// total posts
         count : {type:Number,default:0},
         interval : {type:Number,default:0},
         metrics:{
-            retweet_count:[{type:Number,default:0}],
-            reply_count:[{type:Number,default:0}],
-            like_count:[{type:Number,default:0}],
-            quote_count:[{type:Number,default:0}],
             impression_count:[{type:Number,default:0}]
         }
     }
-    
+
 })
 
 module.exports = mongoose.model('SearchResults',SeachResultsSchema)

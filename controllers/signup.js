@@ -1,33 +1,52 @@
 const Auth = require('../models/Auth')
 const User = require('../models/User')
-const required_params = require('../utils/required_params')
 const bcrypt = require('bcrypt')
 const mongoose = require('mongoose')
-const {createError} = require('../errors/customError')
+const recaptcha = require('../utils/recaptcha')
 
 const createUser = async (req,res,next) => {
-    const params_check = required_params(["signup_email","signup_password","signup_name","signup_terms"],req)
-    
-    if(!params_check) return res.redirect("signup/?error=Missing fields")    
+    if( !req.body.email ||
+        !req.body.password ||
+        !req.body.name ||
+        !req.body.terms) return res.json(JSON.stringify({error:"Missing fields"}))
 
-    Auth.findOne({email:req.body.signup_email}, async (err,auth)=>{
-        
-        if(auth != null) return res.redirect("signup/?error=User already exists!")
+    if((req.body.password != req.body.password_confirm)) return res.json(JSON.stringify({error:"Passwords don't match!"}))
 
-        const password = await bcrypt.hash(req.body.signup_password,10)
-        const id = new mongoose.Types.ObjectId()    
+    let catpcha = await recaptcha(req.body['g-recaptcha-response'])
+    if(!catpcha) return res.json(JSON.stringify({error:"Invalid captcha!"}))
 
-        Auth.create({_id:id,email:req.body.signup_email,password : password})
-        User.create({_id:id,name:req.body.signup_name})
 
-        res.status(200).send('Ok')
+    Auth.findOne({email:req.body.email}, async (err,auth)=>{
+
+        if(auth != null) return res.json(JSON.stringify({error:"User already exists!"}))
+
+        const password = await bcrypt.hash(req.body.password,10)
+        const id = new mongoose.Types.ObjectId()
+
+        Auth.create({_id:id,email:req.body.email,password : password},(err,data)=>{
+            if(err) {
+                return res.json(JSON.stringify({error:"Internal Auth error"}))
+            }
+
+            User.create({_id:id,name:req.body.name},(err,data)=>{
+                if(err) {
+                    return res.json(JSON.stringify({error:"Interval User error"}))
+                }
+            })
+        })
+
+        if(req.session)
+            req.session.destroy()
+
+        return res.json(JSON.stringify({success:"User created successfully!"}))
     })
-    
-    res.json(req.body)
 }
 
 const signupPage = async (req,res) => {
-    res.render('pages/singup')
+    if(!req.session.username || !req.session.email)
+        res.render('pages/singup',{signup:true})
+    else
+        res.render('pages/singup',{signup:true,logout:true})
 }
 
 

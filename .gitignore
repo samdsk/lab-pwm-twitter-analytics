@@ -17,11 +17,11 @@ wp-content/themes/twenty*/
 # ignore node dependency directories
 node_modules/
 
-# ignore env 
+# ignore env
 .env
 credentials.txt
 *.json
-
+!utils/tweets_data.json
 # ignore log files and databases
 *.log
 *.sql

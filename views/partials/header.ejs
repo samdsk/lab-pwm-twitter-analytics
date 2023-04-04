@@ -1,15 +1,69 @@
-<header class="container">        
-    <nav class="navbar justify-content-end">
-        <ul class="nav ml-auto">
-            <li class="nav-item"><a class="nav-link" href="/"></a></li>
-            <li id="user" class="nav-item d-none"><a class="nav-link dashboard" href="/dashboard">Welcome </a></li>
-            <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-            <li class="nav-item"><a class="nav-link" href="/signup">Sign up</a></li>
-            <li class="nav-item"><a class="nav-link" href="/dashboard">Dashboard</a></li>
-            <li class="nav-item"><a class="nav-link" href="/about">About</a></li>
-            <li class="nav-item <% if(!(locals.logout)){%> <%='d-none'%> <%}%>"><a class="nav-link" href="/logout">Logout</a></li>
-            <li class="nav-item"><a class="nav-link" href="#">Dark-Theme</a></li>
-        </ul>
-    </nav>
-    <% if(locals.username){%> <h5 class="">Welcome  <%=username%> </h5> <%}%>
+
+<header class="container-fluid bg-primary">
+        <nav class="navbar navbar-expand-md ps-2 pe-2 align-items-center bg-primary">
+            <div id="navbar-items-wrapper" class="container-fluid">
+                <a class="navbar-brand text-white" href="/"><i class="bi bi-twitter"></i> Twitter Analytics</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div id="navbarToggle" class="collapse navbar-collapse mt-1">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 ">
+                        <li class="nav-item"><a class="nav-link
+                            <% if (locals.signup) { %>
+                            <%= "active" %>
+                            <% } %>" href="/signup">Sign up</a></li>
+                        <li class="nav-item dropdown ">
+                            <a class="nav-link dropdown-toggle
+                            <% if (locals.dashboard) { %>
+                                <%= "active" %>
+                            <% } %>" href="/dashboard" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                              Dashboard
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li class="nav-item">
+                                    <a class="nav-link
+                                    <% if (locals.profile) { %>
+                                        <%= "active" %>
+                                    <% } %>" href="/dashboard/profile">Profile</a></li>
+                                <li class="nav-item">
+                                    <a class="nav-link
+                                    <% if (locals.history) { %>
+                                        <%= "active" %>
+                                    <% } %>" href="/dashboard/history">History</a></li>
+                                <li class="nav-item">
+                                    <a class="nav-link
+                                    <% if (locals.search) { %>
+                                        <%= "active" %>
+                                    <% } %>" href="/dashboard/search">Search</a></li>
+                            </ul>
+                          </li>
+                        <li class="nav-item"><a class="nav-link
+                            <% if (locals.about) { %>
+                                <%= "active" %>
+                            <% } %>" href="/about">About</a></li>
+                        <li class="nav-item"><a class="nav-link
+                            <% if (locals.contact) { %>
+                                <%= "active" %>
+                            <% } %>" href="/contact">Contact</a></li>
+                        <li class="nav-item <% if(!(locals.logout)){%> <%='d-none'%> <%}%>"><a class="nav-link" href="/logout">Logout</a></li>
+                    </ul>
+
+                    <a id="dark-mode" title="change theme" class="nav-link me-4 ms-2 pb-1 text-white text-decoration-none">
+                        <i class="bi"></i>
+                    </a>
+
+
+                    <% if(locals.username && locals.email_hash){%>
+                        <div class="col-sm-12 col-md-auto ">
+                            <a class="row text-decoration-none align-items-center justify-content-end" href="/dashboard/profile" title="profile">
+                                <p class="col-auto mt-2 text-white"><%= username %></p>
+                                <img class="col-auto rounded" src="https://www.gravatar.com/avatar/<%= email_hash %>?s=48&r=g" width="48" height="48" crossorigin="anonymous">
+                            </a>
+                        </div>
+                    <%}%>
+                </div>
+
+            </div>
+        </nav>
 </header>

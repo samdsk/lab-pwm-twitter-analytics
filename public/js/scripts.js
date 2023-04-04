@@ -1,78 +1,311 @@
 // ! boostrap form validation check script
-(function () {
-    'use strict'  
-    // Fetch all the forms we want to apply custom Bootstrap validation styles to
-    var forms = document.querySelectorAll('.needs-validation')
-    // Loop over them and prevent submission
-    Array.prototype.slice.call(forms)
-      .forEach(function (form) {
-        form.addEventListener('submit', function (event) {
-          if (!form.checkValidity()) {
-            event.preventDefault()
-            event.stopPropagation()
-          }  
-          form.classList.add('was-validated')
-        }, false)
-      })
+(function formValidator() {
+  'use strict'
+  // Fetch all the forms we want to apply custom Bootstrap validation styles to
+  var forms = document.querySelectorAll('.needs-validation')
+  // Loop over them and prevent submission
+  Array.prototype.slice.call(forms)
+    .forEach(function (form) {
+      form.addEventListener('submit', function (event) {
+        if (!form.checkValidity()) {
+          event.preventDefault()
+          event.stopPropagation()
+        }
+        form.classList.add('was-validated')
+      }, false)
+    })
 })()
 
 // ! chartsjs plugins
 Chart.register(ChartDataLabels)
 
-function postViaWorker(data){
+function postViaWorker(data,method,url){
   return new Promise((resolve,reject) => {
-    let worker = new Worker('../js/worker.js')    
-    worker.postMessage(data)
+    let worker = new Worker('/js/worker.js')
+    worker.postMessage({data:data,method:method,url:url})
     worker.onmessage = (event) => {
       resolve(event.data)
     }
   })
 }
 
+// set theme on page load
+document.getElementsByTagName('html')[0].setAttribute("data-bs-theme",localStorage.getItem("theme") || 'light')
+if(document.getElementsByTagName('html')[0].getAttribute('data-bs-theme')=='light'){
+  document.querySelector('#dark-mode i').classList.add('bi-sun-fill')
+}else{
+  document.querySelector('#dark-mode i').classList.add('bi-moon-stars-fill')
+}
+
+
+const sleep = ms => new Promise(r => setTimeout(r,ms))
+
 $(document).ready(async function(){
 
-  // ! error display function
-  function errorDisplay(){
-    const errors = new URLSearchParams(document.location.search)
-    if(!errors.entries().next().done){
-      $('#errors').removeClass("d-none")
-      errors.forEach((v,k)=>{
-        $('#errors').append('<p class="mb-0">'+k+" - "+v+"</p>")
-      })
+  // dark-mode click activate function
+  $('#dark-mode').click(function(){
+    if($('html').attr('data-bs-theme') == 'light'){
+      $('html').attr('data-bs-theme','dark')
+      localStorage.setItem("theme","dark")
+      $('i',this).addClass('bi-sun-fill').removeClass('bi-moon-stars-fill')
     }
+    else{
+      $('html').attr('data-bs-theme','light')
+      localStorage.setItem("theme","light")
+      $('i',this).removeClass('bi-sun-fill').addClass('bi-moon-stars-fill')
+    }
+  })
+
+  // dark-mode hover icon
+  $('#dark-mode').hover(function(){
+    if($('i',this).hasClass('bi-sun-fill'))
+      $('i',this).removeClass('bi-sun-fill').addClass('bi-moon-stars-fill')
+    else
+      $('i',this).addClass('bi-sun-fill').removeClass('bi-moon-stars-fill')
+  },function(){
+    if($('i',this).hasClass('bi-sun-fill'))
+      $('i',this).removeClass('bi-sun-fill').addClass('bi-moon-stars-fill')
+    else
+      $('i',this).addClass('bi-sun-fill').removeClass('bi-moon-stars-fill')
+  })
+
+  // forgot psw
+  $('.show-modal-btn').click(function(){
+    let modal = $(this).attr('data-modal')
+    $('#'+modal).modal('show')
+  })
+
+  $('.form-submit').click(async function(event){
+
+    const form_id = $(this).attr('data-form')
+    const form = $('#'+form_id)
+    if(!form) return errorDisplay({error:"Frontend error: Form must be specified"})
+
+    let inputcheck = true;
+
+    form.find('input').each((i,e)=>{
+      if($(e).val().length <1) {
+        inputcheck = false
+      }
+    })
+
+    if(!inputcheck) return errorDisplay({error:"Input can't be empty!"})
+
+    const psw = form.find('input.password')
+    const psw_confirm = form.find('input.password-confirm')
+
+    if(psw.length == 1 && psw_confirm.length == 1){
+
+      const input = psw[0]
+      const input_confirm = psw_confirm[0]
+
+      if(input.value !== input_confirm.value) {
+        input_confirm.setCustomValidity("Passwords don't match")
+        $(input_confirm).parent().find('.invalid-feedback').show()
+
+        return
+      }
+      input_confirm.setCustomValidity("")
+      $(input_confirm).parent().find('.invalid-feedback').hide()
+    }
+
+    event.preventDefault()
+    event.stopPropagation()
+
+    const method = form.attr('method')
+    if(!method) return errorDisplay({error:"Must specify method in form"})
+
+    let url = form.attr('action')
+    if(!url) url = window.location.href
+
+    let form_data = form.serialize()
+
+    let data = await postViaWorker(form_data,method,url)
+
+    console.log(data);
+
+    if(data.error || data.success)
+      return errorDisplay(data)
+
+    // if(data.redirect)
+    //   return window.location.href = data.redirect
+
+  })
+
+  // reset checkboxes on page ready
+  $('.form-check-input:checked').each(function(i,e){
+    $(this).click()
+  })
+
+  function errorParamDisplay(){
+    const params = new URLSearchParams(document.location.search)
+
+    if(params.get('error')){
+      errorDisplay({error:params.get('error')})
+    }
+
+    if(params.get('success')){
+      errorDisplay({success:params.get('success')})
+    }
+    var newURL = location.href.split("?")[0];
+    window.history.pushState('object', document.title, newURL);
   }
-  errorDisplay()
-  
+  errorParamDisplay()
+
+  // ! error display function
+  function errorDisplay(data){
+    $('#error-modal .modal-header').removeClass("bg-danger bg-success")
+    $('#error-modal #error-msg').removeClass("text-danger text-success")
+
+    if(data.error){
+      $('#error-modal .modal-header').addClass('bg-danger')
+      $('#error-modal h5.modal-title').text("Error")
+      $('#error-modal #error-msg').addClass('text-danger').text(data.error)
+    }
+    else if(data.success){
+      $('#error-modal .modal-header').addClass('bg-success')
+      $('#error-modal h5.modal-title').text("Success")
+      $('#error-modal #error-msg').addClass('text-success').text(data.success)
+    }
+
+    $('#error-modal').modal('show')
+  }
+
+  // delete a seached result
+  $('.close-icon').click(async function(){
+    if(!confirm("Are you sure you want to delete this record?")) return
+
+    let id = $(this).attr('data-id')
+    let data = "id="+encodeURIComponent(id)
+    let response = await postViaWorker(data,"DELETE","/results")
+
+    if(response?.error)
+      return errorDisplay(response)
+
+    $(this).parent().parent().parent().fadeOut(function(){
+      $(this).remove()
+    })
+    if($("#searches .searched-entry-container").length < 1) window.location.reload()
+
+  })
+
+  // show detailed clicked result
+  $('.searched-entry').click(async function(){
+    let id = $(this).attr('id')
+    let url = '/results?compare=0&id='+id
+    let data = await postViaWorker(null,'GET',url)
+
+    if(data.error) return errorDisplay(data)
+    await genSearchResults(data)
+    $('#results-modal').removeClass('d-none').modal('toggle')
+    $('#results').removeClass('d-none')
+  })
+
+  // search history close button icon hovering effect
+  $('.close-icon').hover(function(){
+    $(this).removeClass('bi-x-square')
+    $(this).addClass('bi-x-square-fill')
+  },function(){
+    $(this).removeClass('bi-x-square-fill')
+    $(this).addClass('bi-x-square')
+  })
+
+  // model close button
+  $('.model-close-button').click(function(){
+    $('.modal').modal('hide')
+  })
+
+  // show detailed comparing results
+  $('.compare-btn').click(async function(event){
+    const id_1 =  $('.form-check-input:checked').attr('data-id')
+    const id_2 =  $(this).parent().find('.form-check-input').attr('data-id')
+
+    let url = "/results?compare=1&id="+id_1+"&id="+id_2
+
+    let data = await postViaWorker(null,'GET',url)
+    console.log(data);
+    await genSearchResults(data)
+
+    $('#results-modal').removeClass('d-none').modal('toggle')
+    $('#results').removeClass('d-none')
+
+  })
+
+  // disable checkboxes of other usernames
+  // and re-enable checkboxes if there is no checkboxes checked
+
+  //FIXME to test with more results per username
+  $('.form-check-input').click(function(event){
+
+    let username = $(this).attr('data-username')
+    let id = $(this).attr('data-id')
+
+    $("#searched-history .form-check-input[data-username="+username+"]").each(function(i,e){
+      $('#searched-history .form-check-input:not(:checked)').addClass('d-none')
+      if($(this).attr('data-id') != id)
+        $(this).parent().find('.compare-btn').removeClass("d-none")
+      })
+
+    if($('.form-check-input:checked').length < 1){
+      $('.form-check-input:disabled').each( function(i,e){
+          $(this).removeAttr("disabled")
+          $(this).removeAttr('checked')
+      })
+      $('#searched-history .compare-btn').addClass('d-none')
+      $('#searched-history .form-check-input').removeClass('d-none')
+    }
+
+  })
+
+  // search page search button
   $('#search-btn').click(async (event)=>{
     event.preventDefault()
-    $('#results').hide()
-    $('#loader').removeClass('d-none')
+
+    if($('#handler').val() == '') return
+
+    $('#results').addClass('d-none')
+    $('#loader #spinner').removeClass('d-none')
     $('#search-btn').prop("disabled",true)
 
-    let data = await postViaWorker($('#form-search').serialize())
-    
+    let data = await postViaWorker($('#form-search').serialize(),'POST','/twitter')
+
     // let data  = await fetch('../js/output_data_compare.json').then( response => {
-    //     return response.json()
+    //       return response.json()
     // })
-      
+
+    await sleep(500)
+    $('#loader #spinner').addClass('d-none')
+
+    if(data.error) {
+      $('#search-btn').removeAttr("disabled")
+      grecaptcha.reset()
+      return errorDisplay(data)
+    }
+
+    $('#loader #progress-bar').removeClass('d-none')
+    $('#loader #progress-bar .progress-bar').removeClass(function (index, className) {
+      return (className.match(new RegExp("\\S*w-\\S*", 'g')) || []).join(' ')
+    })
     await genSearchResults(data)
-    
-    $('#loader').addClass('d-none')
-    $('#results').removeClass("d-none")
-    $('#results').show()
+    await sleep(500)
+
+    $('#loader #progress-bar').addClass('d-none')
+    $('#results').removeClass("d-none").hide().fadeIn(1000)
     $('#search-btn').removeAttr("disabled")
-  })  
 
-  // let data  = await fetch('../js/output_data.json').then( response => {
-  //   return response.json()
-  // })
-  
-  // await genSearchResults(data)
+    grecaptcha.reset()
+  })
 
+  function cleanResults(){
+    $('#results #user-info #user-profile img').remove()
+    $('#results .data-clean').each((i,obj) => $(obj).empty())
+    $('#results .node-clean').each((i,obj) => $(obj).remove())
 
+  }
   // ! populate with seach results + charts
   async function genSearchResults(data){
-    console.log(data.length);
+    cleanResults()
+    if(data.error) return
     if(data.length==2 && data[1] != null){
       if(data[0].username == data[1].username){
         console.log("Ok: comparing mode");
@@ -84,99 +317,94 @@ $(document).ready(async function(){
       gen(data,1)
     }
   }
-  
+
   async function gen(INPUT,LENGTH){
+
+    if(localStorage.getItem('theme') == 'dark'){
+      Chart.defaults.color = "#bbb"
+      Chart.defaults.borderColor = "rgba(256, 255, 255, 0.1)"
+    }else{
+      Chart.defaults.color = "#333"
+      Chart.defaults.borderColor = 'rgba(0, 0, 0, 0.1)'
+    }
 
     let data = INPUT[0]
     let compare = undefined
     if(LENGTH==2) compare = INPUT[1]
-    
+
+    const colors_1 = ['#6a4c93','#1982c4','#8ac926','#ffca3a','#ff595e','#778da9']
+    const colors_2 = ['#26547c','#ef476f','#ffd166','#06d6a0','#FAA307','#7d8597']
+    const colors_3 = ['#33a8c7','#52e3e1','#a0e426','#00a878','#f77976','#d883ff','#d883ff','#147DF5','#9336fd','#BE0AFF']
+
+
     const load_user_datails = async () => {
-      $('#results #name').text(data.name)
-    
+      $('#results #name span').text(data.name)
+
       let ancor = document.createElement('a')
       ancor.href = buildTwitterUrl(data.username)
       ancor.id = "username-link"
       ancor.title = "Twitter link"
       ancor.innerText = "@"+data.username
       ancor.target = '_blank'
-      $('#results #username').empty().append(ancor)
-      
+      $('#results #username span').empty().append(ancor)
+
       let img = new Image()
       img.crossOrigin = "anonymouse"
       img.src = data.user_img
       img.width = "73"
       img.height = "73"
-    
+      img.classList = 'rounded col-auto p-0'
+      img.alt = "Profile image"
+
       $('#results #user-info #user-profile').prepend(img)
 
       let count = data.total_tweets
       let count_rounded = tweetCount(count)
-      
-      $('#total-tweets-data')
+
+      $('#results #total-tweets-data')
       .attr({"data-real":count, "data-round":count_rounded,"title":"Total tweets"})
       .text(count_rounded)
 
       if(compare)
-        appendCompare("#total-tweets-data",count,compare.total_tweets)
+        appendCompare("#results #total-tweets-data",count,compare.total_tweets)
     }
 
     const load_followers = async () => {
-      let count = data.followers
-      let count_rounded = tweetCount(count)
-
-      $('#followers')
-      .attr({"data-real":count, "data-round":count_rounded,"title":"Total followers"})
-      .text(count_rounded)
-
-      if(compare)
-        appendCompare("#followers",count,compare.followers)
+      load_x("#followers",data.followers,compare?.followers,"Total Followers")
     }
 
     const load_followings = async () => {
-      let count = data.followings
-      let count_rounded = tweetCount(count)
+      load_x('#followings',data.followings,compare?.followings,"Total Followings")
+    }
 
-      $('#followings')
-      .attr({"data-real":count, "data-round":count_rounded,"title":"Total followings"})
-      .text(count_rounded)
-
+    const load_total_info = async () => {
+      $("#results #total-interval").text(msToHMS(data.total.interval))
       if(compare)
-        appendCompare("#followings",count,compare.followings)
+        appendCompareInterval('#results #total-interval',data.total.interval,compare.total.interval)
     }
-    
-    const load_sample_internal_new = async () => {   
-      $("#search-sample-new #search-date .date").text((data.date).slice(0,10))
-      $("#search-sample-new #search-date .time").append((data.date).slice(11,19))
-      $("#search-sample-new #interval-start-date").text((data.start_date).slice(0,10))
-      $("#search-sample-new #interval-start-time").append((data.start_date).slice(11,19))
-      $("#search-sample-new #interval-end-date").text((data.end_date).slice(0,10))
 
-      $("#search-sample-new #interval-end-time").append((data.end_date).slice(11,19))
-      $("#search-sample-new #sample span").text(data.total.count)
+    const load_sample_internal_new = async () =>{
+      let id = "#results #search-sample-new"
+      load_dateTime(id,data)
     }
-    
+
     const load_sample_interval_old = async () => {
-      if(compare == null || compare == undefined){      
-        $("#search-sample-old").remove()
+      let id = "#results #search-sample-old"
+
+      if(compare == null || compare == undefined){
+        $(id).addClass('d-none')
         return
       }
 
       if(compare){
-        $("#search-sample-old #search-date .date").text((compare.date).slice(0,10))
-        $("#search-sample-old #search-date .time").append((compare.date).slice(11,19))
-        $("#search-sample-old #interval-start-date").text((compare.start_date).slice(0,10))
-        $("#search-sample-old #interval-start-time").append((compare.start_date).slice(11,19))
-        $("#search-sample-old #interval-end-date").text((compare.end_date).slice(0,10))
-  
-        $("#search-sample-old #interval-end-time").append((compare.end_date).slice(11,19))
-        $("#search-sample-old #sample span").text(compare.total.count)
+        $(id).removeClass('d-none')
+        load_dateTime(id,compare)
       }
     }
 
     const load_highlights = async () => {
       for(let type of Object.keys(data.highlights)){
-        let id = '#most-'+type
+        let id = '#results  #most-'+type
         let round = tweetCount(data.highlights[type].count)
         $(id).attr({
           "data-real":data.highlights[type].count,
@@ -191,197 +419,286 @@ $(document).ready(async function(){
           $(id+"-compare").attr({
             "href":buildTwitterPostUrl(compare.username,compare.highlights[type].id)
           })
-          } 
-
         }
-    }   
-    
-    const load_tweets_by_media_type_data = async () => {
-      for(let type of Object.keys(data.media_type)){
-
-        let count = data.media_type[type].count
-        let count_rounded = tweetCount(count)
-        let id = "tweets-by-media-type-data-"+type
-        let span = $('<span class="data-hover"></span>')
-        span.attr({"id":id,"data-real":count, "data-round":count_rounded})
-        span.text(count_rounded)
-
-        let span_compare = $('<span id="'+id+'-compare" class="data-hover"></span>')
-
-        let li = $('<li class="list-group-item">'+toUpperFirstChar(cleanText(type))+': </li>').append(span).append(span_compare)
-        $('#tweets-by-media-type-data ul').append(li)
-
-        if(compare)
-         appendCompare('#'+id,count,compare.media_type[type].count)
       }
     }
 
-    const load_tweets_by_type = async () => {
-      let id = "tweets-by-type-data"
+    const load_tweets_by_media_type_data = async () => {
+      load_type("tweets-by-media-type-data",data.media_type,compare?.media_type)
+    }
 
-      for(let type of Object.keys(data.type)){
-        
-        let span = $('<span id="'+id+'-'+type+'" class="data-hover"></span>').text(tweetCount(data.type[type].count))
-        let span_compare = $('<span id="'+id+'-'+type+'-compare" class="data-hover"></span>')
-
-        span.attr({"data-real":data.type[type].count, "data-round":tweetCount(data.type[type].count),"title":type})
-
-        let li = $('<li class="list-group-item">'+type+': </li>').append(span).append(span_compare)
-        $('#'+id+' ul').append(li)
-        if(compare)
-          appendCompare('#'+id+'-'+type,data.type[type].count,compare.type[type].count)
-
-      }
+    const load_tweets_by_type_data = async () => {
+      load_type("tweets-by-type-data",data.type,compare?.type)
     }
 
     const load_avg_metrics_table = async () => {
-      for(let type of Object.keys(data.media_type)){        
+      for(let type of Object.keys(data.media_type)){
 
-        let id = 'avg-interactions-'+type
-        $('#'+id+' #interval').text(msToHMS(data.media_type[type].interval))
-        
+        let id = 'avg-interactions'
+        let sub_id = id+'-'+type
+        let intv_id = id+'-interval-'+type
+
+        if(data.media_type[type].count == 0) {
+          $('#'+sub_id).hide()
+          continue
+        }
+
+        $('#results #'+intv_id).text(msToHMS(data.media_type[type].interval))
+        if(compare)
+          appendCompareInterval("#"+intv_id,data.media_type[type].interval,compare.media_type[type].interval)
+
         for(let key of Object.keys(data.media_type[type].metrics)){
-          let li = $('<a onclick="return false;" class="list-group-item"></a>')
-          
-          if(data.media_type[type].count == 0) {
-            $('#'+id).remove()
-            continue
-          }
-          
+          let li = $('<a onclick="return false;" class="list-group-item data-clean"></a>')
+
           let avg_count = Math.floor(data.media_type[type].metrics[key]/data.media_type[type].count)
-          
+
           let name = countToPlural(key)
           li.text(name+" : ")
-          
-          let span_id = id+'-'+key          
-          let span = $('<span id="'+span_id+'"class="data-hover">'+tweetCount(avg_count)+'</span>')
-          span.attr({"data-real":avg_count, "data-round":tweetCount(avg_count),"title":"Average "+name.toLowerCase()})
-          let compare_span = $('<span id="'+span_id+'-compare" class="data-hover"></span>')            
-          
+
+          let rounded
+
+          if(avg_count  < 1) rounded = "Not enough data"
+          else rounded = tweetCount(avg_count)
+
+          let span_id = sub_id+'-'+key
+          let span = $('<span id="'+span_id+'"class="data-hover data-clean">'+ rounded +'</span>')
+          span.attr({"data-real":avg_count, "data-round":rounded,"title":"Average "+name.toLowerCase()})
+          let compare_span = $('<span id="'+span_id+'-compare" class="data-hover data-clean"></span>')
+
           li.append(span).append(compare_span)
-          $('#'+id+' ul#average').append(li)
-          
+          $('#results #'+sub_id+' ul').append(li)
+
           if(compare){
             let avg_count_compare = Math.floor(compare.media_type[type].metrics[key]/compare.media_type[type].count)
-            appendCompare('#'+span_id,avg_count,avg_count_compare)
+            appendCompare('#results #'+span_id,avg_count,avg_count_compare)
           }
         }
+
+        $('#'+sub_id).show()
       }
     }
 
-    const load_total_info = async () => {
-      let id = "total-info-h"
-      let count = data.total.count
-      let count_rounded = tweetCount(count)
-
-      let span = $('<span id="'+id+'-data" class="data-hover">'+count+'</span>')
-      span.attr({"data-real":count,"data_round":count_rounded,"title":"Total tweets analized"})
-      let span_compare = $('<span id="'+id+'-data-compare" class="data-hover"></span>')
-
-      $('#'+id).append(span).append(span_compare)
-
-      id = id+"-data"
-      if(compare)
-        appendCompare('#'+id,count,compare.total.count)
-
-      $("#total-info-i #interval").text(msToHMS(data.total.interval))
-
-    }
-
-    const load_total_charts = async () => {
-      let id = "total-charts-wrapper-"
-      for(let type of Object.keys(data.total.metrics)){
-        lineCharts(id+type,data.total.metrics[type],type)
-      }
-    }
-
+// FIXME append something then there is no hashtag graph
     const load_hashtags = async () => {
       let id = "hashtags-chart-wrapper"
+      if(compare) $('#hashtags-wrapper').hide()
+      else $('#hashtags-wrapper').show()
+
       if(data.hashtags){
         let hashtags = Object.entries(data.hashtags).sort((a,b)=> b[1]-a[1]).slice(0,10)
-        await barChart(hashtags,id,"hashtags")        
+        await top10Chart(hashtags,id,"Top 10 hashtags")
+      }else{
+        await top10Chart([],id,"Top 10 hashtags")
       }
     }
 
     const load_mentioned_users = async () => {
       let id = "mentioned_users-chart-wrapper"
+      if(compare) $('#mentioned_users-wrapper').hide()
+      else $('#mentioned_users-wrapper').show()
+
       if(data.mentioned_users){
         let mentions = Object.entries(data.mentioned_users).sort((a,b)=> b[1]-a[1]).slice(0,10)
-        await barChart(mentions,id,"mentioned_users")        
+        await top10Chart(mentions,id,"Top 10 mentiones")
+      }else{
+        await top10Chart([],id,"Top 10 mentiones")
       }
-    }    
+    }
 
     const load_langs_chart = async () => {
-      let id = "tweets-by-langs"  
+      let id = "tweets-by-langs"
       let dataset = extractLangs(data.langs)
-      await pieCharts(dataset.data,dataset.labels,null,id)
-      return 
+      let data_langs = {}
+      dataset.labels.forEach((key,i)=> {
+        data_langs[key] = {count:dataset.data[i]}
+      })
+
+      if(compare){
+        let data_langs_compare = {}
+        let dataset_compare = extractLangs(compare.langs)
+
+        dataset_compare.labels.forEach((key,i)=> {
+          data_langs_compare[key] = {count:dataset_compare.data[i]}
+        })
+        console.log(data_langs,data_langs_compare);
+        load_type(id+"-data",data_langs,data_langs_compare)
+        await pieCharts(dataset,dataset_compare,id,"Tweets by languages",colors_3)
+      }else{
+        load_type(id+"-data",data_langs,null)
+        await pieCharts(dataset,null,id,"Tweets by languages",colors_3)
+      }
+
     }
 
     const load_media_type_Chart = async () => {
       let id = "tweets-by-media-type"
       let labels = ["Text","Video","Photo","Link","Poll","Gif"]
-      if(compare)
-        await pieCharts(extractCounts(data.media_type),labels,extractCounts(compare.media_type),id,'doughnut')
+      let dataset = {
+        data:extractCounts(data.media_type),
+        labels:labels
+      }
+
+      if(compare){
+        let dataset_compare ={
+          data:extractCounts(compare.media_type),
+          labels:labels
+        }
+        await pieCharts(dataset,dataset_compare,id,"Tweets by Media Type compare",colors_1,'doughnut')
+      }
       else
-        await pieCharts(extractCounts(data.media_type),labels,null,id,'doughnut')
+        await pieCharts(dataset,null,id,"Tweets by Media Type",colors_1)
     }
 
     const load_type_Chart = async () => {
       let id = "tweets-by-type"
       let labels = ["Retweets","Replies","Quotes","Originals"]
-      if(compare) 
-        await pieCharts(extractCounts(data.type),labels,extractCounts(compare.type),id,'doughnut')
-      else 
-        await pieCharts(extractCounts(data.type),labels,null,id,'doughnut')
+      let dataset = {
+        data:extractCounts(data.type),
+        labels:labels
+      }
+
+      if(compare){
+        let dataset_compare ={
+          data:extractCounts(compare.type),
+          labels:labels
+        }
+        await pieCharts(dataset,dataset_compare,id,"Tweets by Tweet Type compare",colors_2,'doughnut')
+      }
+      else
+        await pieCharts(dataset,null,id,"Tweets by Tweet Type",colors_2)
     }
 
     const load_week_chart = async () => {
       let id = "week-chart-wrapper"
-      let labels = Object.keys(data.tweets_per_day)
-      let colors = ['#FFBE0B','#FB5607','#FF006E','#8338EC','#3A86FF','#3A6CFF']
 
-      let datasets = extractMediaAndType(data.tweets_per_day,colors)
-      await metricCharts(datasets,labels,id,"tweets-per-day")
+      if(compare){
+        let labels = [...Array(7).keys()]
+        let dataset = extractDailyTotal(data.tweets_per_day)
+        let dataset_compare = extractDailyTotal(compare.tweets_per_day)
+        await lineChart(dataset,labels,dataset_compare,id,"daily-tweets-compare","Daily tweets")
+      }else{
+        let labels = Object.keys(data.tweets_per_day)
+        let datasets = extractMediaAndType(data.tweets_per_day,colors_1,colors_2)
+        await dailyChartByType(datasets,labels,id,"Daily tweets by Media Type and Tweet Type")
+      }
     }
-    // load_user_datails()
-    // load_followers()
-    // load_followings()
-    // load_sample_internal_new()  
-    // load_sample_interval_old()
-    // load_highlights()    
-    // load_tweets_by_media_type_data()
-    // load_tweets_by_type()
-    // load_avg_metrics_table()
-    // load_total_info()
-    // load_total_charts()
 
-    Promise.all([
-      load_user_datails(),
-      load_followers(),
-      load_followings(),
-      load_sample_internal_new(),
-      load_sample_interval_old(),
-      load_highlights(), 
-      //load_tweets_by_media_type_data(),
-      //load_tweets_by_type(),
-      load_avg_metrics_table(),
-      load_total_info(),
-      load_week_chart(),
-      load_media_type_Chart(),
-      load_type_Chart(),
-      load_langs_chart(),
-      load_hashtags(),
-      load_mentioned_users()
-    ])
+    await load_user_datails()
+    await load_followers()
+    await load_followings()
 
-    //input,labels,id,type
-    // 
-    // 
-    // await metricCharts(data.metrics,'metric-charts','retweets')
+    $('#loader #progress-bar .progress-bar').addClass('w-10')
 
-    set_data_hover()
+    await load_sample_internal_new()
+    await load_sample_interval_old()
+    await load_highlights()
 
+    $('#loader #progress-bar .progress-bar').addClass('w-30')
+
+    await load_total_info()
+
+    $('#loader #progress-bar .progress-bar').addClass('w-50')
+
+    await load_week_chart()
+
+    $('#loader #progress-bar .progress-bar').addClass('w-55')
+
+    await load_media_type_Chart()
+
+    $('#loader #progress-bar .progress-bar').addClass('w-60')
+    await load_type_Chart()
+
+    $('#loader #progress-bar .progress-bar').addClass('w-65')
+
+    await load_langs_chart()
+
+    $('#loader #progress-bar .progress-bar').addClass('w-70')
+    await load_hashtags()
+    await load_mentioned_users()
+    $('#loader #progress-bar .progress-bar').addClass('w-80')
+
+    await load_tweets_by_media_type_data()
+    await load_tweets_by_type_data()
+
+    $('#loader #progress-bar .progress-bar').addClass('w-90')
+
+    await load_avg_metrics_table()
+
+    $('#loader #progress-bar .progress-bar').addClass('w-100')
+
+    // Promise.all([
+    //   load_user_datails(),
+    //   load_followers(),
+    //   load_followings(),
+    //   load_sample_internal_new(),
+    //   load_sample_interval_old(),
+    //   load_highlights(),
+    //   load_avg_metrics_table(),
+    //   load_total_info(),
+    //   load_week_chart(),
+    //   load_media_type_Chart(),
+    //   load_tweets_by_media_type_data(),
+    //   load_tweets_by_type_data(),
+    //   load_type_Chart(),
+    //   load_langs_chart(),
+    //   load_hashtags(),
+    //   load_mentioned_users()
+    // ])
+  }
+
+  function load_type(id,data,compare){
+
+    for(let type of Object.keys(data)){
+      let count = data[type].count
+      let count_rounded = tweetCount(count)
+
+      let sub_id = id+"-"+type
+
+      let span = $('<span class="data-hover data-clean"></span>')
+      span.attr({"id":sub_id,"data-real":count, "data-round":count_rounded})
+      span.text(count_rounded)
+
+      let span_compare = $('<span id="'+sub_id+'-compare" class="data-hover data-clean"></span>')
+
+      let a = $('<a class="list-group-item list-group-item-action data-clean">'+toUpperFirstChar(cleanText(type))+': </a>').append(span).append(span_compare)
+      $('#results  #'+id+' ul').append(a)
+
+      if(compare && compare[type]){
+        appendCompare('#results #'+id+' #'+sub_id,count,compare[type].count)
+      }
+    }
+  }
+
+  function load_x(id,data,compare,title){
+    let rounded = tweetCount(data)
+    id = '#results '+id
+    $(id)
+    .attr({"data-real":data, "data-round":rounded,"title":title})
+    .text(rounded)
+
+    if(compare)
+      appendCompare(id,data,compare)
+  }
+
+  function load_dateTime(id,data){
+    let date = data.date
+    $(id+" #search-date .date").text(date.slice(0,10))
+    let span = $('<span class="time-span node-clean"></span>')
+
+    $(id+" #search-date .time").append(
+      $('<span class="time-span node-clean"></span>').text(date.slice(11,19)))
+
+    let start_date = data.start_date
+    $(id+" #interval-start-date").text(start_date.slice(0,10))
+    $(id+" #interval-start-time").append(
+      $('<span class="time-span node-clean"></span>').text(start_date.slice(11,19)))
+
+    let end_date = data.end_date
+    $(id+" #interval-end-date").text(end_date.slice(0,10))
+    $(id+" #interval-end-time").append(
+      $('<span class="time-span node-clean"></span>').text(end_date.slice(11,19)))
+
+    $(id+" #sample span").text(data.total.count)
   }
 
   function extractLangs(langs) {
@@ -389,10 +706,11 @@ $(document).ready(async function(){
     let dataset = []
     var unknown_lang = 0
     Object.entries(langs).map( e => {
-      let eng = new Intl.DisplayNames(e[0],{type:"language",fallback:'none'})
+      let eng = new Intl.DisplayNames("en",{type:"language",fallback:'none'})
       let lang = eng.of(e[0])
-      if(lang){
-        labels.push(lang)
+
+      if(lang && lang != "No linguistic content"){
+        labels.push(toUpperFirstChar(lang))
         dataset.push(e[1])
       }else{
         unknown_lang += e[1];
@@ -415,8 +733,140 @@ $(document).ready(async function(){
     return dataset
   }
   // draw pie charts
-  async function pieCharts(data_1,labels,data_2,id,chartType = 'pie'){
-    
+  async function pieCharts(data_1,data_2,id,title,colors,chartType = 'pie'){
+
+    let canvas = document.createElement("canvas")
+    canvas.id = id+"-chart"
+    document.getElementById(id).appendChild(canvas)
+
+    let dataset_1 = {
+      label:title,
+      data:data_1.data,
+      backgroundColor:colors,
+      hoverOffset: 4
+    }
+    let datasets = [dataset_1]
+
+    if(data_2){
+      let dataset_2 = {
+        label:title+" compare",
+        data:data_2.data,
+        backgroundColor:colors,
+        hoverOffset: 4
+      }
+      datasets.push(dataset_2)
+    }
+
+    new Chart(document.getElementById(canvas.id),{
+      type:chartType,
+      data:{
+        labels:data_1.labels,
+        datasets:datasets,
+      },
+      options :{
+        responsive:true,
+        aspectRatio: 1,
+        maintainAspectRatio:false,
+
+        plugins:{
+          title:{
+            display:true,
+            text:title
+          },
+          legend:{
+            display:true,
+            position:"right",
+            labels: {
+
+              usePointStyle:true,
+              pointStyle:'rectRounded',
+              padding:20
+            }
+          },
+          datalabels:{
+            anchor:"center",
+            color:'white',
+            formatter: (value,context)=>{
+              let total = context.dataset.data.reduce((acc,v)=> acc+v,0)
+              let perc = Math.floor(value/total *100)
+              return perc>2 ? perc+"%":''
+            }
+          }
+        }
+      },
+
+    })
+  }
+
+  async function pieChartsLang(data_1,data_2,id,title,chartType = 'pie'){
+
+    let canvas = document.createElement("canvas")
+    canvas.id = id+"-chart"
+    document.getElementById(id).appendChild(canvas)
+
+    let colors = ['#FF595E','#FFCA3A','#8AC926','#1982C4','#00B4D8','#6A4C93']
+
+    let dataset_1 = {
+      label:title,
+      labels:data_1.labels,
+      data:data_1.data,
+      backgroundColor:colors,
+      hoverOffset: 4
+    }
+    let datasets = [dataset_1]
+
+    if(data_2){
+      let dataset_2 = {
+        label:title+" compare",
+        labels:data_2.labels,
+        data:data_2.data,
+        backgroundColor:colors,
+        hoverOffset: 4
+      }
+      datasets.push(dataset_2)
+    }
+
+    new Chart(document.getElementById(canvas.id),{
+      type:chartType,
+      data:{
+        datasets:datasets,
+      },
+      options :{
+        responsive:true,
+        aspectRatio: 1,
+        maintainAspectRatio:false,
+
+        plugins:{
+          title:{
+            display:true,
+            text:title
+          },
+          legend:{
+            display:true,
+            position:"right",
+            labels: {
+              usePointStyle:true,
+              pointStyle:'rectRounded',
+              padding:20
+            }
+          },
+          datalabels:{
+            anchor:"center",
+            color:'white',
+            formatter: (value,context)=>{
+              let total = context.dataset.data.reduce((acc,v)=> acc+v,0)
+              let perc = Math.floor(value/total *100)
+              return perc>2 ? perc+"%":''
+            }
+          }
+        }
+      },
+
+    })
+  }
+
+  async function pieCharts_1(data_1,data_2,id,chartType = 'pie'){
+
     let canvas = document.createElement("canvas")
     canvas.id = id+"-chart"
     document.getElementById(id).appendChild(canvas)
@@ -425,7 +875,8 @@ $(document).ready(async function(){
 
     let dataset_1 = {
       label:cleanText(id)+" new",
-      data:data_1,
+      labels:data_1.labels,
+      data:data_1.data,
       backgroundColor:colors,
       hoverOffset: 4
     }
@@ -434,48 +885,173 @@ $(document).ready(async function(){
     if(data_2){
       let dataset_2 = {
         label:cleanText(id)+" old",
-        data:data_2,
+        labels:data_2.labels,
+        data:data_2.data,
         backgroundColor:colors,
-        hoverOffset: 4        
+        hoverOffset: 4
       }
       datasets.push(dataset_2)
     }
 
+    // const pieLabelsLine = {
+    //   id: "pieLabelsLine",
+    //   afterDraw(chart) {
+    //     const {
+    //       ctx,
+    //       chartArea: { width, height },
+    //     } = chart;
+
+    //     const cx = chart._metasets[0].data[0].x;
+    //     const cy = chart._metasets[0].data[0].y;
+
+    //     const sum = chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+
+    //     chart.data.datasets.forEach((dataset, i) => {
+    //       chart.getDatasetMeta(i).data.forEach((datapoint, index) => {
+    //         const { x: a, y: b } = datapoint.tooltipPosition();
+
+    //         const x = 2 * a - cx;
+    //         const y = 2 * b - cy;
+
+    //         // draw line
+    //         const halfwidth = width / 2;
+    //         const halfheight = height / 2;
+    //         const xLine = x >= halfwidth ? x + 20 : x - 20;
+    //         const yLine = y >= halfheight ? y + 20 : y - 20;
+
+    //         const extraLine = x >= halfwidth ? 10 : -10;
+
+    //         ctx.beginPath();
+    //         ctx.moveTo(x, y);
+    //         ctx.arc(x, y, 2, 0, 2 * Math.PI, true);
+    //         ctx.fill();
+    //         ctx.moveTo(x, y);
+    //         ctx.lineTo(xLine, yLine);
+    //         ctx.lineTo(xLine + extraLine, yLine);
+    //         // ctx.strokeStyle = dataset.backgroundColor[index];
+    //         ctx.strokeStyle = "black";
+    //         ctx.stroke();
+
+    //         // text
+    //         const textWidth = ctx.measureText(chart.data.labels[index]).width;
+    //         ctx.font = "12px Arial";
+    //         // control the position
+    //         const textXPosition = x >= halfwidth ? "left" : "right";
+    //         const plusFivePx = x >= halfwidth ? 1 : -1;
+    //         ctx.textAlign = textXPosition;
+    //         ctx.textBaseline = "middle";
+    //         // ctx.fillStyle = dataset.backgroundColor[index];
+    //         ctx.fillStyle = "black";
+    //           ctx.fillText(chart.data.labels[index] +" : "+ (((chart.data.datasets[0].data[index] * 100) / sum)).toFixed(2) + "%",
+    //           xLine + extraLine + plusFivePx, yLine)
+    //       //   ctx.fillText(
+    //       //     ((chart.data.datasets[0].data[index] * 100) / sum).toFixed(2) +
+    //       //       "%",
+    //       //     xLine + extraLine + plusFivePx,
+    //       //     yLine
+    //       //   );
+    //       });
+    //     });
+    //   },
+    // };
+
+    // var params = {
+    //   display: true,
+    //   // text: [
+    //   // '%l (%p.3) \n VALUE: (%v.3)',
+    //   // '%l (%p) \n VALUE: (%v)',
+    //   // 'SIMPLE VALUE \n => %v',
+    //   // 'VALUE WITH PRECISION 4 \n => %v.4',
+    //   // 'SIMPLE PERCENT \n => %p',
+    //   // 'PERCENT WITH PRECISION 3 \n => %p.3',
+    //   // 'JUST LABEL \n => %l',
+    //   // 'JUST TEXT'
+    //   // ],
+    //   borderWidth: 2,
+    //   lineWidth: 2,
+    //   padding: 3,
+    //   textAlign: 'center',
+    //   stretch: 10,
+    //   font: {
+    //       resizable: true,
+    //       minSize: 12,
+    //       maxSize: 25,
+    //       family: Chart.defaults.font.family,
+    //       size: Chart.defaults.font.size,
+    //       style: Chart.defaults.font.style,
+    //       lineHeight: Chart.defaults.font.lineHeight,
+    //   },
+    //   color: "black",
+    //   valuePrecision: 1,
+    //   percentPrecision: 2
+    // };
+    // var chartOption = {
+
+    //     maintainAspectRatio: false,
+    //     layout: {
+    //         padding: 0
+    //     },
+    //     plugins: {
+    //         legend:{display:false},
+    //         outlabels: params,
+    //     }
+    // };
+
     new Chart(document.getElementById(canvas.id),{
       type:chartType,
       data:{
-        labels:labels,
         datasets:datasets,
       },
-      options : {
-        responsive:true,
-        aspectRatio: 1,
-        maintainAspectRatio:false,
-        plugins:{
-          legend:{
-            position:"bottom",
-            labels: {
-              generateLabels: (chart) => {
-                const datasets = chart.data.datasets;
-                return datasets[0].data.map((data, i) => ({
-                  text: `${chart.data.labels[i]} : ${data}`,
-                  fillStyle: datasets[0].backgroundColor[i],
-                  index: i
-                }))
-              }
-            }
-          },
-          datalabels:{
-            anchor:"center",            
-            color:'white',            
-            formatter: (value,context)=>{
-              let total = context.dataset.data.reduce((acc,v)=> acc+v,0)              
-              let perc = Math.floor(value/total *100)
-              return perc>2 ? perc+"%":''
-            }
-          }
-        }
-      }
+      options : chartOption,
+      // {
+      //   responsive:true,
+      //   aspectRatio: 1,
+      //   maintainAspectRatio:false,
+
+      //   plugins:{
+          // legend:{
+          //   position:"bottom",
+          //   labels: {
+          //     boxWidth:10,
+          //     borderRadius:10,
+          //     generateLabels: (chart) => {
+          //       console.log(chart.data);
+          //       const datasets = chart.data.datasets;
+          //       let labelset_1 = datasets[0].data.map((data, i) => ({
+          //         text: `${datasets[0].labels[i]} : ${data}`,
+          //         fillStyle: datasets[0].backgroundColor[i],
+          //         index: i
+          //       }))
+          //       let labelset_2 = datasets[1].data.map((data, i) => ({
+          //         text: `compare - ${datasets[1].labels[i]} : ${data}`,
+          //         fillStyle: datasets[1].backgroundColor[i],
+          //         index: i
+          //       }))
+
+          //       return labelset_1.concat(labelset_2)
+          //     }
+          //   }
+          // },
+          // tooltip: {
+          //   callbacks: {
+          //       label: function(context) {
+          //         var index = context.dataIndex;
+          //         return context.dataset.labels[index] + ': ' + context.dataset.data[index];
+          //       }
+          //   }
+          // },
+          // datalabels:{
+          //   anchor:"center",
+          //   color:'white',
+          //   formatter: (value,context)=>{
+          //     let total = context.dataset.data.reduce((acc,v)=> acc+v,0)
+          //     let perc = Math.floor(value/total *100)
+          //     return perc>2 ? perc+"%":''
+          //   }
+          // }
+      //   }
+      // },
+
     })
   }
 
@@ -488,8 +1064,8 @@ $(document).ready(async function(){
 
     return struct
   }
-  
-  function extractMediaAndType(data,colors){
+
+  function extractMediaAndType(data,colors_1,colors_2){
     let labels = Object.keys(data)
     let count = 0
 
@@ -521,28 +1097,44 @@ $(document).ready(async function(){
     }
 
     let output = []
-    for(let m of Object.keys(media)){      
-      output.push(toDataset(media[m],m,colors[count++],0))
+    for(let m of Object.keys(media)){
+      output.push(toDataset(media[m],m,colors_1[count++],0))
     }
 
     count = 0
 
-    for(let t of Object.keys(type)){      
-      output.push(toDataset(type[t],t,colors[count++],1))
+    for(let t of Object.keys(type)){
+      output.push(toDataset(type[t],t,colors_2[count++],1))
     }
 
     return output
   }
-  async function metricCharts(datasets,labels,id,type){
+  function extractDailyTotal(data){
+    let labels = Object.keys(data)
+
+    let output = []
+    let tweet_types = Object.keys(data[labels[0]].type)
+
+    for(let day of labels){
+      let count = 0
+      for(let type of tweet_types){
+        count += data[day].type[type]
+      }
+      output.push(count)
+    }
+
+    return output
+  }
+
+  async function dailyChartByType(datasets,labels,id,title){
     let canvas = document.createElement("canvas")
-    canvas.id = type+"-chart"
-    
-    document.getElementById(id).appendChild(canvas)      
+    canvas.id = id+"-chart"
+    document.getElementById(id).appendChild(canvas)
 
     new Chart(document.getElementById(canvas.id),{
     type:'bar',
     data:{
-      labels :  labels,
+      labels : labels,
       datasets:datasets,
     },
     options: {
@@ -551,32 +1143,40 @@ $(document).ready(async function(){
       plugins: {
         title:{
           display:true,
-          text:cleanText(id)
-        },          
-         legend: {
-            display: false
-         },
+          text:title
+        },
+        legend:{
+          display:true,
+          position:"bottom",
+          labels: {
+
+            usePointStyle:true,
+            pointStyle:'rectRounded',
+            padding:20
+          }
+        },
          datalabels:{display:false},
       },
       scales: {
         x: {
-          display:true,
+          title:{text:'Day',display:true,position:'center'},
           stacked:true
         },
         y: {
-          display: false,
+          title:{text:'#tweets',display:true,position:'center'},
           stacked:true
         },
       }
     },
-    
+
   })
 
   }
-  async function barChart(data,id,type){
-    
+
+  async function top10Chart(data,id,title){
+
     let canvas = document.createElement("canvas")
-    canvas.id = type+"-chart"
+    canvas.id = id+"-chart"
     document.getElementById(id).appendChild(canvas)
 
     let labels = []
@@ -589,11 +1189,11 @@ $(document).ready(async function(){
 
     color = '#5634f0'
     new Chart(document.getElementById(canvas.id),{
-      type:'bar',      
+      type:'bar',
       data:{
         labels :  labels,
         datasets: [{
-          label: type,
+          label: title,
           data: dataset,
           fill: false,
           backgroundColor: color,
@@ -615,30 +1215,47 @@ $(document).ready(async function(){
                 minRotation: 45
             }
           },
-          y: {display: true},
+          y: {display: true,title:"asd"},
       }
       }
     })
   }
 
-  async function lineCharts(id,data,type){
-    console.log(id);
+  async function lineChart(data_1,labels,data_2,id,type,title){
     let canvas = document.createElement("canvas")
     canvas.id = type+"-chart"
     document.getElementById(id).appendChild(canvas)
-    let labels = [...Array(data.length).keys()]
-    color = '#5634f0'
+
+
+    color_1 = '#FF006E'
+    color_2 = '#FFBE0B'
+
+    let dataset_1 = {
+      label:title,
+      data:data_1,
+      fill: false,
+      borderColor: color_1,
+      tension: 0.1
+    }
+    let datasets = [dataset_1]
+
+    if(data_2){
+      let dataset_2 = {
+        label:title+" compare",
+        data:data_2,
+        fill: false,
+        borderColor: color_2,
+        tension: 0.1
+      }
+      datasets.push(dataset_2)
+    }
+
+
     new Chart(document.getElementById(canvas.id),{
       type:'line',
       data:{
         labels :  labels,
-        datasets: [{
-          label: type,
-          data: data,
-          fill: false,
-          borderColor: color,
-          tension: 0.5                   
-        }],
+        datasets: datasets,
       },
       options: {
         plugins: {
@@ -648,8 +1265,8 @@ $(document).ready(async function(){
            datalabels:{display:false},
           },
         scales: {
-          x: {display: false},
-          y: {display: false},
+          x: {display: true},
+          y: {display: true},
       }
       }
     })
@@ -662,39 +1279,49 @@ $(document).ready(async function(){
       return key.charAt(0).toUpperCase()+key.slice(1,-6)+"s"
   }
 
-  function set_data_hover(){   
-    $(".data-hover").mouseover(function(){
+  function set_data_hover(){
+    $(document).on("mouseover ",'.data-hover',function(){
       $(this).text($(this).attr("data-real"))
     })
-    
-    $('.data-hover').mouseleave(function(){      
-      $(this).text($(this).attr("data-round"))      
+
+    $(document).on("mouseleave",'.data-hover',function(){
+      $(this).text($(this).attr("data-round"))
     })
 
-    $('#search-interval').mouseover(()=>{
-      $('#search-interval .time').show()
+    $('.date').mouseover(function(){
+      $(this).next().show()
+    }).mouseleave(function(){
+      $(this).next().hide()
     })
-    $('#search-interval').mouseleave(()=>{
-    $('#search-interval .time').hide()
+
+    // NOTE mobile
+    $('.date').on('touchstart tap',(function(){
+      $(this).next().toggle()
+    }))
+
+     // NOTE mobile
+    $(document).on('touchstart tap','.data-hover',function(){
+      if($(this).text() == $(this).attr("data-real"))
+        $(this).text($(this).attr("data-round"))
+      else
+        $(this).text($(this).attr("data-real"))
     })
+
+
   }
 
   function appendCompare(id,new_data,old_data){
-    if(old_data == null || old_data == undefined) return
-    
+    if(!old_data) return
     if(old_data == new_data) return
 
-    let up = ["bi-caret-up-fill","text-success"]
-    let down = ["bi-caret-down-fill","text-danger"]
-
-    // console.log(new_data,old_data);
-    
     let diff = new_data - old_data
     let rounded_data = tweetCount(diff)
 
+    let up = ["bi-caret-up-fill","text-success"]
+    let down = ["bi-caret-down-fill","text-danger"]
     let icon = $('<i class="bi ms-1 me-1"></i>')
-    
-    if(new_data>old_data){
+
+    if(diff>0){
       icon.addClass(up)
       icon.attr("title","Gained")
     }else{
@@ -702,10 +1329,39 @@ $(document).ready(async function(){
       icon.attr("title","Lost")
     }
 
+    icon.addClass("node-clean")
     $(id).after(icon)
 
     id = id+"-compare"
     $(id).attr({"data-real":diff, "data-round":rounded_data, "title":"Difference between new and old data"})
+    $(id).text(rounded_data)
+  }
+  function appendCompareInterval(id,new_data,old_data){
+
+    if(!old_data) return
+    if(old_data == new_data) return
+
+    let diff = new_data - old_data
+    let rounded_data = msToHMS(diff)
+    if(rounded_data.length<1)  return
+
+    let up = ["bi-caret-up-fill","text-success"]
+    let down = ["bi-caret-down-fill","text-danger"]
+    let icon = $('<i class="bi ms-1 me-1"></i>')
+
+    if(diff>0){
+      icon.addClass(up)
+      icon.attr("title","Gained")
+    }else{
+      icon.addClass(down)
+      icon.attr("title","Lost")
+    }
+
+    icon.addClass("node-clean")
+    $(id).after(icon)
+
+    id = id+"-compare"
+    $(id).attr({"title":"Difference of interval"})
     $(id).append(rounded_data)
   }
 
@@ -714,10 +1370,10 @@ $(document).ready(async function(){
   }
 
   function cleanText(str){
-    let regex = /[^A-Za-z0-9]/g    
+    let regex = /[^A-Za-z0-9]/g
     return str.replace(regex," ")
   }
-  function normalize(data){    
+  function normalize(data){
     let output = []
     let max = Math.max(...data)
     for(let i=0;i<data.length;i++){
@@ -732,55 +1388,38 @@ $(document).ready(async function(){
     s = s%60;
     let h = m/60;
     m = m%60;
+
+    if(h<1 && m<1 && s<1) return "0s"
+    if(h<1 && m<1) return Math.floor(s)+"s"
+    if(h<1) return Math.floor(m)+"m "+Math.floor(s)+"s"
+
     return Math.floor(h)+"H "+Math.floor(m)+"m "+Math.floor(s)+"s"
   }
   function tweetCount(count){
     if (count / 1000000 >= 1 || count / 1000000 <= -1)
       return (count / 1000000).toFixed(2) + "M"
-    
+
     if(count / 1000 >= 1 || count / 1000 <= -1)
       return (count / 1000).toFixed(1) + "K"
-    
+
     return count
   }
 
   function buildTwitterUrl(user){
     return "https://twitter.com/"+user
   }
+
   function buildTwitterPostUrl(user,id){
     return buildTwitterUrl(user)+"/status/"+id
   }
 
+  set_data_hover()
 })
-
-  // new Chart(document.getElementById(canvas.id),{
-  //   type:'line',
-  //   data:{
-  //     labels :  labels,
-  //     datasets:datasets,
-  //   },
-  //   options: {
-  //     normalized:true,
-  //     parsing:true,
-  //     plugins: {
-  //       legend: {
-  //           display: false
-  //       },
-  //       datalabels:{display:false},
-  //       },
-  //     scales: {
-  //       x: {display: true},
-  //       y: {display: true},
-  //   }
-  //   }
-  // })
-
-
 
 
 // $('.dashboard').click((event)=>{
   //   event.preventDefault()
-  //   //if(localStorage.getItem('token')==null) return 
+  //   //if(localStorage.getItem('token')==null) return
   //   $.ajax({
     //     url:'/dashboard',
     //     headers:{'Authorization':'Bear '+localStorage.getItem('token') },
@@ -789,18 +1428,18 @@ $(document).ready(async function(){
       //     }
       //   })
       // })
-      
+
       // $('#login').click((event)=>{
         //   event.preventDefault()
-  //   $.post("/login",$('#sign-in').serialize(),(data,status,xhr)=>{      
+  //   $.post("/login",$('#sign-in').serialize(),(data,status,xhr)=>{
     //     if(xhr.status == 200){
       //       window.location.href = '/dashboard'
       //     }
       //     console.log('no token received')
       //   })
       // })
-      
-      // $.post("/twitter",$('#form-search').serialize(),(data,status,xhr)=>{      
+
+      // $.post("/twitter",$('#form-search').serialize(),(data,status,xhr)=>{
       //   if(xhr.status == 200){
       //     let json_data = JSON.parse(data)
       //     build(json_data[0])
@@ -810,5 +1449,5 @@ $(document).ready(async function(){
       //   }else{
       //     console.log('twitter error '+xhr.status)
       //   }
-        
+
       // })
