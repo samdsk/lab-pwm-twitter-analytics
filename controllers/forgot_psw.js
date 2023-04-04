@@ -8,6 +8,8 @@ const JWT_EXP = '30m'
 // FIXME change the email address
 
 const postEmail = async (req,res,next) => {
+    console.log("psw forgot request recieved");
+
     if(req.body.email){
         Auth.findOne({email:req.body.email},async (err,auth)=>{
 
@@ -25,11 +27,11 @@ const postEmail = async (req,res,next) => {
 
             const mail_opt = {
                 from:'Twitter Analytics App',
-                to:sendTo,
+                to:auth.email,
                 subject:'Twitter Analytics App Password Recovery',
                 text:'You have requested for a password reset. Follow this link: ' + link,
                 html:`
-                    <h4 class="h4">Hi ${name}!</h4>
+                    <h4 class="h4">Hi ${name.name}!</h4>
                     <p>You have requested for a password reset, follow the following link</p>
                     <a href="${link}">${link}</a>
                     `
