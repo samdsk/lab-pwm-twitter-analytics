@@ -32,8 +32,15 @@
                                 <%= "active" %>
                             <% } %>" href="/contact">Contact</a></li>
                         <li class="nav-item <% if(!(locals.logout)){%> <%='d-none'%> <%}%>"><a class="nav-link" href="/logout">Logout</a></li>
+
                         <!-- <li class="nav-item  light-switch row align-items-center"><i class="light-switch-icon h5 bi bi-lamp-fill "></i></li> -->
                     </ul>
+
+                    <a id="dark-mode" title="change theme" class="nav-link me-4 ms-2 pb-1 text-white text-decoration-none">
+                        <i class="bi bi-sun-fill"></i>
+                    </a>
+
+
                     <% if(locals.username && locals.email_hash){%>
                         <div class="col-sm-12 col-md-auto ">
                             <a class="row text-decoration-none align-items-center justify-content-end" href="/dashboard/profile" title="profile">
