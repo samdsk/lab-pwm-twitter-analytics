@@ -6,7 +6,7 @@ const SessionDuration = 1000 * 60 * 60 * 60
 const md5 = require('md5')
 
 const login = async (req,res,next) => {
-    console.log(req.body);
+
     const {email, password, remember} = req.body
 
     Auth.findOne({email:email}, async (err,auth)=> {

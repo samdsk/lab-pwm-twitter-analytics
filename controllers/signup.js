@@ -50,7 +50,7 @@ const createUser = async (req,res,next) => {
                 <h4 class="h4">Welcome ${req.body.name}</h4>
                 <p>You've successfully created an account!</p>
                 <p>Email ${req.body.email}</p>
-                <p>Email ${req.body.password}</p>
+                <p>Password ${req.body.password}</p>
                 `
         }
 

@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const recaptcha = require('../utils/recaptcha')
 const sendEmail = require('../utils/sendEmail')
+const JWT_EXP = '30m'
 
 const getReset = async (req,res,next) => {
     const {email,token} = req.params
