@@ -51,8 +51,6 @@ const script_src = [
     "'unsafe-hashes'"
 ]
 
-//"script-src-attr":["'self'","'unsafe-inline'","cdn.jsdelivr.net","cdnjs.cloudflare.com","code.jquery.com"],
-
 const img_src = [
     "'self'",
     'data:',
@@ -127,7 +125,10 @@ app.get('/',function(req,res){
 })
 
 app.get('/about',function(req,res){
-    res.render('pages/about',{about:true})
+    if(!req.session.username || !req.session.email)
+        res.render('pages/about',{about:true})
+    else
+        res.render('pages/about',{about:true,logout:true})
 })
 
 // app.use(/^\/dashboard.*/,auth_session,dashboard)
@@ -139,8 +140,12 @@ app.use('/results',auth_session,results)
 app.use('/signup',signup)
 app.use('/login',login)
 app.use('/contact',contact)
+
 app.get('/terms',function(req,res){
-    res.render('pages/terms',{terms:true})
+    if(!req.session.username || !req.session.email)
+        res.render('pages/terms',{terms:true})
+    else
+        res.render('pages/terms',{terms:true,logout:true})
 })
 
 app.get('/logout',(req,res)=>{

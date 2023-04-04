@@ -29,9 +29,46 @@ function postViaWorker(data,method,url){
   })
 }
 
+// set theme on page load
+document.getElementsByTagName('html')[0].setAttribute("data-bs-theme",localStorage.getItem("theme") || 'light')
+if(document.getElementsByTagName('html')[0].getAttribute('data-bs-theme')=='light'){
+  document.querySelector('#dark-mode i').classList.add('bi-sun-fill')
+}else{
+  document.querySelector('#dark-mode i').classList.add('bi-moon-stars-fill')
+}
+
+
 const sleep = ms => new Promise(r => setTimeout(r,ms))
 
 $(document).ready(async function(){
+
+  // dark-mode click activate function
+  $('#dark-mode').click(function(){
+    if($('html').attr('data-bs-theme') == 'light'){
+      $('html').attr('data-bs-theme','dark')
+      localStorage.setItem("theme","dark")
+      $('i',this).addClass('bi-sun-fill').removeClass('bi-moon-stars-fill')
+    }
+    else{
+      $('html').attr('data-bs-theme','light')
+      localStorage.setItem("theme","light")
+      $('i',this).removeClass('bi-sun-fill').addClass('bi-moon-stars-fill')
+    }
+  })
+
+  // dark-mode hover icon
+  $('#dark-mode').hover(function(){
+    if($('i',this).hasClass('bi-sun-fill'))
+      $('i',this).removeClass('bi-sun-fill').addClass('bi-moon-stars-fill')
+    else
+      $('i',this).addClass('bi-sun-fill').removeClass('bi-moon-stars-fill')
+  },function(){
+    if($('i',this).hasClass('bi-sun-fill'))
+      $('i',this).removeClass('bi-sun-fill').addClass('bi-moon-stars-fill')
+    else
+      $('i',this).addClass('bi-sun-fill').removeClass('bi-moon-stars-fill')
+  })
+
   // forgot psw
   $('.show-modal-btn').click(function(){
     let modal = $(this).attr('data-modal')
@@ -227,35 +264,37 @@ $(document).ready(async function(){
     if($('#handler').val() == '') return
 
     $('#results').addClass('d-none')
-    $('#loader').removeClass('d-none')
-    $('#loader #loader-gif').removeClass('d-none')
+    $('#loader #spinner').removeClass('d-none')
     $('#search-btn').prop("disabled",true)
 
-    // let data = await postViaWorker($('#form-search').serialize(),'POST','/twitter')
-    //await sleep(1000)
-    // await sleep(1000)
-    // $('#loader #working-gif').removeClass('d-none')
+    let data = await postViaWorker($('#form-search').serialize(),'POST','/twitter')
 
     // let data  = await fetch('../js/output_data_compare.json').then( response => {
-      //     return response.json()
-      // })
-      //await sleep(1000)
+    //       return response.json()
+    // })
 
-      await genSearchResults(data)
+    await sleep(500)
+    $('#loader #spinner').addClass('d-none')
 
-    $('#loader #loader-gif').addClass('d-none')
-    // $('#loader #working-gif').addClass('d-none')
-    $('#loader').addClass('d-none')
+    if(data.error) {
+      $('#search-btn').removeAttr("disabled")
+      grecaptcha.reset()
+      return errorDisplay(data)
+    }
 
-    $('#results').removeClass("d-none")
-    $('#results').show()
+    $('#loader #progress-bar').removeClass('d-none')
+    $('#loader #progress-bar .progress-bar').removeClass(function (index, className) {
+      return (className.match(new RegExp("\\S*w-\\S*", 'g')) || []).join(' ')
+    })
+    await genSearchResults(data)
+    await sleep(500)
+
+    $('#loader #progress-bar').addClass('d-none')
+    $('#results').removeClass("d-none").hide().fadeIn(1000)
     $('#search-btn').removeAttr("disabled")
-  })
 
-  let data  = await fetch('../js/output_data.json').then( response => {
-      return response.json()
+    grecaptcha.reset()
   })
-  await genSearchResults(data)
 
   function cleanResults(){
     $('#results #user-info #user-profile img').remove()
@@ -280,6 +319,14 @@ $(document).ready(async function(){
   }
 
   async function gen(INPUT,LENGTH){
+
+    if(localStorage.getItem('theme') == 'dark'){
+      Chart.defaults.color = "#bbb"
+      Chart.defaults.borderColor = "rgba(256, 255, 255, 0.1)"
+    }else{
+      Chart.defaults.color = "#333"
+      Chart.defaults.borderColor = 'rgba(0, 0, 0, 0.1)'
+    }
 
     let data = INPUT[0]
     let compare = undefined
@@ -408,9 +455,14 @@ $(document).ready(async function(){
           let name = countToPlural(key)
           li.text(name+" : ")
 
+          let rounded
+
+          if(avg_count  < 1) rounded = "Not enough data"
+          else rounded = tweetCount(avg_count)
+
           let span_id = sub_id+'-'+key
-          let span = $('<span id="'+span_id+'"class="data-hover data-clean">'+tweetCount(avg_count)+'</span>')
-          span.attr({"data-real":avg_count, "data-round":tweetCount(avg_count),"title":"Average "+name.toLowerCase()})
+          let span = $('<span id="'+span_id+'"class="data-hover data-clean">'+ rounded +'</span>')
+          span.attr({"data-real":avg_count, "data-round":rounded,"title":"Average "+name.toLowerCase()})
           let compare_span = $('<span id="'+span_id+'-compare" class="data-hover data-clean"></span>')
 
           li.append(span).append(compare_span)
@@ -425,7 +477,6 @@ $(document).ready(async function(){
         $('#'+sub_id).show()
       }
     }
-
 
 // FIXME append something then there is no hashtag graph
     const load_hashtags = async () => {
@@ -532,24 +583,67 @@ $(document).ready(async function(){
       }
     }
 
-    Promise.all([
-      load_user_datails(),
-      load_followers(),
-      load_followings(),
-      load_sample_internal_new(),
-      load_sample_interval_old(),
-      load_highlights(),
-      load_avg_metrics_table(),
-      load_total_info(),
-      load_week_chart(),
-      load_media_type_Chart(),
-      load_tweets_by_media_type_data(),
-      load_tweets_by_type_data(),
-      load_type_Chart(),
-      load_langs_chart(),
-      load_hashtags(),
-      load_mentioned_users()
-    ])
+    await load_user_datails()
+    await load_followers()
+    await load_followings()
+
+    $('#loader #progress-bar .progress-bar').addClass('w-10')
+
+    await load_sample_internal_new()
+    await load_sample_interval_old()
+    await load_highlights()
+
+    $('#loader #progress-bar .progress-bar').addClass('w-30')
+
+    await load_total_info()
+
+    $('#loader #progress-bar .progress-bar').addClass('w-50')
+
+    await load_week_chart()
+
+    $('#loader #progress-bar .progress-bar').addClass('w-55')
+
+    await load_media_type_Chart()
+
+    $('#loader #progress-bar .progress-bar').addClass('w-60')
+    await load_type_Chart()
+
+    $('#loader #progress-bar .progress-bar').addClass('w-65')
+
+    await load_langs_chart()
+
+    $('#loader #progress-bar .progress-bar').addClass('w-70')
+    await load_hashtags()
+    await load_mentioned_users()
+    $('#loader #progress-bar .progress-bar').addClass('w-80')
+
+    await load_tweets_by_media_type_data()
+    await load_tweets_by_type_data()
+
+    $('#loader #progress-bar .progress-bar').addClass('w-90')
+
+    await load_avg_metrics_table()
+
+    $('#loader #progress-bar .progress-bar').addClass('w-100')
+
+    // Promise.all([
+    //   load_user_datails(),
+    //   load_followers(),
+    //   load_followings(),
+    //   load_sample_internal_new(),
+    //   load_sample_interval_old(),
+    //   load_highlights(),
+    //   load_avg_metrics_table(),
+    //   load_total_info(),
+    //   load_week_chart(),
+    //   load_media_type_Chart(),
+    //   load_tweets_by_media_type_data(),
+    //   load_tweets_by_type_data(),
+    //   load_type_Chart(),
+    //   load_langs_chart(),
+    //   load_hashtags(),
+    //   load_mentioned_users()
+    // ])
   }
 
   function load_type(id,data,compare){
