@@ -11,7 +11,8 @@ const getProfile = async (req,res,next) => {
         username:req.session.username,
         email: req.session.email,
         email_hash:req.session.gravatar,
-        profile:true
+        profile:true,
+        dashboard:true,
     })
 }
 

@@ -43,7 +43,10 @@ const createUser = async (req,res,next) => {
 }
 
 const signupPage = async (req,res) => {
-    res.render('pages/singup',{signup:true})
+    if(!req.session.username || !req.session.email)
+        res.render('pages/singup',{signup:true})
+    else
+        res.render('pages/singup',{signup:true,logout:true})
 }
 
 

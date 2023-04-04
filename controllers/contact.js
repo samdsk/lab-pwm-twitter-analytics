@@ -2,7 +2,11 @@ const recaptcha = require('../utils/recaptcha')
 const sendEmail = require('../utils/sendEmail')
 
 const getContact = async (req,res,next) =>{
-    res.render('pages/contact',{contact:true})
+    if(!req.session.username || !req.session.email)
+        res.render('pages/contact',{contact:true})
+    else
+        res.render('pages/contact',{contact:true,logout:true})
+
 }
 
 const postContact = async (req,res,next) =>{
