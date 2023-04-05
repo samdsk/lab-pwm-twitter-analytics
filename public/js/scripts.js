@@ -382,7 +382,18 @@ $(document).ready(async function(){
       if(compare)
         appendCompareInterval('#results #total-interval',data.total.interval,compare.total.interval)
     }
+    const load_limit_data = async () => {
 
+      if(!$('#search-limit').hasClass('d-none'))
+        $('#search-limit').addClass('d-none')
+
+      if(data.limit){
+        $('#search-limit p span#limit').text(data.limit.limit)
+        $('#search-limit p span#remaining').text(data.limit.remaining)
+        $('#search-limit p span#reset').text(msToHMS(data.limit.reset))
+        $('#search-limit').removeClass('d-none')
+      }
+    }
     const load_sample_internal_new = async () =>{
       let id = "#results #search-sample-new"
       load_dateTime(id,data)
@@ -586,6 +597,7 @@ $(document).ready(async function(){
     await load_user_datails()
     await load_followers()
     await load_followings()
+    await load_limit_data()
 
     $('#loader #progress-bar .progress-bar').addClass('w-10')
 
@@ -1388,12 +1400,15 @@ $(document).ready(async function(){
     s = s%60;
     let h = m/60;
     m = m%60;
+    let d = h/24;
+    h = h%24;
 
-    if(h<1 && m<1 && s<1) return "0s"
-    if(h<1 && m<1) return Math.floor(s)+"s"
-    if(h<1) return Math.floor(m)+"m "+Math.floor(s)+"s"
+    if(d<1 && h<1 && m<1 && s<1) return "0s"
+    if(d<1 && h<1 && m<1) return Math.floor(s)+"s"
+    if(d<1 && h<1) return Math.floor(m)+"m "+Math.floor(s)+"s"
+    if(d<1) return Math.floor(h)+"H "+Math.floor(m)+"m "+Math.floor(s)+"s"
 
-    return Math.floor(h)+"H "+Math.floor(m)+"m "+Math.floor(s)+"s"
+    return Math.floor(d) +"D "+ Math.floor(h)+"H "+Math.floor(m)+"m "+Math.floor(s)+"s"
   }
   function tweetCount(count){
     if (count / 1000000 >= 1 || count / 1000000 <= -1)
