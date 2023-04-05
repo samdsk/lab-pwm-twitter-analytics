@@ -22,7 +22,7 @@ const getResults = async (req,res,next) => {
 
     let email = req.session.email
     if(req.query.compare > 0){
-        console.log("Results: new single request received.");
+        console.log("Results: new compare request received.");
 
         if(!req.query.id.length) return res.json(JSON.stringify({error:"Must provide two ids"}))
         if(req.query.id.length != 2) return res.json(JSON.stringify({error:"Must provide two ids"}))
@@ -37,7 +37,7 @@ const getResults = async (req,res,next) => {
         return res.json(JSON.stringify([result_1,result_2]))
 
     }else{
-        console.log("Results: new compare request received.");
+        console.log("Results: new single request received.");
 
         if(!(await validateID(req.query.id,email)))
             return res.json(JSON.stringify({error:"Invalid id"}))

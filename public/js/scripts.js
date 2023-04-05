@@ -455,8 +455,10 @@ $(document).ready(async function(){
         }
 
         $('#results #'+intv_id).text(msToHMS(data.media_type[type].interval))
-        if(compare)
-          appendCompareInterval("#"+intv_id,data.media_type[type].interval,compare.media_type[type].interval)
+
+        if(compare){
+            appendCompareInterval("#"+intv_id,data.media_type[type].interval,compare.media_type[type].interval)
+        }
 
         for(let key of Object.keys(data.media_type[type].metrics)){
           let li = $('<a onclick="return false;" class="list-group-item data-clean"></a>')
@@ -479,7 +481,7 @@ $(document).ready(async function(){
           li.append(span).append(compare_span)
           $('#results #'+sub_id+' ul').append(li)
 
-          if(compare){
+          if(compare && !(avg_count<1)){
             let avg_count_compare = Math.floor(compare.media_type[type].metrics[key]/compare.media_type[type].count)
             appendCompare('#results #'+span_id,avg_count,avg_count_compare)
           }
@@ -1354,8 +1356,9 @@ $(document).ready(async function(){
     if(old_data == new_data) return
 
     let diff = new_data - old_data
+    if(diff<1000) return
     let rounded_data = msToHMS(diff)
-    if(rounded_data.length<1)  return
+
 
     let up = ["bi-caret-up-fill","text-success"]
     let down = ["bi-caret-down-fill","text-danger"]
