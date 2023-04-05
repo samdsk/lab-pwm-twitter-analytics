@@ -8,7 +8,12 @@ const collectData = async (DATA) => {
     const TWEETS = JSON.parse(jsonObj)
 
     let data = DATA._realData.data
+
+    if(data.length<1) throw new Error("There's no recent data for "+((DATA._queryParams.query).split(":")[1]))
+
     let media = DATA._realData.includes?.media
+
+    TWEETS.limit = DATA._rateLimit
 
     // sort tweets in ascending order
     data = data.sort((a,b) => {if(a.created_at > b.created_at) return 1 ;else return -1})
@@ -26,11 +31,11 @@ const collectData = async (DATA) => {
     temp_date.setDate(temp_end.getDate()-7)
     temp_end.setDate(temp_end.getDate()+1)
 
-    console.log(temp_date,temp_end);
+    // console.log(temp_date,temp_end);
     TWEETS.interval = temp_end.getTime() - temp_date.getTime()
 
     while(temp_date<=temp_end){
-        console.log("test");
+
         let date = temp_date.toISOString().split('T')[0]
         tweets_per_day[date] = {
             media:{
@@ -63,8 +68,6 @@ const collectData = async (DATA) => {
     const lang = {}
 
     data.forEach(e => {
-
-        console.log(tweets_per_day)
 
         // section - count post media types
         let mediaType = findMediaType(media,e)
@@ -116,8 +119,6 @@ const collectData = async (DATA) => {
     TWEETS.mentioned_users  = mentioned_users
     TWEETS.hashtags = hashtags
     TWEETS.langs = lang
-
-
 
     return TWEETS
 }
