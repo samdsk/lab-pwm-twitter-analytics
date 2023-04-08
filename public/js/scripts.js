@@ -192,7 +192,7 @@ $(document).ready(async function(){
   // show detailed clicked result
   $('.searched-entry').click(async function(){
     let id = $(this).attr('id')
-    let url = '/results?compare=0&id='+id
+    let url = '/results?id='+id
     let data = await postViaWorker(null,'GET',url)
 
     if(data.error) return errorDisplay(data)
@@ -220,7 +220,7 @@ $(document).ready(async function(){
     const id_1 =  $('.form-check-input:checked').attr('data-id')
     const id_2 =  $(this).parent().find('.form-check-input').attr('data-id')
 
-    let url = "/results?compare=1&id="+id_1+"&id="+id_2
+    let url = "/results?id="+id_1+"&id="+id_2
 
     let data = await postViaWorker(null,'GET',url)
     console.log(data);
