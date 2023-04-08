@@ -1,8 +1,8 @@
 <!-- NOTE add d-none -->
 <div id="results" class="row justify-content-between mt-2 border-top d-none" >
-    <div class="col-sm-12 col-md-1 m-0 mt-3 p-0">
-        <nav id="navbar-search" class="h-100 flex-column align-items-stretch navbar-expand-md " style="min-width:80px;">
-            <nav class="nav nav-pills flex-column">
+    <div class="col-sm-12 col-md-1 m-0 mt-3 p-0 ">
+        <nav  class="h-100 flex-column align-items-stretch" style="min-width:80px;">
+            <nav id="navbar-search-1" class="nav nav-pills flex-column">
                 <a class="nav-link h6 m-0 p-2" href="#account-info">Details</a>
                 <a class="nav-link h6 m-0 p-2" href="#highlights">Highlights</a>
                 <a class="nav-link h6 m-0 p-2" href="#tweets-by-media-type-h">Media</a>
@@ -14,7 +14,9 @@
             </nav>
         </nav>
     </div>
-    <div id="results-content" class="col-sm-12 col-md-10 m-0 mt-3 ps-2" style="height: 70vh; overflow-y: auto;" data-bs-offset="0"  data-bs-spy="scroll" data-bs-target="#navbar-search" data-bs-root-margin="0px 0px -40%" data-bs-smooth-scroll="true" tabindex="0">
+    <div id="results-content" class="border-start col-sm-12 col-md-10 m-0 mt-3 ps-2"
+    style="position:relative; height: 700px; overflow-y: auto;"
+    data-bs-spy="scroll" data-bs-target="#navbar-search-1" data-bs-smooth-scroll="true" tabindex="0">
         <div id="account-info" class="row">
             <div id="user-info" class="col col-sm-12 col-lg-6">
                 <h5 class="sector-title" id="userinfo-section">
@@ -58,7 +60,7 @@
                     <a href="#search-info" class="text-decoration-none">Search Details</a>
                 </h5>
                 <div id="search-sample-new">
-                    <h6 class="font-weight-bold">New Search Sample</h6>
+                    <h6 class="font-weight-bold">Dataset</h6>
                     <p id="search-date" class="h7 mb-0">
                         Search results of:
                         <i class="bi bi-calendar4-week"></i>
@@ -79,7 +81,7 @@
                     <p id="sample" class="h7 mt-0">Sample size: <span class="data text-primary"></span></p>
                 </div>
                 <div id="search-sample-old">
-                    <h6 class="font-weight-bold">Old Search Sample</h6>
+                    <h6 class="font-weight-bold">Comparing Dataset</h6>
                     <p id="search-date" class="h7 mb-0">
                         Search results of:
                         <i class="bi bi-calendar4-week"></i>
@@ -98,6 +100,11 @@
                         <span id="interval-end-time"class="time "><i class="bi bi-clock "></i> </span>
                     </p>
                     <p id="sample" class="h7">Sample size: <span class="data text-primary"></span></p>
+                </div>
+                <div id="search-limit" class="d-none">
+                    <p>
+                        Limit: <span id="limit" class="data-clean"></span> Remaining: <span id="remaining" class="data-clean"></span> Reset: <span id="reset" class="data-clean"></span>
+                    </p>
                 </div>
             </div>
         </div>

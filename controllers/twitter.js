@@ -64,9 +64,31 @@ const search = async (ID) => {
     }))
 }
 
+// verify the search limit of an user
+const searchLimit = async (email)=>{
+
+    let auth = await Auth.findOne({email:email})
+    if(!auth) return false
+
+    let user = await User.findById(auth._id)
+    if(!user) return false
+
+    console.log("Twitter: user has",user.searched.length,"search records");
+
+    if(user.searched?.length > 10) return false
+    return true
+}
+
 const postTwitter = async(req,res,next) => {
     let catpcha = await recaptcha(req.body['g-recaptcha-response'])
     if(!catpcha) return res.json(JSON.stringify({error:"Invalid captcha!"}))
+
+    let limit = await searchLimit(req.session.email)
+
+    console.log("Twitter: limit",limit);
+
+    if(!limit)
+        return res.json(JSON.stringify({error:"Limit exceeded, please delete a search record from History page!"}))
 
     const user = await app.userByUsername(req.body.handler,{"user.fields":tweet_user_fields});
     if(user?.errors) return res.json(JSON.stringify({error:`Invalid user`}))
@@ -92,6 +114,8 @@ const postTwitter = async(req,res,next) => {
         data.name = user.data.name
         data.date = new Date()
         data.mentions = mentions.meta.result_count
+
+        console.log("Twitter Limit:",data.limit.limit,data.limit.remaining,data.limit.reset);
 
         console.log('Twitter: creating search results')
 

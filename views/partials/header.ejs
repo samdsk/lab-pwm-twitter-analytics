@@ -13,31 +13,34 @@
                             <% if (locals.signup) { %>
                             <%= "active" %>
                             <% } %>" href="/signup">Sign up</a></li>
-                        <li class="nav-item dropdown ">
-                            <a class="nav-link dropdown-toggle
-                            <% if (locals.dashboard) { %>
-                                <%= "active" %>
-                            <% } %>" href="/dashboard" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                              Dashboard
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li class="nav-item">
-                                    <a class="nav-link
-                                    <% if (locals.profile) { %>
-                                        <%= "active" %>
-                                    <% } %>" href="/dashboard/profile">Profile</a></li>
-                                <li class="nav-item">
-                                    <a class="nav-link
-                                    <% if (locals.history) { %>
-                                        <%= "active" %>
-                                    <% } %>" href="/dashboard/history">History</a></li>
-                                <li class="nav-item">
-                                    <a class="nav-link
-                                    <% if (locals.search) { %>
-                                        <%= "active" %>
-                                    <% } %>" href="/dashboard/search">Search</a></li>
-                            </ul>
-                          </li>
+                        <% if(locals.logout){%>
+                            <li class="nav-item dropdown ">
+                                <a class="nav-link dropdown-toggle
+                                <% if (locals.dashboard) { %>
+                                    <%= "active" %>
+                                <% } %>" href="/dashboard" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Dashboard
+                                </a>
+
+                                <ul class="dropdown-menu">
+                                    <li class="nav-item">
+                                        <a class="nav-link
+                                        <% if (locals.profile) { %>
+                                            <%= "active" %>
+                                        <% } %>" href="/dashboard/profile"><i class="bi bi-person-lines-fill"></i> Profile</a></li>
+                                    <li class="nav-item">
+                                        <a class="nav-link
+                                        <% if (locals.history) { %>
+                                            <%= "active" %>
+                                        <% } %>" href="/dashboard/history"><i class="bi bi-clock-history"></i> History</a></li>
+                                    <li class="nav-item">
+                                        <a class="nav-link
+                                        <% if (locals.search) { %>
+                                            <%= "active" %>
+                                        <% } %>" href="/dashboard/search"><i class="bi bi-search"></i> Search</a></li>
+                                </ul>
+                            </li>
+                        <% } %>
                         <li class="nav-item"><a class="nav-link
                             <% if (locals.about) { %>
                                 <%= "active" %>

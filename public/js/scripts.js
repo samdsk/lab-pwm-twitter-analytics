@@ -192,7 +192,7 @@ $(document).ready(async function(){
   // show detailed clicked result
   $('.searched-entry').click(async function(){
     let id = $(this).attr('id')
-    let url = '/results?compare=0&id='+id
+    let url = '/results?id='+id
     let data = await postViaWorker(null,'GET',url)
 
     if(data.error) return errorDisplay(data)
@@ -220,7 +220,7 @@ $(document).ready(async function(){
     const id_1 =  $('.form-check-input:checked').attr('data-id')
     const id_2 =  $(this).parent().find('.form-check-input').attr('data-id')
 
-    let url = "/results?compare=1&id="+id_1+"&id="+id_2
+    let url = "/results?id="+id_1+"&id="+id_2
 
     let data = await postViaWorker(null,'GET',url)
     console.log(data);
@@ -382,7 +382,18 @@ $(document).ready(async function(){
       if(compare)
         appendCompareInterval('#results #total-interval',data.total.interval,compare.total.interval)
     }
+    const load_limit_data = async () => {
 
+      if(!$('#search-limit').hasClass('d-none'))
+        $('#search-limit').addClass('d-none')
+
+      if(data.limit){
+        $('#search-limit p span#limit').text(data.limit.limit)
+        $('#search-limit p span#remaining').text(data.limit.remaining)
+        $('#search-limit p span#reset').text(msToHMS(data.limit.reset))
+        $('#search-limit').removeClass('d-none')
+      }
+    }
     const load_sample_internal_new = async () =>{
       let id = "#results #search-sample-new"
       load_dateTime(id,data)
@@ -444,8 +455,10 @@ $(document).ready(async function(){
         }
 
         $('#results #'+intv_id).text(msToHMS(data.media_type[type].interval))
-        if(compare)
-          appendCompareInterval("#"+intv_id,data.media_type[type].interval,compare.media_type[type].interval)
+
+        if(compare){
+            appendCompareInterval("#"+intv_id,data.media_type[type].interval,compare.media_type[type].interval)
+        }
 
         for(let key of Object.keys(data.media_type[type].metrics)){
           let li = $('<a onclick="return false;" class="list-group-item data-clean"></a>')
@@ -468,7 +481,7 @@ $(document).ready(async function(){
           li.append(span).append(compare_span)
           $('#results #'+sub_id+' ul').append(li)
 
-          if(compare){
+          if(compare && !(avg_count<1)){
             let avg_count_compare = Math.floor(compare.media_type[type].metrics[key]/compare.media_type[type].count)
             appendCompare('#results #'+span_id,avg_count,avg_count_compare)
           }
@@ -586,6 +599,7 @@ $(document).ready(async function(){
     await load_user_datails()
     await load_followers()
     await load_followings()
+    await load_limit_data()
 
     $('#loader #progress-bar .progress-bar').addClass('w-10')
 
@@ -1342,8 +1356,9 @@ $(document).ready(async function(){
     if(old_data == new_data) return
 
     let diff = new_data - old_data
+    if(diff<1000) return
     let rounded_data = msToHMS(diff)
-    if(rounded_data.length<1)  return
+
 
     let up = ["bi-caret-up-fill","text-success"]
     let down = ["bi-caret-down-fill","text-danger"]
@@ -1388,12 +1403,15 @@ $(document).ready(async function(){
     s = s%60;
     let h = m/60;
     m = m%60;
+    let d = h/24;
+    h = h%24;
 
-    if(h<1 && m<1 && s<1) return "0s"
-    if(h<1 && m<1) return Math.floor(s)+"s"
-    if(h<1) return Math.floor(m)+"m "+Math.floor(s)+"s"
+    if(d<1 && h<1 && m<1 && s<1) return "0s"
+    if(d<1 && h<1 && m<1) return Math.floor(s)+"s"
+    if(d<1 && h<1) return Math.floor(m)+"m "+Math.floor(s)+"s"
+    if(d<1) return Math.floor(h)+"H "+Math.floor(m)+"m "+Math.floor(s)+"s"
 
-    return Math.floor(h)+"H "+Math.floor(m)+"m "+Math.floor(s)+"s"
+    return Math.floor(d) +"D "+ Math.floor(h)+"H "+Math.floor(m)+"m "+Math.floor(s)+"s"
   }
   function tweetCount(count){
     if (count / 1000000 >= 1 || count / 1000000 <= -1)
