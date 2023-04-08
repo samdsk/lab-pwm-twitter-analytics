@@ -85,7 +85,6 @@ const SeachResultsSchema = new mongoose.Schema({
             }
         } // gif tweets count
     },
-
     highlights : {
         retweet_count : {
             id : {type:String,default:""},
@@ -108,7 +107,6 @@ const SeachResultsSchema = new mongoose.Schema({
             count : {type:String},
         }, // tweet with most impressions
     },
-
     type : {
         retweeted : {
             count : {type:Number,default:0},
@@ -151,10 +149,7 @@ const SeachResultsSchema = new mongoose.Schema({
     },
     total : {// total posts
         count : {type:Number,default:0},
-        interval : {type:Number,default:0},
-        metrics:{
-            impression_count:[{type:Number,default:0}]
-        }
+        interval : {type:Number,default:0}
     }
 
 })

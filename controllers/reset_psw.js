@@ -28,7 +28,7 @@ const getReset = async (req,res,next) => {
 }
 
 
-const postReset = async (req,res,next) =>{
+const putReset = async (req,res,next) =>{
     console.log("reset request recieved");
     const {email,password,password_confirm} = req.body
 
@@ -84,4 +84,4 @@ const postReset = async (req,res,next) =>{
 
 
 
-module.exports = {getReset,postReset}
+module.exports = {getReset,putReset}
