@@ -12,7 +12,7 @@ self.onmessage = (event) => {
 
     xhr.onreadystatechange = function (){
         if(xhr.readyState == 4 && xhr.status == 200){
-            postMessage(JSON.parse(xhr.response))
+            postMessage(xhr.response)
         }else if(xhr.readyState == 4){
             postMessage({'error':xhr.status})
         }

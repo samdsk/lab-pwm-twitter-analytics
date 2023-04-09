@@ -14,7 +14,7 @@ const postContact = async (req,res,next) =>{
 
     const {name,email,subject,message} = req.body
     let catpcha = await recaptcha(req.body['g-recaptcha-response'])
-    if(!catpcha) return res.json(JSON.stringify({error:"Invalid captcha!"}))
+    if(!catpcha) return res.json({error:"Invalid captcha!"})
 
     const mail_opt = {
         from:name+" : "+email,
@@ -33,9 +33,9 @@ const postContact = async (req,res,next) =>{
     }
 
     await sendEmail(mail_opt).then(()=>{
-        return res.json(JSON.stringify({success:"Your message has been sent!"}))
+        return res.json({success:"Your message has been sent!"})
     }).catch((err)=>{
-        return res.json(JSON.stringify({error:"Failed to send message!"}))
+        return res.json({error:"Failed to send message!"})
     })
 }
 

@@ -14,7 +14,7 @@ const postEmail = async (req,res,next) => {
         Auth.findOne({email:req.body.email},async (err,auth)=>{
 
             if(err) return res.sendStatus(500)
-            if(!auth) return res.json(JSON.stringify({error:"Invalid email"}))
+            if(!auth) return res.json({error:"Invalid email"})
 
             const name = await User.findById(auth._id)
 
@@ -38,9 +38,9 @@ const postEmail = async (req,res,next) => {
             }
 
             await sendEmail(mail_opt).then(()=>{
-                return res.json(JSON.stringify({success:"Email sent to "+req.body.email}))
+                return res.json({success:"Email sent to "+req.body.email})
             }).catch((err)=>{
-                return res.json(JSON.stringify({error:"Failed to send message!"}))
+                return res.json({error:"Failed to send message!"})
             })
         })
 
