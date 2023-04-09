@@ -148,7 +148,7 @@ const postTwitter = async(req,res,next) => {
                 }
 
                 console.log("Twitter: sending data");
-                return res.json([data,null])
+                return res.json(data)
         })
     })
     .catch(err => {

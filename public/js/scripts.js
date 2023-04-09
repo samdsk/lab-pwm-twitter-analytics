@@ -111,6 +111,13 @@ $(document).ready(async function(){
 
     if(!inputcheck) return errorDisplay({error:"Input can't be empty!"})
 
+    const email = form.find('input.email')
+
+    if(!validateEmail(email[0].value)){
+      $(email[0]).parent().find('.invalid-feedback').show()
+      return
+    }
+
     const psw = form.find('input.password')
     const psw_confirm = form.find('input.password-confirm')
 
@@ -141,8 +148,6 @@ $(document).ready(async function(){
     let form_data = form.serialize()
 
     let data = await postViaWorker(form_data,method,url)
-
-    console.log(data);
 
     if(data.error || data.success)
       return errorDisplay(data)
@@ -213,7 +218,6 @@ $(document).ready(async function(){
   $('.searched-entry').click(async function(){
     let id = $(this).attr('id')
     let url = '/results?id='
-    let url = '/results?id='
 
     $('#results').hide()
     $('#results').hide()
@@ -250,10 +254,7 @@ $(document).ready(async function(){
     const id_2 =  $(this).parent().find('.form-check-input').attr('data-id')
 
     let url = "/results?id="
-    $('#results').hide()
-    $('#results-modal').removeClass('d-none').modal('toggle')
-    $('#loader #spinner').removeClass('d-none')
-    let url = "/results?id="
+
     $('#results').hide()
     $('#results-modal').removeClass('d-none').modal('toggle')
     $('#loader #spinner').removeClass('d-none')
@@ -335,28 +336,24 @@ $(document).ready(async function(){
     if(data.error) return errorDisplay(data)
 
     resetProgressBar()
+    await sleep(500)
     $('#loader #progress-bar').removeClass('d-none')
 
     cleanResults()
-    await sleep(1000)
-    if(data.length==2 && data[1] != null){
-      if(data[0].username == data[1].username){
-        //console.log("Ok: comparing mode");
-        await gen(data,data.length)
-      }else{
-        return errorDisplay({error:"Can't compare different users"})
-        //console.log("Error: comparing different users");
-      }
-    }else{
-      await gen(data,1)
+
+    if(data.length==2 && data[0].username != data[1].username){
+      return errorDisplay({error:"Can't compare different users"})
     }
-    await sleep(1000)
+
+    await build(data)
+
+    await sleep(500)
     $('#loader #progress-bar').addClass('d-none')
     $('#results').removeClass("d-none").fadeIn(1000)
 
   }
 
-  async function gen(INPUT,LENGTH){
+  async function build(INPUT){
 
     if(localStorage.getItem('theme') == 'dark'){
       Chart.defaults.color = "#bbb"
@@ -366,9 +363,15 @@ $(document).ready(async function(){
       Chart.defaults.borderColor = 'rgba(0, 0, 0, 0.1)'
     }
 
-    let data = INPUT[0]
+    let data = undefined
     let compare = undefined
-    if(LENGTH==2) compare = INPUT[1]
+
+    if(INPUT?.length) {
+      data = INPUT[0]
+      compare = INPUT[1]
+    }else{
+      data = INPUT
+    }
 
     const colors_1 = ['#6a4c93','#1982c4','#8ac926','#ffca3a','#ff595e','#778da9']
     const colors_2 = ['#26547c','#ef476f','#ffd166','#06d6a0','#FAA307','#7d8597']

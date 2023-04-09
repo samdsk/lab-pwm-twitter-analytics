@@ -31,7 +31,7 @@ const getResults = async (req,res,next) => {
 
         let result = await SearchResults.findById(req.query.id)
 
-        return res.json([result])
+        return res.json(result)
     }else{
         console.log("Results: new compare request received.");
 
