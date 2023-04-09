@@ -507,9 +507,11 @@ $(document).ready(async function(){
         }
 
         $('#results #'+intv_id).text(msToHMS(data.media_type[type].interval))
+        $('#results #'+sub_id+'-count').text(data.media_type[type].count)
 
         if(compare){
             appendCompareInterval("#"+intv_id,data.media_type[type].interval,compare.media_type[type].interval)
+            appendCompare('#results #'+sub_id+'-count',data.media_type[type].count,compare.media_type[type].count)
         }
 
         for(let key of Object.keys(data.media_type[type].metrics)){
@@ -526,9 +528,9 @@ $(document).ready(async function(){
           else rounded = tweetCount(avg_count)
 
           let span_id = sub_id+'-'+key
-          let span = $('<span id="'+span_id+'"class="data-hover data-clean">'+ rounded +'</span>')
+          let span = $('<span id="'+span_id+'"class="text-primary data-hover data-clean">'+ rounded +'</span>')
           span.attr({"data-real":avg_count, "data-round":rounded,"title":"Average "+name.toLowerCase()})
-          let compare_span = $('<span id="'+span_id+'-compare" class="data-hover data-clean"></span>')
+          let compare_span = $('<span id="'+span_id+'-compare" class="text-primary data-hover data-clean"></span>')
 
           li.append(span).append(compare_span)
           $('#results #'+sub_id+' ul').append(li)
@@ -541,6 +543,10 @@ $(document).ready(async function(){
 
         $('#'+sub_id).show()
       }
+    }
+
+    const load_original = async ()=>{
+
     }
 
     const load_hashtags = async () => {
@@ -584,7 +590,7 @@ $(document).ready(async function(){
         dataset_compare.labels.forEach((key,i)=> {
           data_langs_compare[key] = {count:dataset_compare.data[i]}
         })
-        console.log(data_langs,data_langs_compare);
+        // console.log(data_langs,data_langs_compare);
         load_type(id+"-data",data_langs,data_langs_compare)
         await pieCharts(dataset,dataset_compare,id,"Tweets by languages",colors_3)
       }else{

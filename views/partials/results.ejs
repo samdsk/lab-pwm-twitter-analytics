@@ -10,7 +10,7 @@
 <div id="results" class="row justify-content-between mt-2 border-top d-none" >
     <div class="col-sm-12 col-md-1 m-0 mt-3 p-0 ">
         <nav  class="h-100 flex-column align-items-stretch" style="min-width:80px;">
-            <nav id="navbar-search-1" class="nav nav-pills flex-column">
+            <nav id="navbar-search" class="nav nav-pills flex-column">
                 <a class="nav-link h6 m-0 p-2" href="#account-info">Details</a>
                 <a class="nav-link h6 m-0 p-2" href="#highlights">Highlights</a>
                 <a class="nav-link h6 m-0 p-2" href="#tweets-by-media-type-h">Media</a>
@@ -24,9 +24,9 @@
     </div>
     <div id="results-content" class="border-start col-sm-12 col-md-10 m-0 mt-3 ps-2"
     style="position:relative; height: 700px; overflow-y: auto;"
-    data-bs-spy="scroll" data-bs-target="#navbar-search-1" data-bs-smooth-scroll="true" tabindex="0">
+    data-bs-spy="scroll" data-bs-target="#navbar-search" data-bs-smooth-scroll="true" tabindex="0">
         <div id="account-info" class="row">
-            <div id="user-info" class="col col-sm-12 col-lg-6">
+            <div id="user-info" class="col-sm-12 col-lg-6">
                 <h5 class="sector-title" id="userinfo-section">
                     <a class="text-decoration-none" href="#userinfo-section">User Info</a>
                 </h5>
@@ -75,7 +75,7 @@
                     </div>
                 </div>
             </div>
-            <div id="search-interval" class="col col-sm-12 col-lg-6">
+            <div id="search-interval" class="col-sm-12 col-lg-6">
                 <h5 class="sector-title" id="search-info">
                     <a href="#search-info" class="text-decoration-none">Search Details</a>
                 </h5>
@@ -232,14 +232,33 @@
                 </div>
             </div>
         </div>
+        <div id="original-interactions-wrapper" class="row border-top pt-3">
+            <div class="row mb-3">
+                <h5 class="sector-title"><a class="text-decoration-none" href="#original">Average interactions of original tweets</a></h5>
+            </div>
+            <div class="row mb-3">
+                <div id="avg-interactions-original" class="col-sm-12 col-md-12 col-lg-6 col-xl-4 pb-3">
+                    <i class="bi bi-postcard"></i>
+                    Original:
+                    <span id="avg-interactions-original-count" class="data-clean" title="text posts"></span>
+                    <span id="avg-interactions-original-compare"  class="data-clean" title="text posts"></span>
+                    <i class="bi bi-stopwatch" title="interval"></i>
+                    <span id="avg-interactions-interval-original" class="data-clean" title="Average interval between text posts"></span>
+                    <span id="avg-interactions-interval-original-compare"  class="data-clean" title="Average interval between text posts"></span>
+                    <ul id="average" class="list-group data-clean"></ul>
+                </div>
+            </div>
+        </div>
         <div id="avg-interactions-wrapper" class="row border-top pt-3">
             <div class="row mb-3">
-                <h5 class="sector-title"><a class="text-decoration-none" href="#average">Average interations per tweet by media type</a></h5>
+                <h5 class="sector-title"><a class="text-decoration-none" href="#average">Average interactions per tweet by media type</a></h5>
             </div>
             <div id="avg-interactions" class="row align-items-start">
                 <div id="avg-interactions-text" class="col-sm-12 col-md-12 col-lg-6 col-xl-4 pb-3">
                     <i class="bi bi-chat-right-text-fill"></i>
                     Text:
+                    <span id="avg-interactions-text-count" class="data-clean" title="text posts"></span>
+                    <span id="avg-interactions-text-count-compare"  class="data-clean" title="text posts"></span>
                     <i class="bi bi-stopwatch" title="interval"></i>
                     <span id="avg-interactions-interval-text" class="data-clean" title="Average interval between text posts"></span>
                     <span id="avg-interactions-interval-text-compare"  class="data-clean" title="Average interval between text posts"></span>
@@ -248,6 +267,8 @@
                 <div id="avg-interactions-video" class="col-sm-12 col-md-12 col-lg-6 col-xl-4 pb-3">
                     <i class="bi bi-camera-reels-fill"></i>
                     Video:
+                    <span id="avg-interactions-video-count" class="data-clean" title="video posts"></span>
+                    <span id="avg-interactions-video-count-compare"  class="data-clean" title="video posts"></span>
                     <i class="bi bi-stopwatch" title="interval"></i>
                     <span id="avg-interactions-interval-video" class="data-clean" title="Average interval between video posts"></span>
                     <span id="avg-interactions-interval-video-compare" class="data-clean" title="Average interval between video posts"></span>
@@ -256,6 +277,8 @@
                 <div id="avg-interactions-photo" class="col-sm-12 col-md-12 col-lg-6 col-xl-4 pb-3">
                     <i class="bi bi-camera-fill"></i>
                     Photo:
+                    <span id="avg-interactions-photo-count" class="data-clean" title="photo posts"></span>
+                    <span id="avg-interactions-photo-count-compare"  class="data-clean" title="photo posts"></span>
                     <i class="bi bi-stopwatch" title="interval"></i>
                     <span id="avg-interactions-interval-photo" class="data-clean" title="Average interval between photo posts"></span>
                     <span id="avg-interactions-interval-photo-compare" class="data-clean" title="Average interval between photo posts"></span>
@@ -264,6 +287,8 @@
                 <div id="avg-interactions-link" class="col-sm-12 col-md-12 col-lg-6 col-xl-4 pb-3">
                     <i class="bi bi-link-45deg"></i>
                     Link:
+                    <span id="avg-interactions-link-count" class="data-clean" title="link posts"></span>
+                    <span id="avg-interactions-link-count-compare" class="data-clean" title="link posts"></span>
                     <i class="bi bi-stopwatch" title="interval"></i>
                     <span id="avg-interactions-interval-link" class="data-clean" title="Average interval between link posts"></span>
                     <span id="avg-interactions-interval-link-compare" class="data-clean" title="Average interval between link posts"></span>
@@ -272,6 +297,8 @@
                 <div id="avg-interactions-polls" class="col-sm-12 col-md-12 col-lg-6 col-xl-4 pb-3">
                     <i class="bi bi-bar-chart-fill"></i>
                     Polls:
+                    <span id="avg-interactions-polls-count" class="data-clean" title="polls posts"></span>
+                    <span id="avg-interactions-polls-count-compare"  class="data-clean" title="polls posts"></span>
                     <i class="bi bi-stopwatch" title="interval"></i>
                     <span id="avg-interactions-interval-polls" class="data-clean" title="Average interval between poll posts"></span>
                     <span id="avg-interactions-interval-polls-compare" class="data-clean" title="Average interval between poll posts"></span>
