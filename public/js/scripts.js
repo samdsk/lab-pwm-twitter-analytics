@@ -48,6 +48,18 @@ const validateEmail = (email) => {
 
 const sleep = ms => new Promise(r => setTimeout(r,ms))
 
+async function loadFromCache(url,id){
+  let data
+  if(localStorage.getItem("dataCache-"+id)){
+    data = JSON.parse(localStorage.getItem("dataCache-"+id))
+  }else{
+    data = await postViaWorker(null,'GET',url+id)
+    localStorage.setItem("dataCache-"+id,JSON.stringify(data))
+  }
+
+  return data
+}
+
 $(document).ready(async function(){
 
   // dark-mode click activate function
@@ -206,14 +218,7 @@ $(document).ready(async function(){
     $('#results-modal').removeClass('d-none').modal('toggle')
     $('#loader #spinner').removeClass('d-none')
 
-    let data
-
-    if(localStorage.getItem("dataCache-"+id)){
-      data = JSON.parse(localStorage.getItem("dataCache-"+id))
-    }else{
-      data = await postViaWorker(null,'GET',url+id)
-      localStorage.setItem("dataCache-"+id,JSON.stringify(data))
-    }
+    let data = await loadFromCache(url,id)
 
     await sleep(500)
     $('#loader #spinner').addClass('d-none')
@@ -247,29 +252,13 @@ $(document).ready(async function(){
     $('#results-modal').removeClass('d-none').modal('toggle')
     $('#loader #spinner').removeClass('d-none')
 
-    let data_1
-    let data_2
-
-    if(localStorage.getItem("dataCache-"+id_1)){
-      data_1 = JSON.parse(localStorage.getItem("dataCache-"+id_1))
-    }else{
-      data_1 = await postViaWorker(null,'GET',url+id_1)
-      localStorage.setItem("dataCache-"+id_1,JSON.stringify(data_1))
-    }
-
-    if(localStorage.getItem("dataCache-"+id_2)){
-      data_2 = JSON.parse(localStorage.getItem("dataCache-"+id_2))
-    }else{
-      data_2 = await postViaWorker(null,'GET',url+id_2)
-      localStorage.setItem("dataCache-"+id_2,JSON.stringify(data_2))
-    }
-
+    let data_1 = await loadFromCache(url,id_1)
+    let data_2 = await loadFromCache(url,id_2)
 
     await sleep(500)
     $('#loader #spinner').addClass('d-none')
 
     await genSearchResults([data_1,data_2])
-
   })
 
   // disable checkboxes of other usernames
