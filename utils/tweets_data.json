@@ -140,11 +140,11 @@
         "last" : 0,
         "interval" : 0,
         "metrics":{
-            "retweet_count":[],
-            "reply_count":[],
-            "like_count":[],
-            "quote_count":[],
-            "impression_count":[]
+            "retweet_count":0,
+            "reply_count":0,
+            "like_count":0,
+            "quote_count":0,
+            "impression_count":0
         }
     }
 }

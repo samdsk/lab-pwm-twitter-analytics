@@ -1,4 +1,12 @@
 <!-- NOTE add d-none -->
+<div id="loader" class="row mt-2 justify-content-center align-items-center ">
+    <div id="spinner" class="col-auto spinner-border d-none" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+    <div id="progress-bar" class="progress mt-3 d-none" role="progressbar" aria-valuenow="50"  style="height: 5px" aria-label="5px high" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-bar"></div>
+    </div>
+</div>
 <div id="results" class="row justify-content-between mt-2 border-top d-none" >
     <div class="col-sm-12 col-md-1 m-0 mt-3 p-0 ">
         <nav  class="h-100 flex-column align-items-stretch" style="min-width:80px;">
@@ -43,6 +51,18 @@
                         <i class="bi bi-person-check-fill"></i>
                         Followings:
                         <span id="followings" class="text-primary data-hover data-clean"></span><span id="followings-compare" class="text-primary data-hover data-clean"></span>
+                    </p>
+                </div>
+                <div  class="row">
+                    <p class="col-auto">
+                        <i class="bi bi-at"></i>
+                        Mentions:
+                        <span id="mentions" class="text-primary data-hover data-clean"></span><span id="mentions-compare" class="text-prim data-clean data-hover"></span>
+                    </p>
+                    <p class="col-auto">
+                        <i class="bi bi-graph-up"></i>
+                        Engagement:
+                        <span id="engagement" class="text-primary data-hover data-clean" title="percent"></span> <span id="engagement-compare" class="text-primary data-clean data-hover" title="percent"></span>
                     </p>
                 </div>
                 <div id="total-charts" class="row justify-content-center">

@@ -22,20 +22,20 @@ const updateProfile = async (req,res,next) => {
     if(req.session.email){
 
         let catpcha = await recaptcha(req.body['g-recaptcha-response'])
-        if(!catpcha) return res.json(JSON.stringify({error:"Invalid captcha!"}))
+        if(!catpcha) return res.json({error:"Invalid captcha!"})
 
         const {password,new_password,new_password_confirm} = req.body
         if(new_password !== new_password_confirm)
-            return res.json(JSON.stringify({error:"Passwords don't match"}))
+            return res.json({error:"Passwords don't match"})
 
         Auth.findOne({email:req.session.email},async function(err,auth){
             bcrypt.compare(password,auth.password).then(async (check)=>{
 
-                if(!check) return res.json(JSON.stringify({error:"Credentials are not valid"}))
+                if(!check) return res.json({error:"Credentials are not valid"})
                 const password = await bcrypt.hash(new_password,10)
                 await Auth.findByIdAndUpdate(auth._id,{password:password})
 
-                return res.json(JSON.stringify({success:"Password updated"}))
+                return res.json({success:"Password updated"})
             })
 
         })
@@ -54,7 +54,7 @@ const deleteProfile = async (req,res,next) => {
             console.log(req.body.password);
             await bcrypt.compare(req.body.password,auth.password).then(async (check)=>{
 
-                if(!check) return res.json(JSON.stringify({error:"Credentials are not valid"}))
+                if(!check) return res.json({error:"Credentials are not valid"})
                 console.log("pass: psw");
 
                 let searched = await User.findById(auth._id,'searched')
@@ -63,7 +63,7 @@ const deleteProfile = async (req,res,next) => {
                     searched.searched.map(async(x)=>{
                         SearchResults.findByIdAndRemove(x).exec((err,data)=>{
                             if(err) {
-                                return res.json(JSON.stringify({error:"Profile delete: SearchResults error"}))
+                                return res.json({error:"Profile delete: SearchResults error"})
                             }
                             console.log("pass: search",x);
                         })
@@ -72,21 +72,21 @@ const deleteProfile = async (req,res,next) => {
 
                 Auth.findByIdAndRemove(auth._id).exec((err,data)=>{
                     if(err) {
-                        return res.json(JSON.stringify({error:"Profile delete: Auth error"}))
+                        return res.json({error:"Profile delete: Auth error"})
                     }
                     console.log("pass: delete auth");
                 })
 
                 User.findByIdAndRemove(auth._id).exec((err,data)=>{
                     if(err) {
-                        return res.json(JSON.stringify({error:"Profile delete: User error"}))
+                        return res.json({error:"Profile delete: User error"})
 
                     }
                     console.log("pass: delete user");
                 })
 
                 req.session.destroy()
-                return res.json(JSON.stringify({success:"Profile has been delete successfully"}))
+                return res.json({success:"Profile has been delete successfully"})
             })
 
         })

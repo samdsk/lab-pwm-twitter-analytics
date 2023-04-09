@@ -37,8 +37,28 @@ if(document.getElementsByTagName('html')[0].getAttribute('data-bs-theme')=='ligh
   document.querySelector('#dark-mode i').classList.add('bi-moon-stars-fill')
 }
 
+const validateEmail = (email) => {
+  return String(email)
+    .toLowerCase()
+    .match(
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    );
+};
+
 
 const sleep = ms => new Promise(r => setTimeout(r,ms))
+
+async function loadFromCache(url,id){
+  let data
+  if(localStorage.getItem("dataCache-"+id)){
+    data = JSON.parse(localStorage.getItem("dataCache-"+id))
+  }else{
+    data = await postViaWorker(null,'GET',url+id)
+    localStorage.setItem("dataCache-"+id,JSON.stringify(data))
+  }
+
+  return data
+}
 
 $(document).ready(async function(){
 
@@ -91,6 +111,13 @@ $(document).ready(async function(){
 
     if(!inputcheck) return errorDisplay({error:"Input can't be empty!"})
 
+    const email = form.find('input.email')
+
+    if(!validateEmail(email[0].value)){
+      $(email[0]).parent().find('.invalid-feedback').show()
+      return
+    }
+
     const psw = form.find('input.password')
     const psw_confirm = form.find('input.password-confirm')
 
@@ -121,8 +148,6 @@ $(document).ready(async function(){
     let form_data = form.serialize()
 
     let data = await postViaWorker(form_data,method,url)
-
-    console.log(data);
 
     if(data.error || data.success)
       return errorDisplay(data)
@@ -192,13 +217,21 @@ $(document).ready(async function(){
   // show detailed clicked result
   $('.searched-entry').click(async function(){
     let id = $(this).attr('id')
-    let url = '/results?id='+id
-    let data = await postViaWorker(null,'GET',url)
+    let url = '/results?id='
 
-    if(data.error) return errorDisplay(data)
-    await genSearchResults(data)
+    $('#results').hide()
+    $('#results').hide()
     $('#results-modal').removeClass('d-none').modal('toggle')
-    $('#results').removeClass('d-none')
+    $('#loader #spinner').removeClass('d-none')
+
+    let data = await loadFromCache(url,id)
+
+    await sleep(500)
+    $('#loader #spinner').addClass('d-none')
+
+    await genSearchResults(data)
+
+
   })
 
   // search history close button icon hovering effect
@@ -220,15 +253,19 @@ $(document).ready(async function(){
     const id_1 =  $('.form-check-input:checked').attr('data-id')
     const id_2 =  $(this).parent().find('.form-check-input').attr('data-id')
 
-    let url = "/results?id="+id_1+"&id="+id_2
+    let url = "/results?id="
 
-    let data = await postViaWorker(null,'GET',url)
-    console.log(data);
-    await genSearchResults(data)
-
+    $('#results').hide()
     $('#results-modal').removeClass('d-none').modal('toggle')
-    $('#results').removeClass('d-none')
+    $('#loader #spinner').removeClass('d-none')
 
+    let data_1 = await loadFromCache(url,id_1)
+    let data_2 = await loadFromCache(url,id_2)
+
+    await sleep(500)
+    $('#loader #spinner').addClass('d-none')
+
+    await genSearchResults([data_1,data_2])
   })
 
   // disable checkboxes of other usernames
@@ -261,20 +298,16 @@ $(document).ready(async function(){
   $('#search-btn').click(async (event)=>{
     event.preventDefault()
 
-    if($('#handler').val() == '') return
+    if($('#handler').val() == '') return errorDisplay({error:"Please provide a valid Twitter username!"})
 
-    $('#results').addClass('d-none')
+    $('#results').fadeOut(1000).addClass('d-none')
     $('#loader #spinner').removeClass('d-none')
     $('#search-btn').prop("disabled",true)
 
     let data = await postViaWorker($('#form-search').serialize(),'POST','/twitter')
-
     // let data  = await fetch('../js/output_data_compare.json').then( response => {
     //       return response.json()
     // })
-
-    await sleep(500)
-    $('#loader #spinner').addClass('d-none')
 
     if(data.error) {
       $('#search-btn').removeAttr("disabled")
@@ -282,15 +315,11 @@ $(document).ready(async function(){
       return errorDisplay(data)
     }
 
-    $('#loader #progress-bar').removeClass('d-none')
-    $('#loader #progress-bar .progress-bar').removeClass(function (index, className) {
-      return (className.match(new RegExp("\\S*w-\\S*", 'g')) || []).join(' ')
-    })
-    await genSearchResults(data)
     await sleep(500)
+    $('#loader #spinner').addClass('d-none')
 
-    $('#loader #progress-bar').addClass('d-none')
-    $('#results').removeClass("d-none").hide().fadeIn(1000)
+    await genSearchResults(data)
+
     $('#search-btn').removeAttr("disabled")
 
     grecaptcha.reset()
@@ -304,21 +333,27 @@ $(document).ready(async function(){
   }
   // ! populate with seach results + charts
   async function genSearchResults(data){
+    if(data.error) return errorDisplay(data)
+
+    resetProgressBar()
+    await sleep(500)
+    $('#loader #progress-bar').removeClass('d-none')
+
     cleanResults()
-    if(data.error) return
-    if(data.length==2 && data[1] != null){
-      if(data[0].username == data[1].username){
-        console.log("Ok: comparing mode");
-        gen(data,data.length)
-      }else{
-        console.log("Error: comparing different users");
-      }
-    }else{
-      gen(data,1)
+
+    if(data.length==2 && data[0].username != data[1].username){
+      return errorDisplay({error:"Can't compare different users"})
     }
+
+    await build(data)
+
+    await sleep(500)
+    $('#loader #progress-bar').addClass('d-none')
+    $('#results').removeClass("d-none").fadeIn(1000)
+
   }
 
-  async function gen(INPUT,LENGTH){
+  async function build(INPUT){
 
     if(localStorage.getItem('theme') == 'dark'){
       Chart.defaults.color = "#bbb"
@@ -328,9 +363,15 @@ $(document).ready(async function(){
       Chart.defaults.borderColor = 'rgba(0, 0, 0, 0.1)'
     }
 
-    let data = INPUT[0]
+    let data = undefined
     let compare = undefined
-    if(LENGTH==2) compare = INPUT[1]
+
+    if(INPUT?.length) {
+      data = INPUT[0]
+      compare = INPUT[1]
+    }else{
+      data = INPUT
+    }
 
     const colors_1 = ['#6a4c93','#1982c4','#8ac926','#ffca3a','#ff595e','#778da9']
     const colors_2 = ['#26547c','#ef476f','#ffd166','#06d6a0','#FAA307','#7d8597']
@@ -375,6 +416,17 @@ $(document).ready(async function(){
 
     const load_followings = async () => {
       load_x('#followings',data.followings,compare?.followings,"Total Followings")
+    }
+
+    const load_mentions = async () =>{
+      load_x('#mentions',data.mentions,compare?.mentions,"Recent Mentions")
+    }
+
+    const load_engagement = async () =>{
+      let id = '#engagement'
+      let eng = engagement(data)
+      let eng_compare = engagement(compare)
+      load_x(id,eng,eng_compare,"Engagement")
     }
 
     const load_total_info = async () => {
@@ -491,7 +543,6 @@ $(document).ready(async function(){
       }
     }
 
-// FIXME append something then there is no hashtag graph
     const load_hashtags = async () => {
       let id = "hashtags-chart-wrapper"
       if(compare) $('#hashtags-wrapper').hide()
@@ -600,45 +651,47 @@ $(document).ready(async function(){
     await load_followers()
     await load_followings()
     await load_limit_data()
+    await load_mentions()
+    await load_engagement()
 
-    $('#loader #progress-bar .progress-bar').addClass('w-10')
+    updateProgressBar(10)
 
     await load_sample_internal_new()
     await load_sample_interval_old()
     await load_highlights()
 
-    $('#loader #progress-bar .progress-bar').addClass('w-30')
+    updateProgressBar(20)
 
     await load_total_info()
 
-    $('#loader #progress-bar .progress-bar').addClass('w-50')
+    updateProgressBar(30)
 
     await load_week_chart()
 
-    $('#loader #progress-bar .progress-bar').addClass('w-55')
+    updateProgressBar(40)
 
     await load_media_type_Chart()
 
-    $('#loader #progress-bar .progress-bar').addClass('w-60')
+    updateProgressBar(50)
+
     await load_type_Chart()
 
-    $('#loader #progress-bar .progress-bar').addClass('w-65')
+    updateProgressBar(60)
 
     await load_langs_chart()
-
-    $('#loader #progress-bar .progress-bar').addClass('w-70')
     await load_hashtags()
     await load_mentioned_users()
-    $('#loader #progress-bar .progress-bar').addClass('w-80')
+
+    updateProgressBar(70)
 
     await load_tweets_by_media_type_data()
     await load_tweets_by_type_data()
 
-    $('#loader #progress-bar .progress-bar').addClass('w-90')
+    updateProgressBar(80)
 
     await load_avg_metrics_table()
 
-    $('#loader #progress-bar .progress-bar').addClass('w-100')
+    updateProgressBar(100)
 
     // Promise.all([
     //   load_user_datails(),
@@ -658,6 +711,38 @@ $(document).ready(async function(){
     //   load_hashtags(),
     //   load_mentioned_users()
     // ])
+  }
+
+  function engagement(input){
+    if(!input) return undefined
+
+    let result = 0
+    let metrics = input.total.metrics
+
+
+    for(let type of Object.keys(metrics)){
+      if(type == 'impression_count') continue
+      result += metrics[type]
+    }
+
+    result /= input.total.count
+    result /= input.followers
+    result *= 100
+
+    return result.toFixed(2)
+
+  }
+
+  function resetProgressBar() {
+    let id = "#loader #progress-bar "
+    $(id+' .progress-bar').removeClass(function (index, className) {
+      return (className.match(new RegExp("\\S*w-\\S*", 'g')) || []).join(' ')
+    })
+  }
+
+  function updateProgressBar(n){
+    let id = "#loader #progress-bar "
+    $(id+' .progress-bar').addClass('w-'+n)
   }
 
   function load_type(id,data,compare){
@@ -1328,7 +1413,7 @@ $(document).ready(async function(){
     if(!old_data) return
     if(old_data == new_data) return
 
-    let diff = new_data - old_data
+    let diff = Number((new_data - old_data).toFixed(3))
     let rounded_data = tweetCount(diff)
 
     let up = ["bi-caret-up-fill","text-success"]
@@ -1347,7 +1432,7 @@ $(document).ready(async function(){
     $(id).after(icon)
 
     id = id+"-compare"
-    $(id).attr({"data-real":diff, "data-round":rounded_data, "title":"Difference between new and old data"})
+    $(id).attr({"data-real":diff, "data-round":rounded_data, "title":"Difference between compared data"})
     $(id).text(rounded_data)
   }
   function appendCompareInterval(id,new_data,old_data){
@@ -1415,10 +1500,10 @@ $(document).ready(async function(){
   }
   function tweetCount(count){
     if (count / 1000000 >= 1 || count / 1000000 <= -1)
-      return (count / 1000000).toFixed(2) + "M"
+      return Number((count / 1000000).toFixed(2)) + "M"
 
     if(count / 1000 >= 1 || count / 1000 <= -1)
-      return (count / 1000).toFixed(1) + "K"
+      return Number((count / 1000).toFixed(1)) + "K"
 
     return count
   }

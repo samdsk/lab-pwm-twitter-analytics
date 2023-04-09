@@ -11,29 +11,29 @@ const createUser = async (req,res,next) => {
     if( !req.body.email ||
         !req.body.password ||
         !req.body.name ||
-        !req.body.terms) return res.json(JSON.stringify({error:"Missing fields"}))
+        !req.body.terms) return res.json({error:"Missing fields"})
 
-    if((req.body.password != req.body.password_confirm)) return res.json(JSON.stringify({error:"Passwords don't match!"}))
+    if((req.body.password != req.body.password_confirm)) return res.json({error:"Passwords don't match!"})
 
     let catpcha = await recaptcha(req.body['g-recaptcha-response'])
-    if(!catpcha) return res.json(JSON.stringify({error:"Invalid captcha!"}))
+    if(!catpcha) return res.json({error:"Invalid captcha!"})
 
 
     Auth.findOne({email:req.body.email}, async (err,auth)=>{
 
-        if(auth != null) return res.json(JSON.stringify({error:"User already exists!"}))
+        if(auth != null) return res.json({error:"User already exists!"})
 
         const password = await bcrypt.hash(req.body.password,10)
         const id = new mongoose.Types.ObjectId()
 
         Auth.create({_id:id,email:req.body.email,password : password},(err,data)=>{
             if(err) {
-                return res.json(JSON.stringify({error:"Internal Auth error"}))
+                return res.json({error:"Internal Auth error"})
             }
 
             User.create({_id:id,name:req.body.name},(err,data)=>{
                 if(err) {
-                    return res.json(JSON.stringify({error:"Interval User error"}))
+                    return res.json({error:"Interval User error"})
                 }
             })
         })
@@ -60,7 +60,7 @@ const createUser = async (req,res,next) => {
             console.log("Signup: email error - ",err);
         })
 
-        return res.json(JSON.stringify({success:"User created successfully!"}))
+        return res.json({success:"User created successfully!"})
     })
 }
 

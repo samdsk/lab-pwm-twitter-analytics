@@ -12,7 +12,7 @@ const getReset = async (req,res,next) => {
         return res.sendStatus(500)
     }else{
         Auth.findOne({email:email},(err,auth)=>{
-            if(err) return res.json(JSON.stringify({error:"Invalid email"}))
+            if(err) return res.json({error:"Invalid email"})
             if(!auth) return res.sendStatus(404)
 
             const secret = process.env.Server_Secret + auth.password
@@ -33,15 +33,15 @@ const putReset = async (req,res,next) =>{
     const {email,password,password_confirm} = req.body
 
     let catpcha = await recaptcha(req.body['g-recaptcha-response'])
-    if(!catpcha) return res.json(JSON.stringify({error:"Invalid captcha!"}))
+    if(!catpcha) return res.json({error:"Invalid captcha!"})
 
 
-    if(!email || !password || !password_confirm) return res.json(JSON.stringify({error:"Invalid request"}))
-    if(password !== password_confirm) return res.json(JSON.stringify({error:"Passwords don't match"}))
+    if(!email || !password || !password_confirm) return res.json({error:"Invalid request"})
+    if(password !== password_confirm) return res.json({error:"Passwords don't match"})
 
     Auth.findOne({email:email},async (err,auth)=>{
-        if(err) return res.json(JSON.stringify({error:"Invalid email"}))
-        if(!auth) return res.json(JSON.stringify({error:"Invalid email"}))
+        if(err) return res.json({error:"Invalid email"})
+        if(!auth) return res.json({error:"Invalid email"})
 
         const password_new = await bcrypt.hash(password,10)
         Auth.findByIdAndUpdate(auth._id,{password:password_new}).exec(function(err,auth){
@@ -76,7 +76,7 @@ const putReset = async (req,res,next) =>{
             console.log("Reset Psw: email error - ",err);
         })
 
-        return res.json(JSON.stringify({success:"Password was changed successfully!"}))
+        return res.json({success:"Password was changed successfully!"})
     })
 }
 
