@@ -213,7 +213,9 @@ $(document).ready(async function(){
   $('.searched-entry').click(async function(){
     let id = $(this).attr('id')
     let url = '/results?id='
+    let url = '/results?id='
 
+    $('#results').hide()
     $('#results').hide()
     $('#results-modal').removeClass('d-none').modal('toggle')
     $('#loader #spinner').removeClass('d-none')
@@ -247,6 +249,10 @@ $(document).ready(async function(){
     const id_1 =  $('.form-check-input:checked').attr('data-id')
     const id_2 =  $(this).parent().find('.form-check-input').attr('data-id')
 
+    let url = "/results?id="
+    $('#results').hide()
+    $('#results-modal').removeClass('d-none').modal('toggle')
+    $('#loader #spinner').removeClass('d-none')
     let url = "/results?id="
     $('#results').hide()
     $('#results-modal').removeClass('d-none').modal('toggle')
