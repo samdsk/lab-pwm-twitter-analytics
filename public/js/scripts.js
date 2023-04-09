@@ -37,6 +37,14 @@ if(document.getElementsByTagName('html')[0].getAttribute('data-bs-theme')=='ligh
   document.querySelector('#dark-mode i').classList.add('bi-moon-stars-fill')
 }
 
+const validateEmail = (email) => {
+  return String(email)
+    .toLowerCase()
+    .match(
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    );
+};
+
 
 const sleep = ms => new Promise(r => setTimeout(r,ms))
 
@@ -192,13 +200,27 @@ $(document).ready(async function(){
   // show detailed clicked result
   $('.searched-entry').click(async function(){
     let id = $(this).attr('id')
-    let url = '/results?id='+id
-    let data = await postViaWorker(null,'GET',url)
+    let url = '/results?id='
 
-    if(data.error) return errorDisplay(data)
-    await genSearchResults(data)
+    $('#results').hide()
     $('#results-modal').removeClass('d-none').modal('toggle')
-    $('#results').removeClass('d-none')
+    $('#loader #spinner').removeClass('d-none')
+
+    let data
+
+    if(localStorage.getItem("dataCache-"+id)){
+      data = JSON.parse(localStorage.getItem("dataCache-"+id))
+    }else{
+      data = await postViaWorker(null,'GET',url+id)
+      localStorage.setItem("dataCache-"+id,JSON.stringify(data))
+    }
+
+    await sleep(500)
+    $('#loader #spinner').addClass('d-none')
+
+    await genSearchResults(data)
+
+
   })
 
   // search history close button icon hovering effect
@@ -220,14 +242,33 @@ $(document).ready(async function(){
     const id_1 =  $('.form-check-input:checked').attr('data-id')
     const id_2 =  $(this).parent().find('.form-check-input').attr('data-id')
 
-    let url = "/results?id="+id_1+"&id="+id_2
-
-    let data = await postViaWorker(null,'GET',url)
-    console.log(data);
-    await genSearchResults(data)
-
+    let url = "/results?id="
+    $('#results').hide()
     $('#results-modal').removeClass('d-none').modal('toggle')
-    $('#results').removeClass('d-none')
+    $('#loader #spinner').removeClass('d-none')
+
+    let data_1
+    let data_2
+
+    if(localStorage.getItem("dataCache-"+id_1)){
+      data_1 = JSON.parse(localStorage.getItem("dataCache-"+id_1))
+    }else{
+      data_1 = await postViaWorker(null,'GET',url+id_1)
+      localStorage.setItem("dataCache-"+id_1,JSON.stringify(data_1))
+    }
+
+    if(localStorage.getItem("dataCache-"+id_2)){
+      data_2 = JSON.parse(localStorage.getItem("dataCache-"+id_2))
+    }else{
+      data_2 = await postViaWorker(null,'GET',url+id_2)
+      localStorage.setItem("dataCache-"+id_2,JSON.stringify(data_2))
+    }
+
+
+    await sleep(500)
+    $('#loader #spinner').addClass('d-none')
+
+    await genSearchResults([data_1,data_2])
 
   })
 
@@ -261,34 +302,28 @@ $(document).ready(async function(){
   $('#search-btn').click(async (event)=>{
     event.preventDefault()
 
-    if($('#handler').val() == '') return
+    if($('#handler').val() == '') return errorDisplay({error:"Please provide a valid Twitter username!"})
 
-    $('#results').addClass('d-none')
+    $('#results').fadeOut(1000).addClass('d-none')
     $('#loader #spinner').removeClass('d-none')
     $('#search-btn').prop("disabled",true)
 
     let data = await postViaWorker($('#form-search').serialize(),'POST','/twitter')
-
     // let data  = await fetch('../js/output_data_compare.json').then( response => {
     //       return response.json()
     // })
-
-    await sleep(500)
-    $('#loader #spinner').addClass('d-none')
 
     if(data.error) {
       $('#search-btn').removeAttr("disabled")
       grecaptcha.reset()
       return errorDisplay(data)
     }
-    resetProgressBar()
-    $('#loader #progress-bar').removeClass('d-none')
+
+    await sleep(500)
+    $('#loader #spinner').addClass('d-none')
 
     await genSearchResults(data)
-    await sleep(500)
 
-    $('#loader #progress-bar').addClass('d-none')
-    $('#results').removeClass("d-none").hide().fadeIn(1000)
     $('#search-btn').removeAttr("disabled")
 
     grecaptcha.reset()
@@ -302,18 +337,28 @@ $(document).ready(async function(){
   }
   // ! populate with seach results + charts
   async function genSearchResults(data){
+    if(data.error) return errorDisplay(data)
+
+    resetProgressBar()
+    $('#loader #progress-bar').removeClass('d-none')
+
     cleanResults()
-    if(data.error) return
+    await sleep(1000)
     if(data.length==2 && data[1] != null){
       if(data[0].username == data[1].username){
-        console.log("Ok: comparing mode");
-        gen(data,data.length)
+        //console.log("Ok: comparing mode");
+        await gen(data,data.length)
       }else{
-        console.log("Error: comparing different users");
+        return errorDisplay({error:"Can't compare different users"})
+        //console.log("Error: comparing different users");
       }
     }else{
-      gen(data,1)
+      await gen(data,1)
     }
+    await sleep(1000)
+    $('#loader #progress-bar').addClass('d-none')
+    $('#results').removeClass("d-none").fadeIn(1000)
+
   }
 
   async function gen(INPUT,LENGTH){
