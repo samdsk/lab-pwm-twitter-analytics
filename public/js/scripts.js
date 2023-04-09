@@ -281,11 +281,9 @@ $(document).ready(async function(){
       grecaptcha.reset()
       return errorDisplay(data)
     }
-
+    resetProgressBar()
     $('#loader #progress-bar').removeClass('d-none')
-    $('#loader #progress-bar .progress-bar').removeClass(function (index, className) {
-      return (className.match(new RegExp("\\S*w-\\S*", 'g')) || []).join(' ')
-    })
+
     await genSearchResults(data)
     await sleep(500)
 
@@ -375,6 +373,17 @@ $(document).ready(async function(){
 
     const load_followings = async () => {
       load_x('#followings',data.followings,compare?.followings,"Total Followings")
+    }
+
+    const load_mentions = async () =>{
+      load_x('#mentions',data.mentions,compare?.mentions,"Recent Mentions")
+    }
+
+    const load_engagement = async () =>{
+      let id = '#engagement'
+      let eng = engagement(data)
+      let eng_compare = engagement(compare)
+      load_x(id,eng,eng_compare,"Engagement")
     }
 
     const load_total_info = async () => {
@@ -491,7 +500,6 @@ $(document).ready(async function(){
       }
     }
 
-// FIXME append something then there is no hashtag graph
     const load_hashtags = async () => {
       let id = "hashtags-chart-wrapper"
       if(compare) $('#hashtags-wrapper').hide()
@@ -600,45 +608,47 @@ $(document).ready(async function(){
     await load_followers()
     await load_followings()
     await load_limit_data()
+    await load_mentions()
+    await load_engagement()
 
-    $('#loader #progress-bar .progress-bar').addClass('w-10')
+    updateProgressBar(10)
 
     await load_sample_internal_new()
     await load_sample_interval_old()
     await load_highlights()
 
-    $('#loader #progress-bar .progress-bar').addClass('w-30')
+    updateProgressBar(20)
 
     await load_total_info()
 
-    $('#loader #progress-bar .progress-bar').addClass('w-50')
+    updateProgressBar(30)
 
     await load_week_chart()
 
-    $('#loader #progress-bar .progress-bar').addClass('w-55')
+    updateProgressBar(40)
 
     await load_media_type_Chart()
 
-    $('#loader #progress-bar .progress-bar').addClass('w-60')
+    updateProgressBar(50)
+
     await load_type_Chart()
 
-    $('#loader #progress-bar .progress-bar').addClass('w-65')
+    updateProgressBar(60)
 
     await load_langs_chart()
-
-    $('#loader #progress-bar .progress-bar').addClass('w-70')
     await load_hashtags()
     await load_mentioned_users()
-    $('#loader #progress-bar .progress-bar').addClass('w-80')
+
+    updateProgressBar(70)
 
     await load_tweets_by_media_type_data()
     await load_tweets_by_type_data()
 
-    $('#loader #progress-bar .progress-bar').addClass('w-90')
+    updateProgressBar(80)
 
     await load_avg_metrics_table()
 
-    $('#loader #progress-bar .progress-bar').addClass('w-100')
+    updateProgressBar(100)
 
     // Promise.all([
     //   load_user_datails(),
@@ -658,6 +668,38 @@ $(document).ready(async function(){
     //   load_hashtags(),
     //   load_mentioned_users()
     // ])
+  }
+
+  function engagement(input){
+    if(!input) return undefined
+
+    let result = 0
+    let metrics = input.total.metrics
+
+
+    for(let type of Object.keys(metrics)){
+      if(type == 'impression_count') continue
+      result += metrics[type]
+    }
+
+    result /= input.total.count
+    result /= input.followers
+    result *= 100
+
+    return result.toFixed(2)
+
+  }
+
+  function resetProgressBar() {
+    let id = "#loader #progress-bar "
+    $(id+' .progress-bar').removeClass(function (index, className) {
+      return (className.match(new RegExp("\\S*w-\\S*", 'g')) || []).join(' ')
+    })
+  }
+
+  function updateProgressBar(n){
+    let id = "#loader #progress-bar "
+    $(id+' .progress-bar').addClass('w-'+n)
   }
 
   function load_type(id,data,compare){
@@ -1328,7 +1370,7 @@ $(document).ready(async function(){
     if(!old_data) return
     if(old_data == new_data) return
 
-    let diff = new_data - old_data
+    let diff = Number((new_data - old_data).toFixed(3))
     let rounded_data = tweetCount(diff)
 
     let up = ["bi-caret-up-fill","text-success"]
@@ -1347,7 +1389,7 @@ $(document).ready(async function(){
     $(id).after(icon)
 
     id = id+"-compare"
-    $(id).attr({"data-real":diff, "data-round":rounded_data, "title":"Difference between new and old data"})
+    $(id).attr({"data-real":diff, "data-round":rounded_data, "title":"Difference between compared data"})
     $(id).text(rounded_data)
   }
   function appendCompareInterval(id,new_data,old_data){
@@ -1415,10 +1457,10 @@ $(document).ready(async function(){
   }
   function tweetCount(count){
     if (count / 1000000 >= 1 || count / 1000000 <= -1)
-      return (count / 1000000).toFixed(2) + "M"
+      return Number((count / 1000000).toFixed(2)) + "M"
 
     if(count / 1000 >= 1 || count / 1000 <= -1)
-      return (count / 1000).toFixed(1) + "K"
+      return Number((count / 1000).toFixed(1)) + "K"
 
     return count
   }

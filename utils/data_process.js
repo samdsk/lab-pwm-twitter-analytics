@@ -173,7 +173,7 @@ function updateMetrics(data,type,e){
 function updateMetricsTotal(data,e){
     let total = data.total.metrics
     Object.keys(total).forEach(key => {
-        total[key].push(e.public_metrics[key])
+        total[key] += e.public_metrics[key]
         updateHighlights(data,key,e)
     })
 }

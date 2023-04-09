@@ -8,7 +8,7 @@ const User = require('../models/User')
 const Auth = require('../models/Auth')
 const recaptcha = require('../utils/recaptcha')
 
-const testing_filename = './test.json'
+const DEBUG = true
 const filename = './data.json'
 
 const tweet_fields = [
@@ -56,12 +56,21 @@ const search = async (ID) => {
         'expansions':['attachments.media_keys'],
         'media.fields':tweet_media_fields})
 
-    let data = await res.fetchLast()
+    let DATA = await res.fetchLast()
 
-    return new Promise( (resolve,reject) => fs.writeFile(filename,JSON.stringify(data), (err)=>{
-        if(err) reject(err)
-        resolve(data_process(filename))
-    }))
+    if(DEBUG){
+        return new Promise( (resolve,reject) => fs.writeFile(filename,JSON.stringify(DATA), (err)=>{
+            if(err) reject(err)
+            resolve(data_process(filename))
+        }))
+    }else{
+        return new Promise( (resolve,reject) => {
+            if(err) reject(err)
+            resolve(data_process(DATA))
+        })
+    }
+
+
 }
 
 // verify the search limit of an user
@@ -80,62 +89,71 @@ const searchLimit = async (email)=>{
 }
 
 const postTwitter = async(req,res,next) => {
+    // recaptcha validation
     let catpcha = await recaptcha(req.body['g-recaptcha-response'])
-    if(!catpcha) return res.json(JSON.stringify({error:"Invalid captcha!"}))
+    if(!catpcha) return res.json({error:"Invalid captcha!"})
 
+    //user search limit validation
     let limit = await searchLimit(req.session.email)
-
     console.log("Twitter: limit",limit);
 
     if(!limit)
-        return res.json(JSON.stringify({error:"Limit exceeded, please delete a search record from History page!"}))
+        return res.json({error:"Limit exceeded, please delete a search record from History page!"})
 
-    const user = await app.userByUsername(req.body.handler,{"user.fields":tweet_user_fields});
-    if(user?.errors) return res.json(JSON.stringify({error:`Invalid user`}))
+    Auth.findOne({email:req.session.email},async (err,auth)=>{
+        if(err) return res.sendStatus(500)
+        if(!auth) return res.json({error:"Twitter: Invalid session"})
 
-    console.log("Twitter: request for ->",user.data);
-    //let liked_tweets = await (await app.userLikedTweets(id)).fetchLast(100)
+        // twitter username validation
+        const user = await app.userByUsername(req.body.handler,{"user.fields":tweet_user_fields});
+        if(user?.errors) return res.json({error:`Invalid user`})
 
-    let mentions = await (await app.userMentionTimeline(user.data.id)).fetchLast()
+        //console.log("Twitter: request for ->",user.data);
+        //let liked_tweets = await (await app.userLikedTweets(id)).fetchLast(100)
 
-    fs.writeFileSync("./output_metions.json",JSON.stringify(mentions))
+        //API call for recent mentions
+        let mentions = await (await app.userMentionTimeline(user.data.id)).fetchLast()
 
-    search(req.body.handler)
-    .then( async (data,err) => {
-        if(err) return res.json(JSN.stringify({error:"Twitter search: "+err.message}))
+        if(DEBUG)
+            fs.writeFileSync("./output_metions.json",JSON.stringify(mentions))
 
-        data._id = new mongoose.Types.ObjectId()
-        data.user_id = user.data.id
-        data.username = req.body.handler
-        data.followers = user.data.public_metrics.followers_count
-        data.followings = user.data.public_metrics.following_count
-        data.total_tweets = user.data.public_metrics.tweet_count
-        data.user_img = user.data.profile_image_url.replace("_normal","_bigger")
-        data.name = user.data.name
-        data.date = new Date()
-        data.mentions = mentions.meta.result_count
+        search(req.body.handler)
+        .then( async (data,err) => {
+            if(err) return res.json({error:"Twitter search: "+err.message})
 
-        console.log("Twitter Limit:",data.limit.limit,data.limit.remaining,data.limit.reset);
+            // populating data object
+            data._id = new mongoose.Types.ObjectId()
+            data.user_id = user.data.id
+            data.username = req.body.handler
+            data.followers = user.data.public_metrics.followers_count
+            data.followings = user.data.public_metrics.following_count
+            data.total_tweets = user.data.public_metrics.tweet_count
+            data.user_img = user.data.profile_image_url.replace("_normal","_bigger")
+            data.name = user.data.name
+            data.date = new Date()
+            data.mentions = mentions.meta.result_count
 
-        console.log('Twitter: creating search results')
+            // Limit display
+            console.log("Twitter Limit:",data.limit.limit,data.limit.remaining,data.limit.reset)
 
-        Auth.findOne({email:req.session.email}).exec(async (err,auth)=>{
-            if(err) return res.json(JSON.stringify({error:"Twitter: email not found"}))
+            console.log('Twitter: creating search results')
+                await SearchResults.create(data)
+                await User.findOneAndUpdate({_id:auth._id},{$push : {searched:data._id}})
 
-            await SearchResults.create(data)
-            await User.findOneAndUpdate({_id:auth._id},{$push : {searched:data._id}})
+                delete(data._id)
 
-            delete(data._id)
-            console.log("Twitter: Writing to file");
-            fs.writeFileSync("./output_data.json",JSON.stringify([data,null]))
+                if(DEBUG){
+                    console.log("Twitter: Writing to file");
+                    fs.writeFileSync("./output_data.json",JSON.stringify([data,null]))
+                }
 
-            console.log("Twitter: sending data");
-            return res.json(JSON.stringify([data,null]))
+                console.log("Twitter: sending data");
+                return res.json([data,null])
         })
     })
     .catch(err => {
         console.log(err);
-        res.json(JSON.stringify({error:err.message}))
+        return res.json({error:err.message})
     })
 }
 

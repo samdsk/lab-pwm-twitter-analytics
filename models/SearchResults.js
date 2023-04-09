@@ -149,9 +149,18 @@ const SeachResultsSchema = new mongoose.Schema({
     },
     total : {// total posts
         count : {type:Number,default:0},
-        interval : {type:Number,default:0}
+        interval : {type:Number,default:0},
+        metrics : {
+            retweet_count:{type:Number,default:0},
+            reply_count:{type:Number,default:0},
+            like_count:{type:Number,default:0},
+            quote_count:{type:Number,default:0},
+            impression_count:{type:Number,default:0}
+        }
     }
 
 })
+
+let counts
 
 module.exports = mongoose.model('SearchResults',SeachResultsSchema)
