@@ -377,6 +377,13 @@ $(document).ready(async function(){
     const colors_2 = ['#26547c','#ef476f','#ffd166','#06d6a0','#FAA307','#7d8597']
     const colors_3 = ['#33a8c7','#52e3e1','#a0e426','#00a878','#f77976','#d883ff','#d883ff','#147DF5','#9336fd','#BE0AFF']
 
+    const icon_set = {
+      retweet_count : '<i class="bi bi-repeat text-primary"></i>',
+      reply_count : '<i class="bi bi-reply-fill text-success"></i>',
+      like_count : '<i class="bi bi-heart-fill text-danger"></i>',
+      quote_count : '<i class="bi bi-chat-right-quote-fill text-warning"></i>',
+      impression_count : '<i class="bi bi-bar-chart-line-fill text-info" class="text-center"></i>'
+    }
 
     const load_user_datails = async () => {
       $('#results #name span').text(data.name)
@@ -494,12 +501,14 @@ $(document).ready(async function(){
       load_type("tweets-by-type-data",data.type,compare?.type)
     }
 
+// FIXME refactor avg functions + load_type
     const load_avg_metrics_table = async () => {
+
       for(let type of Object.keys(data.media_type)){
 
-        let id = 'avg-interactions'
-        let sub_id = id+'-'+type
-        let intv_id = id+'-interval-'+type
+        let id = 'avg-interactions-'
+        let sub_id = id+type
+        let intv_id = sub_id+'-interval'
 
         if(data.media_type[type].count == 0) {
           $('#'+sub_id).hide()
@@ -507,18 +516,20 @@ $(document).ready(async function(){
         }
 
         $('#results #'+intv_id).text(msToHMS(data.media_type[type].interval))
+        $('#results #'+sub_id+'-count').text(data.media_type[type].count)
 
         if(compare){
             appendCompareInterval("#"+intv_id,data.media_type[type].interval,compare.media_type[type].interval)
+            appendCompare('#results #'+sub_id+'-count',data.media_type[type].count,compare.media_type[type].count)
         }
 
         for(let key of Object.keys(data.media_type[type].metrics)){
-          let li = $('<a onclick="return false;" class="list-group-item data-clean"></a>')
+          let li = $('<a onclick="return false;" class="list-group-item list-group-item-action data-clean"></a>')
 
           let avg_count = Math.floor(data.media_type[type].metrics[key]/data.media_type[type].count)
 
           let name = countToPlural(key)
-          li.text(name+" : ")
+          li.text(name+" : ").prepend(icon_set[key]+' ')
 
           let rounded
 
@@ -526,9 +537,9 @@ $(document).ready(async function(){
           else rounded = tweetCount(avg_count)
 
           let span_id = sub_id+'-'+key
-          let span = $('<span id="'+span_id+'"class="data-hover data-clean">'+ rounded +'</span>')
+          let span = $('<span id="'+span_id+'"class="text-primary data-hover data-clean">'+ rounded +'</span>')
           span.attr({"data-real":avg_count, "data-round":rounded,"title":"Average "+name.toLowerCase()})
-          let compare_span = $('<span id="'+span_id+'-compare" class="data-hover data-clean"></span>')
+          let compare_span = $('<span id="'+span_id+'-compare" class="text-primary data-hover data-clean"></span>')
 
           li.append(span).append(compare_span)
           $('#results #'+sub_id+' ul').append(li)
@@ -542,6 +553,49 @@ $(document).ready(async function(){
         $('#'+sub_id).show()
       }
     }
+
+    const load_avg_original = async ()=>{
+      let id = "avg-interactions-"
+      let type = 'original'
+      let intv_id = id+type+'-interval'
+
+      $('#results #'+intv_id).text(msToHMS(data.type[type].interval))
+      $('#results #'+id+type+'-count').text(data.type[type].count)
+
+      if(compare){
+          appendCompareInterval("#"+intv_id,data.type[type].interval,compare.type[type].interval)
+          appendCompare('#results #'+id+type+'-count',data.type[type].count,compare.type[type].count)
+      }
+
+      for(let key of Object.keys(data.type[type].metrics)){
+        let li = $('<a onclick="return false;" class="list-group-item list-group-item-action data-clean"></a>')
+
+        let avg_count = Math.floor(data.type[type].metrics[key]/data.type[type].count)
+
+        let name = countToPlural(key)
+        li.text(name+" : ").prepend(icon_set[key]+' ')
+
+        let rounded
+
+        if(avg_count  < 1) rounded = "Not enough data"
+        else rounded = tweetCount(avg_count)
+
+        let span_id = id+type+'-'+key
+        let span = $('<span id="'+span_id+'"class="text-primary data-hover data-clean">'+ rounded +'</span>')
+        span.attr({"data-real":avg_count, "data-round":rounded,"title":"Average "+name.toLowerCase()})
+        let compare_span = $('<span id="'+span_id+'-compare" class="text-primary data-hover data-clean"></span>')
+
+        li.append(span).append(compare_span)
+        $('#results #'+id+type+' ul').append(li)
+
+        if(compare && !(avg_count<1)){
+          let avg_count_compare = Math.floor(compare.type[type].metrics[key]/compare.type[type].count)
+          appendCompare('#results #'+span_id,avg_count,avg_count_compare)
+        }
+      }
+
+    }
+
 
     const load_hashtags = async () => {
       let id = "hashtags-chart-wrapper"
@@ -584,7 +638,7 @@ $(document).ready(async function(){
         dataset_compare.labels.forEach((key,i)=> {
           data_langs_compare[key] = {count:dataset_compare.data[i]}
         })
-        console.log(data_langs,data_langs_compare);
+        // console.log(data_langs,data_langs_compare);
         load_type(id+"-data",data_langs,data_langs_compare)
         await pieCharts(dataset,dataset_compare,id,"Tweets by languages",colors_3)
       }else{
@@ -690,6 +744,7 @@ $(document).ready(async function(){
     updateProgressBar(80)
 
     await load_avg_metrics_table()
+    await load_avg_original()
 
     updateProgressBar(100)
 
