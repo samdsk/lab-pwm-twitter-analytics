@@ -447,9 +447,9 @@ $(document).ready(async function(){
     const load_total_info = async () => {
       $("#results #total-interval").text(msToHMS(data.total.interval))
       if(compare)
-        buildCompare('#results #total-interval',data.total.interval/1000,compare.total.interval/1000,'Avg. Interval',msToHMS)
+        buildCompare('#results #total-interval',data.total.interval,compare.total.interval,'Avg. Interval',msToHMS)
       else
-        buildCompare('#results #total-interval',data.total.interval/1000,null,'Avg. Interval',msToHMS)
+        buildCompare('#results #total-interval',data.total.interval,null,'Avg. Interval',msToHMS)
     }
 
     const load_limit_data = async () => {
@@ -753,7 +753,6 @@ $(document).ready(async function(){
       buildCompare(id,data,compare,title,round)
   }
 
-//FIXME id without #results
   function load_avg(id,data,compare){
     id = '#results #'+id
     let count_id = id+'-count'
@@ -765,7 +764,7 @@ $(document).ready(async function(){
 
     if(compare){
       buildCompare(count_id,data.count,compare.count,'count',tweetCount)
-      buildCompare(interval_id,data.interval/1000,compare.interval/1000,'interval',msToHMS,'interval')
+      buildCompare(interval_id,data.interval,compare.interval,'interval',msToHMS,'interval')
     }
     const dn = (x) => Number(x/data.count).toFixed(2)
     const cn = (x) => Number(x/compare?.count).toFixed(2)
@@ -783,6 +782,10 @@ $(document).ready(async function(){
     if(data == compare) return
 
     let diff = Number((data - compare).toFixed(3))
+
+    if(type === 'interval')
+      console.log(diff);
+
     let rounded = round(diff)
 
     appendDiffIcon(id,diff)
@@ -1227,6 +1230,7 @@ $(document).ready(async function(){
   }
 
   function msToHMS(e){
+    e = Math.abs(e)
     let s = e/1000;
     let m = s/60;
     s = s%60;
