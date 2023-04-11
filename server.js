@@ -1,9 +1,8 @@
 require('dotenv').config()
-require('express-async-errors')
 const express = require('express')
 const app = express()
 
-//const cookie_signature = require('cookie-signature')
+require('express-async-errors')
 const cookie_parser = require('cookie-parser')
 const express_session = require('express-session')
 const genid = require('genid')
@@ -24,11 +23,12 @@ const twitter = require('./routes/twitter')
 const results = require('./routes/results')
 const forgot_psw = require('./routes/forgot_psw')
 const reset_psw = require('./routes/reset_psw')
+const contact = require('./routes/contact')
+
+// ========= Custom Middleware
 const auth_session = require('./middleware/auth_session')
 const not_found = require('./middleware/not_found')
 const error_handler = require('./middleware/error_handler')
-const contact = require('./routes/contact')
-
 
 // ===================== Port
 const PORT = process.env.PORT || 3000
@@ -73,21 +73,6 @@ app.use(helmet({
     crossOriginOpenerPolicy: {policy:"same-origin"},
 }))
 
-
-// app.use((req, res, next) => {
-//     // res.setHeader('Access-Control-Allow-Origin', '*');
-//     // res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
-//     // res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-//     res.setHeader('Cross-origin-Embedder-Policy', 'same-origin');
-//     res.setHeader('Cross-origin-Opener-Policy','same-origin');
-
-//     if (req.method === 'OPTIONS') {
-//       res.sendStatus(200)
-//     } else {
-//       next()
-//     }
-// });
-
 app.use(express.static(__dirname + '/public'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
@@ -131,7 +116,6 @@ app.get('/about',function(req,res){
         res.render('pages/about',{about:true,logout:true})
 })
 
-// app.use(/^\/dashboard.*/,auth_session,dashboard)
 app.use('/dashboard',auth_session,dashboard)
 
 app.use('/twitter',auth_session,twitter)
@@ -165,7 +149,7 @@ app.use(error_handler)
 const start = async (connection_url) => {
     try{
         await db_connect(connection_url)
-        app.listen(PORT,()=> console.log('OK: Server is up and running at port:3000 '))
+        app.listen(PORT,()=> console.log('OK: Server is up and running at port',PORT))
     }catch(err){
         console.log(`Error: ${err}`)
     }

@@ -29,7 +29,6 @@ const collectData = async (DATA) => {
 
     temp_date.setDate(temp_end.getDate()-7)
     temp_end.setDate(temp_end.getDate())
-    // console.log(temp_date,temp_end);
     TWEETS.interval = temp_end.getTime() - temp_date.getTime()
 
     while(temp_date<=temp_end){
@@ -60,9 +59,11 @@ const collectData = async (DATA) => {
 
     // collect metioned users
     const mentioned_users = {}
+
     // collect used hashtags
     const hashtags = {}
 
+    // collect used langs
     const lang = {}
 
     data.forEach(e => {
@@ -110,9 +111,8 @@ const collectData = async (DATA) => {
 
         // count total posts and interval between tweets
         updateInterval(TWEETS.total,time,interval_start_time)
-        // console.log(e.id,mediaType,type);
     });
-    // console.log(hashtags_count);
+
     TWEETS.tweets_per_day = tweets_per_day
     TWEETS.mentioned_users  = mentioned_users
     TWEETS.hashtags = hashtags

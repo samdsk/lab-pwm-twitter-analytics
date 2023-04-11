@@ -5,7 +5,6 @@ const SearchResults = require('../models/SearchResults')
 const recaptcha = require('../utils/recaptcha')
 
 const getProfile = async (req,res,next) => {
-
     res.render('pages/profile',{
         logout:true,
         username:req.session.username,
@@ -80,7 +79,6 @@ const deleteProfile = async (req,res,next) => {
                 User.findByIdAndRemove(auth._id).exec((err,data)=>{
                     if(err) {
                         return res.json({error:"Profile delete: User error"})
-
                     }
                     console.log("pass: delete user");
                 })

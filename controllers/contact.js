@@ -6,7 +6,6 @@ const getContact = async (req,res,next) =>{
         res.render('pages/contact',{contact:true})
     else
         res.render('pages/contact',{contact:true,logout:true})
-
 }
 
 const postContact = async (req,res,next) =>{
@@ -38,6 +37,5 @@ const postContact = async (req,res,next) =>{
         return res.json({error:"Failed to send message!"})
     })
 }
-
 
 module.exports = {getContact,postContact}

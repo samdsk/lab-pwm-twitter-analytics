@@ -8,6 +8,7 @@ const User = require('../models/User')
 const Auth = require('../models/Auth')
 const recaptcha = require('../utils/recaptcha')
 
+const DEBUG = true
 const filename = './data.json'
 
 const tweet_fields = [
