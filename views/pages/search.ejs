@@ -17,13 +17,13 @@
                         <div class="col">
                             <div class="input-group">
                                 <input type="text" class="form-control" id="handler" name="handler" placeholder="@twitter handler" required>
-                                <button id="search-btn" class="btn btn-primary " type="submit"><i class="bi bi-search"></i></button>
+                                <button id="search-btn" disabled class="disable-btn btn btn-primary " type="submit"><i class="bi bi-search"></i></button>
                                 <div class="invalid-feedback">Please choose a valid twitter handler.</div>
 
                             </div>
                         </div>
                         <div class="col-auto justify-content-center align-items-center">
-                            <div class="col g-recaptcha" data-sitekey="6LelT0olAAAAAENj2D8op4_dpePjY1iMyl5Luo4b"></div>
+                            <div class="col g-recaptcha" data-callback="enableBtns" data-expired-callback="disableBtns" data-sitekey="6LelT0olAAAAAENj2D8op4_dpePjY1iMyl5Luo4b"></div>
                         </div>
 
                     </div>

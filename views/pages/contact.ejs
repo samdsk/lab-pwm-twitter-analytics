@@ -29,10 +29,10 @@
                         <div class="invalid-feedback">Message can't be empty</div>
                     </div>
                     <div class="row justify-content-center align-items-center">
-                        <div class="col g-recaptcha" data-theme="light"  data-sitekey="6LelT0olAAAAAENj2D8op4_dpePjY1iMyl5Luo4b"></div>
+                        <div class="col g-recaptcha" data-theme="light" data-callback="enableBtns" data-expired-callback="disableBtns"  data-sitekey="6LelT0olAAAAAENj2D8op4_dpePjY1iMyl5Luo4b"></div>
                     </div>
                     <div class="row p-2">
-                        <button id="contact-btn" class="col-12 form-submit btn btn-primary"  data-form="contact-form" type="submit">Send <i class="bi bi-send-fill"></i></button>
+                        <button id="contact-btn" disabled class="disable-btn col-auto form-submit btn btn-primary"  data-form="contact-form" type="submit">Send <i class="bi bi-send-fill"></i></button>
                     </div>
                 </form>
             </div>
