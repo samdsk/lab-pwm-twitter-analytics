@@ -67,7 +67,7 @@ async function loadFromCache(url,id){
 
   return data
 }
-
+// g-captcha callback enable
 function enableBtns(){
 
   let buttons = document.getElementsByClassName('disable-btn')
@@ -76,7 +76,7 @@ function enableBtns(){
     button.removeAttribute("disabled")
   })
 }
-
+// g-captcha callback disable
 function disableBtns(){
   let buttons = document.getElementsByClassName('disable-btn')
 
@@ -787,6 +787,7 @@ $(document).ready(async function(){
       console.log(diff);
 
     let rounded = round(diff)
+
 
     appendDiffIcon(id,diff)
 
