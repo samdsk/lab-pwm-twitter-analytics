@@ -3,7 +3,6 @@ const pathToJsonObj = "./tweets_data.json"
 
 const collectData = async (DATA) => {
 
-    DATA = JSON.parse(DATA)
     let jsonObj = fs.readFileSync(require.resolve(pathToJsonObj),"utf-8")
     const TWEETS = JSON.parse(jsonObj)
 
@@ -29,8 +28,7 @@ const collectData = async (DATA) => {
     let temp_date = new Date(temp_end)
 
     temp_date.setDate(temp_end.getDate()-7)
-    temp_end.setDate(temp_end.getDate()+1)
-
+    temp_end.setDate(temp_end.getDate())
     // console.log(temp_date,temp_end);
     TWEETS.interval = temp_end.getTime() - temp_date.getTime()
 
@@ -206,22 +204,27 @@ function msToHMS(e) {
     return [Math.floor(h),Math.floor(m),Math.floor(s)]
 }
 
-const process_data = (async (filename) => {
+const process_data = (async (DATA) => {
 
-    let FILE = fs.readFileSync(filename)
-    let data =  await collectData(FILE).then( data => {
+    let data = await collectData(DATA).then( data => {
         avgInterval(data.media_type,data.interval)
         avgInterval(data.type,data.interval)
         avgIntervalTotal(data.total,data.interval)
         return data
     })
 
-    // console.log(data);
     return data
 })
 
-// function test(){
-//     console.log(process_data('../data.json'))
+// async function test(){
+//     let FILE = fs.readFileSync('../data.json')
+//     let data =  await collectData(JSON.parse(FILE)).then( data => {
+//         avgInterval(data.media_type,data.interval)
+//         avgInterval(data.type,data.interval)
+//         avgIntervalTotal(data.total,data.interval)
+//         return data
+//     })
+//     console.log(data);
 // }
 
 // test()

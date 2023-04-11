@@ -18,8 +18,8 @@
                 <a class="nav-link h6 m-0 p-2" href="#tweets-by-language-h">Languages</a>
                 <a class="nav-link h6 m-0 p-2" href="#week-chart-h">Week</a>
                 <a class="nav-link h6 m-0 p-2" href="#top10s">Top 10</a>
-                <a class="nav-link h6 m-0 p-2" href="#original-interactions-wrapper">Original</a>
-                <a class="nav-link h6 m-0 p-2" href="#avg-interactions-wrapper">Averages</a>
+                <a class="nav-link h6 m-0 p-2" href="#avg-media_type-interactions-wrapper">Avg. Media</a>
+                <a class="nav-link h6 m-0 p-2" href="#avg-type-interactions-wrapper">Avg. Type</a>
             </nav>
         </nav>
     </div>
@@ -60,7 +60,9 @@
                         Mentions:
                         <span id="mentions" class="text-primary data-hover data-clean"></span><span id="mentions-compare" class="text-prim data-clean data-hover"></span>
                     </p>
-                    <p class="col-auto">
+                    <p class="col-auto" data-bs-toggle="tooltip" data-bs-placement="top"
+                    data-bs-custom-class="custom-tooltip"
+                    data-bs-title="Formula :  (Likes + Retweets + Quotes + Replies) divided by the number of tweets, then by the total number of followers, then multiplied by 100">
                         <i class="bi bi-graph-up"></i>
                         Engagement:
                         <span id="engagement" class="text-primary data-hover data-clean" title="percent"></span> <span id="engagement-compare" class="text-primary data-clean data-hover" title="percent"></span>
@@ -191,7 +193,43 @@
                     <a href="#" class="active text-decoration-none" aria-current="true" href="#tweets-by-media-type-h">Tweets By Media Type</a>
                 </h5>
                 <div id="tweets-by-media-type-data" class="col-sm-12 col-md-8 col-lg-4">
-                    <ul id="tweets-by-media-type-data-ul" class="list-group  data-clean">
+                    <ul id="tweets-by-media-type-data-ul" class="list-group">
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-chat-right-text-fill"></i>
+                            Text:
+                            <span id="tweets-by-media-type-data-text" class="data-clean text-primary data-hover"></span>
+                            <span id="tweets-by-media-type-data-text-compare"  class="data-clean text-primary data-hover"></span>
+                        </a>
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-camera-reels-fill"></i>
+                            Video:
+                            <span id="tweets-by-media-type-data-video" class="data-clean text-primary data-hover"></span>
+                            <span id="tweets-by-media-type-data-video-compare"  class="data-clean text-primary data-hover"></span>
+                        </a>
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-camera-fill"></i>
+                            Photo:
+                            <span id="tweets-by-media-type-data-photo" class="data-clean text-primary data-hover"></span>
+                            <span id="tweets-by-media-type-data-photo-compare"  class="data-clean text-primary data-hover"></span>
+                        </a>
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-link-45deg"></i>
+                            Link:
+                            <span id="tweets-by-media-type-data-link" class="data-clean text-primary data-hover"></span>
+                            <span id="tweets-by-media-type-data-link-compare"  class="data-clean text-primary data-hover"></span>
+                        </a>
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-clipboard-data-fill"></i>
+                            Poll:
+                            <span id="tweets-by-media-type-data-polls" class="data-clean text-primary data-hover"></span>
+                            <span id="tweets-by-media-type-data-polls-compare"  class="data-clean text-primary data-hover"></span>
+                        </a>
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-filetype-gif"></i>
+                            Gif:
+                            <span id="tweets-by-media-type-data-animated_gif" class="data-clean text-primary data-hover"></span>
+                            <span id="tweets-by-media-type-data-animated_gif-compare"  class="data-clean text-primary data-hover"></span>
+                        </a>
                     </ul>
                 </div>
                 <div id="tweets-by-media-type" class="col-8 pie-chart-container data-clean">
@@ -202,7 +240,32 @@
                     <a class="text-decoration-none" href="#tweets-by-type-h">Tweets By Type</a>
                 </h5>
                 <div id="tweets-by-type-data"  class="col-sm-12 col-md-8 col-lg-4">
-                    <ul id="tweets-by-type-data-ul" class="list-group data-clean"></ul>
+                    <ul id="tweets-by-type-data-ul" class="list-group">
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-repeat"></i>
+                            Retweets:
+                            <span id="tweets-by-type-data-retweeted" class="data-clean text-primary data-hover"></span>
+                            <span id="tweets-by-type-data-retweeted-compare"  class="data-clean text-primary data-hover"></span>
+                        </a>
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-reply-fill"></i>
+                            Replies:
+                            <span id="tweets-by-type-data-replied_to" class="data-clean text-primary data-hover"></span>
+                            <span id="tweets-by-type-data-replied_to-compare"  class="data-clean text-primary data-hover"></span>
+                        </a>
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-chat-right-quote-fill"></i>
+                            Quotes
+                            <span id="tweets-by-type-data-quoted" class="data-clean text-primary data-hover"></span>
+                            <span id="tweets-by-type-data-quoted-compare"  class="data-clean text-primary data-hover"></span>
+                        </a>
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-postcard-fill"></i>
+                            Original
+                            <span id="tweets-by-type-data-original" class="data-clean text-primary data-hover"></span>
+                            <span id="tweets-by-type-data-original-compare"  class="data-clean text-primary data-hover"></span>
+                        </a>
+                    </ul>
                 </div>
                 <div id="tweets-by-type"  class="col-8 pie-chart-container data-clean">
                 </div>
@@ -211,7 +274,9 @@
                 <h5 id="tweets-by-language-h" class="col-md-6 col-lg-12 sector-title">
                     <a class="text-decoration-none" href="#tweets-by-language-h">Tweets By Language</a></h5>
                 <div id="tweets-by-langs-data"  class="col-sm-12 col-md-8 col-lg-4">
-                    <ul id="tweets-by-langs-data-ul" class="list-group data-clean"></ul>
+                    <ul id="tweets-by-langs-data-ul" class="list-group data-clean">
+
+                    </ul>
                 </div>
                 <div id="tweets-by-langs"  class="col-8 pie-chart-container data-clean">
                 </div>
@@ -233,85 +298,393 @@
                 </div>
             </div>
         </div>
-        <div id="original-interactions-wrapper" class="row border-top pt-3">
-            <div class="row mb-3">
-                <h5 class="sector-title"><a class="text-decoration-none" href="#original">Average interactions of original tweets</a></h5>
-            </div>
-            <div class="row mb-3">
-                <div id="avg-interactions-original" class="col-sm-12 col-md-12 col-lg-6 col-xl-4 pb-3">
-                    <i class="bi bi-postcard"></i>
-                    Original:
-                    <span id="avg-interactions-original-count" class="data-clean" title="text posts"></span>
-                    <span id="avg-interactions-original-count-compare"  class="data-clean" title="text posts"></span>
-                    <i class="bi bi-stopwatch" title="interval"></i>
-                    <span id="avg-interactions-original-interval" class="data-clean" title="Average interval between text posts"></span>
-                    <span id="avg-interactions-original-interval-compare"  class="data-clean" title="Average interval between text posts"></span>
-                    <ul id="avg-interactions-original-data" class="list-group data-clean"></ul>
-                </div>
-            </div>
-        </div>
-        <div id="avg-interactions-wrapper" class="row border-top pt-3">
+        <div id="avg-media_type-interactions-wrapper" class="row border-top pt-3">
             <div class="row mb-3">
                 <h5 class="sector-title"><a class="text-decoration-none" href="#average">Average interactions per tweet by media type</a></h5>
             </div>
-            <div id="avg-interactions" class="row align-items-start">
-                <div id="avg-interactions-text" class="col-sm-12 col-md-12 col-lg-6 col-xl-4 pb-3">
+            <div id="" class="row align-items-start">
+                <div id="avg-text" class="col-sm-12 col-md-12 col-lg-6 col-xl-4 pb-3">
                     <i class="bi bi-chat-right-text-fill"></i>
                     Text:
-                    <span id="avg-interactions-text-count" class="data-clean" title="text posts"></span>
-                    <span id="avg-interactions-text-count-compare"  class="data-clean" title="text posts"></span>
+                    <span id="avg-text-count" class="data-clean" title="text posts"></span>
+                    <span id="avg-text-count-compare"  class="data-clean" title="text posts"></span>
                     <i class="bi bi-stopwatch" title="interval"></i>
-                    <span id="avg-interactions-text-interval" class="data-clean" title="Average interval between text posts"></span>
-                    <span id="avg-interactions-text-interval-compare"  class="data-clean" title="Average interval between text posts"></span>
-                    <ul id="average" class="list-group data-clean"></ul>
+                    <span id="avg-text-interval" class="data-clean" title="Average interval between text posts"></span>
+                    <span id="avg-text-interval-compare"  class="data-clean" title="Average interval between text posts"></span>
+
+                    <ul id="avg-text-data" class="list-group">
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-repeat text-primary"></i>
+                            Retweets:
+                            <span id="avg-text-data-retweet_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-text-data-retweet_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-reply-fill text-success"></i>
+                            Replies:
+                            <span id="avg-text-data-reply_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-text-data-reply_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-heart-fill text-danger"></i>
+                            Likes:
+                            <span id="avg-text-data-like_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-text-data-like_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-chat-right-quote-fill text-warning"></i>
+                            Quotes:
+                            <span id="avg-text-data-quote_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-text-data-quote_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-bar-chart-line-fill text-info" class="text-center"></i>
+                            Impressions:
+                            <span id="avg-text-data-impression_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-text-data-impression_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                    </ul>
                 </div>
-                <div id="avg-interactions-video" class="col-sm-12 col-md-12 col-lg-6 col-xl-4 pb-3">
+                <div id="avg-video" class="col-sm-12 col-md-12 col-lg-6 col-xl-4 pb-3">
                     <i class="bi bi-camera-reels-fill"></i>
                     Video:
-                    <span id="avg-interactions-video-count" class="data-clean" title="video posts"></span>
-                    <span id="avg-interactions-video-count-compare"  class="data-clean" title="video posts"></span>
+                    <span id="avg-video-count" class="data-clean" title="video posts"></span>
+                    <span id="avg-video-count-compare"  class="data-clean" title="video posts"></span>
                     <i class="bi bi-stopwatch" title="interval"></i>
-                    <span id="avg-interactions-video-interval" class="data-clean" title="Average interval between video posts"></span>
-                    <span id="avg-interactions-video-interval-compare" class="data-clean" title="Average interval between video posts"></span>
-                    <ul id="average" class="list-group data-clean"></ul>
+                    <span id="avg-video-interval" class="data-clean" title="Average interval between video posts"></span>
+                    <span id="avg-video-interval-compare" class="data-clean" title="Average interval between video posts"></span>
+
+                    <ul id="avg-video-data" class="list-group">
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-repeat text-primary"></i>
+                            Retweets:
+                            <span id="avg-video-data-retweet_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-video-data-retweet_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-reply-fill text-success"></i>
+                            Replies:
+                            <span id="avg-video-data-reply_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-video-data-reply_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-heart-fill text-danger"></i>
+                            Likes:
+                            <span id="avg-video-data-like_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-video-data-like_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-chat-right-quote-fill text-warning"></i>
+                            Quotes:
+                            <span id="avg-video-data-quote_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-video-data-quote_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-bar-chart-line-fill text-info" class="text-center"></i>
+                            Impressions:
+                            <span id="avg-video-data-impression_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-video-data-impression_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                    </ul>
                 </div>
-                <div id="avg-interactions-photo" class="col-sm-12 col-md-12 col-lg-6 col-xl-4 pb-3">
+                <div id="avg-photo" class="col-sm-12 col-md-12 col-lg-6 col-xl-4 pb-3">
                     <i class="bi bi-camera-fill"></i>
                     Photo:
-                    <span id="avg-interactions-photo-count" class="data-clean" title="photo posts"></span>
-                    <span id="avg-interactions-photo-count-compare"  class="data-clean" title="photo posts"></span>
+                    <span id="avg-photo-count" class="data-clean" title="photo posts"></span>
+                    <span id="avg-photo-count-compare"  class="data-clean" title="photo posts"></span>
                     <i class="bi bi-stopwatch" title="interval"></i>
-                    <span id="avg-interactions-photo-interval" class="data-clean" title="Average interval between photo posts"></span>
-                    <span id="avg-interactions-photo-interval-compare" class="data-clean" title="Average interval between photo posts"></span>
-                    <ul id="average" class="list-group data-clean"></ul>
+                    <span id="avg-photo-interval" class="data-clean" title="Average interval between photo posts"></span>
+                    <span id="avg-photo-interval-compare" class="data-clean" title="Average interval between photo posts"></span>
+
+                    <ul id="avg-photo-data" class="list-group">
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-repeat text-primary"></i>
+                            Retweets:
+                            <span id="avg-photo-data-retweet_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-photo-data-retweet_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-reply-fill text-success"></i>
+                            Replies:
+                            <span id="avg-photo-data-reply_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-photo-data-reply_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-heart-fill text-danger"></i>
+                            Likes:
+                            <span id="avg-photo-data-like_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-photo-data-like_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-chat-right-quote-fill text-warning"></i>
+                            Quotes:
+                            <span id="avg-photo-data-quote_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-photo-data-quote_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-bar-chart-line-fill text-info" class="text-center"></i>
+                            Impressions:
+                            <span id="avg-photo-data-impression_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-photo-data-impression_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                    </ul>
                 </div>
-                <div id="avg-interactions-link" class="col-sm-12 col-md-12 col-lg-6 col-xl-4 pb-3">
+                <div id="avg-link" class="col-sm-12 col-md-12 col-lg-6 col-xl-4 pb-3">
                     <i class="bi bi-link-45deg"></i>
                     Link:
-                    <span id="avg-interactions-link-count" class="data-clean" title="link posts"></span>
-                    <span id="avg-interactions-link-count-compare" class="data-clean" title="link posts"></span>
+                    <span id="avg-link-count" class="data-clean" title="link posts"></span>
+                    <span id="avg-link-count-compare" class="data-clean" title="link posts"></span>
                     <i class="bi bi-stopwatch" title="interval"></i>
-                    <span id="avg-interactions-link-interval" class="data-clean" title="Average interval between link posts"></span>
-                    <span id="avg-interactions-link-interval-compare" class="data-clean" title="Average interval between link posts"></span>
-                    <ul id="average" class="list-group data-clean"></ul>
+                    <span id="avg-link-interval" class="data-clean" title="Average interval between link posts"></span>
+                    <span id="avg-link-interval-compare" class="data-clean" title="Average interval between link posts"></span>
+
+                    <ul id="avg-link-data" class="list-group">
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-repeat text-primary"></i>
+                            Retweets:
+                            <span id="avg-link-data-retweet_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-link-data-retweet_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-reply-fill text-success"></i>
+                            Replies:
+                            <span id="avg-link-data-reply_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-link-data-reply_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-heart-fill text-danger"></i>
+                            Likes:
+                            <span id="avg-link-data-like_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-link-data-like_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-chat-right-quote-fill text-warning"></i>
+                            Quotes:
+                            <span id="avg-link-data-quote_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-link-data-quote_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-bar-chart-line-fill text-info" class="text-center"></i>
+                            Impressions:
+                            <span id="avg-link-data-impression_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-link-data-impression_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                    </ul>
                 </div>
-                <div id="avg-interactions-polls" class="col-sm-12 col-md-12 col-lg-6 col-xl-4 pb-3">
-                    <i class="bi bi-bar-chart-fill"></i>
+                <div id="avg-polls" class="col-sm-12 col-md-12 col-lg-6 col-xl-4 pb-3">
+                    <i class="bi bi-clipboard-data-fill"></i>
                     Polls:
-                    <span id="avg-interactions-polls-count" class="data-clean" title="polls posts"></span>
-                    <span id="avg-interactions-polls-count-compare"  class="data-clean" title="polls posts"></span>
+                    <span id="avg-polls-count" class="data-clean" title="polls posts"></span>
+                    <span id="avg-polls-count-compare"  class="data-clean" title="polls posts"></span>
                     <i class="bi bi-stopwatch" title="interval"></i>
-                    <span id="avg-interactions-polls-interval" class="data-clean" title="Average interval between poll posts"></span>
-                    <span id="avg-interactions-polls-interval-compare" class="data-clean" title="Average interval between poll posts"></span>
-                    <ul id="average" class="list-group data-clean"></ul>
+                    <span id="avg-polls-interval" class="data-clean" title="Average interval between poll posts"></span>
+                    <span id="avg-polls-interval-compare" class="data-clean" title="Average interval between poll posts"></span>
+
+                    <ul id="avg-polls-data" class="list-group">
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-repeat text-primary"></i>
+                            Retweets:
+                            <span id="avg-polls-data-retweet_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-polls-data-retweet_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-reply-fill text-success"></i>
+                            Replies:
+                            <span id="avg-polls-data-reply_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-polls-data-reply_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-heart-fill text-danger"></i>
+                            Likes:
+                            <span id="avg-polls-data-like_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-polls-data-like_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-chat-right-quote-fill text-warning"></i>
+                            Quotes:
+                            <span id="avg-polls-data-quote_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-polls-data-quote_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-bar-chart-line-fill text-info" class="text-center"></i>
+                            Impressions:
+                            <span id="avg-polls-data-impression_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-polls-data-impression_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                    </ul>
                 </div>
-                <div id="avg-interactions-animated_gif" class="col-sm-12 col-md-12 col-lg-6 col-xl-4 pb-3">
+                <div id="avg-animated_gif" class="col-sm-12 col-md-12 col-lg-6 col-xl-4 pb-3">
                     <i class="bi bi-filetype-gif"></i>
                     Gif:
                     <i class="bi bi-stopwatch" title="interval"></i>
-                    <span id="avg-interactions-animated_gif-interval" class="data-clean" title="Average interval between animated_gif posts"></span>
-                    <span id="avg-interactions-animated_gif-interval-compare" class="data-clean" title="Average interval between animated_gif posts"></span>
-                    <ul id="average" class="list-group data-clean"></ul>
+                    <span id="avg-animated_gif-interval" class="data-clean" title="Average interval between animated_gif posts"></span>
+                    <span id="avg-animated_gif-interval-compare" class="data-clean" title="Average interval between animated_gif posts"></span>
+
+                    <ul id="avg-animated_gif-data" class="list-group">
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-repeat text-primary"></i>
+                            Retweets:
+                            <span id="avg-animated_gif-data-retweet_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-animated_gif-data-retweet_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-reply-fill text-success"></i>
+                            Replies:
+                            <span id="avg-animated_gif-data-reply_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-animated_gif-data-reply_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-heart-fill text-danger"></i>
+                            Likes:
+                            <span id="avg-animated_gif-data-like_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-animated_gif-data-like_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-chat-right-quote-fill text-warning"></i>
+                            Quotes:
+                            <span id="avg-animated_gif-data-quote_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-animated_gif-data-quote_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-bar-chart-line-fill text-info" class="text-center"></i>
+                            Impressions:
+                            <span id="avg-animated_gif-data-impression_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-animated_gif-data-impression_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div id="avg-type-interactions-wrapper" class="row border-top pt-3">
+            <div class="row mb-3">
+                <h5 class="sector-title"><a class="text-decoration-none" href="#average">Average interactions per tweet by type</a></h5>
+            </div>
+            <div id="" class="row align-items-start">
+                <div id="avg-replied_to" class="col-sm-12 col-md-12 col-lg-6 col-xl-4 pb-3">
+                    <i class="bi bi-reply-fill"></i>
+                    Replies:
+                    <span id="avg-replied_to-count" class="data-clean" title="replied_to posts"></span>
+                    <span id="avg-replied_to-count-compare"  class="data-clean" title="replied_to posts"></span>
+                    <i class="bi bi-stopwatch" title="interval"></i>
+                    <span id="avg-replied_to-interval" class="data-clean" title="Average interval between replied_to posts"></span>
+                    <span id="avg-replied_to-interval-compare" class="data-clean" title="Average interval between replied_to posts"></span>
+
+                    <ul id="avg-replied_to-data" class="list-group">
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-repeat text-primary"></i>
+                            Retweets:
+                            <span id="avg-replied_to-data-retweet_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-replied_to-data-retweet_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-reply-fill text-success"></i>
+                            Replies:
+                            <span id="avg-replied_to-data-reply_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-replied_to-data-reply_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-heart-fill text-danger"></i>
+                            Likes:
+                            <span id="avg-replied_to-data-like_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-replied_to-data-like_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-chat-right-quote-fill text-warning"></i>
+                            Quotes:
+                            <span id="avg-replied_to-data-quote_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-replied_to-data-quote_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-bar-chart-line-fill text-info" class="text-center"></i>
+                            Impressions:
+                            <span id="avg-replied_to-data-impression_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-replied_to-data-impression_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                    </ul>
+                </div>
+                <div id="avg-quoted" class="col-sm-12 col-md-12 col-lg-6 col-xl-4 pb-3">
+                    <i class="bi bi-chat-right-quote-fill"></i>
+                    Quotes:
+                    <span id="avg-quoted-count" class="data-clean" title="quoted posts"></span>
+                    <span id="avg-quoted-count-compare"  class="data-clean" title="quoted posts"></span>
+                    <i class="bi bi-stopwatch" title="interval"></i>
+                    <span id="avg-quoted-interval" class="data-clean" title="Average interval between quoted posts"></span>
+                    <span id="avg-quoted-interval-compare" class="data-clean" title="Average interval between quoted posts"></span>
+
+                    <ul id="avg-quoted-data" class="list-group">
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-repeat text-primary"></i>
+                            Retweets:
+                            <span id="avg-quoted-data-retweet_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-quoted-data-retweet_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-reply-fill text-success"></i>
+                            Replies:
+                            <span id="avg-quoted-data-reply_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-quoted-data-reply_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-heart-fill text-danger"></i>
+                            Likes:
+                            <span id="avg-quoted-data-like_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-quoted-data-like_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-chat-right-quote-fill text-warning"></i>
+                            Quotes:
+                            <span id="avg-quoted-data-quote_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-quoted-data-quote_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-bar-chart-line-fill text-info" class="text-center"></i>
+                            Impressions:
+                            <span id="avg-quoted-data-impression_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-quoted-data-impression_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                    </ul>
+                </div>
+                <div id="avg-original" class="col-sm-12 col-md-12 col-lg-6 col-xl-4 pb-3">
+                    <i class="bi bi-postcard-fill"></i>
+                    Original:
+                    <span id="avg-original-count" class="data-clean" title="original posts"></span>
+                    <span id="avg-original-count-compare" class="data-clean" title="original posts"></span>
+                    <i class="bi bi-stopwatch" title="interval"></i>
+                    <span id="avg-original-interval" class="data-clean" title="Average interval between original posts"></span>
+                    <span id="avg-original-interval-compare" class="data-clean" title="Average interval between original posts"></span>
+
+                    <ul id="avg-original-data" class="list-group">
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-repeat text-primary"></i>
+                            Retweets:
+                            <span id="avg-original-data-retweet_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-original-data-retweet_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-reply-fill text-success"></i>
+                            Replies:
+                            <span id="avg-original-data-reply_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-original-data-reply_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-heart-fill text-danger"></i>
+                            Likes:
+                            <span id="avg-original-data-like_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-original-data-like_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-chat-right-quote-fill text-warning"></i>
+                            Quotes:
+                            <span id="avg-original-data-quote_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-original-data-quote_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                        <a class="list-group-item list-group-item-action" onclick="return false;" >
+                            <i class="bi bi-bar-chart-line-fill text-info" class="text-center"></i>
+                            Impressions:
+                            <span id="avg-original-data-impression_count" class="text-primary data-hover data-clean"></span>
+                            <span id="avg-original-data-impression_count-compare" class="text-primary data-hover data-clean"></span>
+                        </a>
+                    </ul>
                 </div>
             </div>
         </div>

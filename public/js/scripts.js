@@ -16,6 +16,14 @@
     })
 })()
 
+// ! enable boostrap tooltips
+const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+
+const colors_1 = ['#6a4c93','#1982c4','#8ac926','#ffca3a','#ff595e','#778da9']
+const colors_2 = ['#26547c','#ef476f','#ffd166','#06d6a0','#FAA307','#7d8597']
+const colors_3 = ['#33a8c7','#52e3e1','#a0e426','#00a878','#f77976','#d883ff','#d883ff','#147DF5','#9336fd','#BE0AFF']
+
 // ! chartsjs plugins
 Chart.register(ChartDataLabels)
 
@@ -58,6 +66,23 @@ async function loadFromCache(url,id){
   }
 
   return data
+}
+
+function enableBtns(){
+
+  let buttons = document.getElementsByClassName('disable-btn')
+
+  Array.prototype.slice.call(buttons).forEach(function(button){
+    button.removeAttribute("disabled")
+  })
+}
+
+function disableBtns(){
+  let buttons = document.getElementsByClassName('disable-btn')
+
+  Array.prototype.slice.call(buttons).forEach(function(button){
+    button.setAttribute("disabled",'')
+  })
 }
 
 $(document).ready(async function(){
@@ -196,6 +221,8 @@ $(document).ready(async function(){
     $('#error-modal').modal('show')
   }
 
+
+
   // delete a seached result
   $('.close-icon').click(async function(){
     if(!confirm("Are you sure you want to delete this record?")) return
@@ -309,12 +336,6 @@ $(document).ready(async function(){
     //       return response.json()
     // })
 
-    if(data.error) {
-      $('#search-btn').removeAttr("disabled")
-      grecaptcha.reset()
-      return errorDisplay(data)
-    }
-
     await sleep(500)
     $('#loader #spinner').addClass('d-none')
 
@@ -329,7 +350,6 @@ $(document).ready(async function(){
     $('#results #user-info #user-profile img').remove()
     $('#results .data-clean').each((i,obj) => $(obj).empty())
     $('#results .node-clean').each((i,obj) => $(obj).remove())
-
   }
   // ! populate with seach results + charts
   async function genSearchResults(data){
@@ -373,18 +393,6 @@ $(document).ready(async function(){
       data = INPUT
     }
 
-    const colors_1 = ['#6a4c93','#1982c4','#8ac926','#ffca3a','#ff595e','#778da9']
-    const colors_2 = ['#26547c','#ef476f','#ffd166','#06d6a0','#FAA307','#7d8597']
-    const colors_3 = ['#33a8c7','#52e3e1','#a0e426','#00a878','#f77976','#d883ff','#d883ff','#147DF5','#9336fd','#BE0AFF']
-
-    const icon_set = {
-      retweet_count : '<i class="bi bi-repeat text-primary"></i>',
-      reply_count : '<i class="bi bi-reply-fill text-success"></i>',
-      like_count : '<i class="bi bi-heart-fill text-danger"></i>',
-      quote_count : '<i class="bi bi-chat-right-quote-fill text-warning"></i>',
-      impression_count : '<i class="bi bi-bar-chart-line-fill text-info" class="text-center"></i>'
-    }
-
     const load_user_datails = async () => {
       $('#results #name span').text(data.name)
 
@@ -414,51 +422,55 @@ $(document).ready(async function(){
       .text(count_rounded)
 
       if(compare)
-        appendCompare("#results #total-tweets-data",count,compare.total_tweets)
+        buildCompare("#results #total-tweets-data",count,compare.total_tweets,'total-tweets',tweetCount)
     }
 
     const load_followers = async () => {
-      load_x("#followers",data.followers,compare?.followers,"Total Followers")
+      load_element("#results #followers",data.followers,compare?.followers,"Total Followers",tweetCount)
     }
 
     const load_followings = async () => {
-      load_x('#followings',data.followings,compare?.followings,"Total Followings")
+      load_element('#results #followings',data.followings,compare?.followings,"Total Followings",tweetCount)
     }
 
     const load_mentions = async () =>{
-      load_x('#mentions',data.mentions,compare?.mentions,"Recent Mentions")
+      load_element('#results #mentions',data.mentions,compare?.mentions,"Recent Mentions",tweetCount)
     }
 
     const load_engagement = async () =>{
-      let id = '#engagement'
+      let id = '#results #engagement'
       let eng = engagement(data)
       let eng_compare = engagement(compare)
-      load_x(id,eng,eng_compare,"Engagement")
+      load_element(id,eng,eng_compare,"Engagement",(x)=>x)
     }
 
     const load_total_info = async () => {
       $("#results #total-interval").text(msToHMS(data.total.interval))
       if(compare)
-        appendCompareInterval('#results #total-interval',data.total.interval,compare.total.interval)
+        buildCompare('#results #total-interval',data.total.interval,compare.total.interval,'Avg. Interval',msToHMS)
+      else
+        buildCompare('#results #total-interval',data.total.interval,null,'Avg. Interval',msToHMS)
     }
+
     const load_limit_data = async () => {
 
-      if(!$('#search-limit').hasClass('d-none'))
-        $('#search-limit').addClass('d-none')
+      if(!$('#results #search-limit').hasClass('d-none'))
+        $('#results #search-limit').addClass('d-none')
 
       if(data.limit){
-        $('#search-limit p span#limit').text(data.limit.limit)
-        $('#search-limit p span#remaining').text(data.limit.remaining)
-        $('#search-limit p span#reset').text(msToHMS(data.limit.reset))
-        $('#search-limit').removeClass('d-none')
+        $('#results #search-limit p span#limit').text(data.limit.limit)
+        $('#results #search-limit p span#remaining').text(data.limit.remaining)
+        $('#results #search-limit p span#reset').text(msToHMS(data.limit.reset))
+        $('#results #search-limit').removeClass('d-none')
       }
     }
-    const load_sample_internal_new = async () =>{
+
+    const load_sample_interval_dataset = async () =>{
       let id = "#results #search-sample-new"
       load_dateTime(id,data)
     }
 
-    const load_sample_interval_old = async () => {
+    const load_sample_interval_comparing = async () => {
       let id = "#results #search-sample-old"
 
       if(compare == null || compare == undefined){
@@ -476,6 +488,7 @@ $(document).ready(async function(){
       for(let type of Object.keys(data.highlights)){
         let id = '#results  #most-'+type
         let round = tweetCount(data.highlights[type].count)
+
         $(id).attr({
           "data-real":data.highlights[type].count,
           "data-round":round,
@@ -484,7 +497,7 @@ $(document).ready(async function(){
         }).text(round)
 
         if(compare){
-          appendCompare(id,data.highlights[type].count,compare.highlights[type].count)
+          buildCompare(id,data.highlights[type].count,compare.highlights[type].count,type,tweetCount)
 
           $(id+"-compare").attr({
             "href":buildTwitterPostUrl(compare.username,compare.highlights[type].id)
@@ -494,113 +507,44 @@ $(document).ready(async function(){
     }
 
     const load_tweets_by_media_type_data = async () => {
-      load_type("tweets-by-media-type-data",data.media_type,compare?.media_type)
+      const fn = (x)=>x.count
+      load_subTypes("#results #tweets-by-media-type-data",data.media_type,compare?.media_type,fn,fn)
     }
 
     const load_tweets_by_type_data = async () => {
-      load_type("tweets-by-type-data",data.type,compare?.type)
+      const fn = (x)=>x.count
+      load_subTypes("#results #tweets-by-type-data",data.type,compare?.type,fn,fn)
     }
 
-// FIXME refactor avg functions + load_type
-    const load_avg_metrics_table = async () => {
+    const load_avg_type = async () => {
+      for(let type of Object.keys(data.type)){
+        if(type == 'retweeted') continue
+        let id = 'avg-'+type
+        if(data.type[type].count != 0){
+          load_avg(id,data.type[type],compare?.type[type])
+          $(id).show()
+        }
+        else
+          $('#results #'+id).hide()
+      }
+    }
 
+    const load_avg_media_type = async () => {
       for(let type of Object.keys(data.media_type)){
-
-        let id = 'avg-interactions-'
-        let sub_id = id+type
-        let intv_id = sub_id+'-interval'
-
-        if(data.media_type[type].count == 0) {
-          $('#'+sub_id).hide()
-          continue
+        let id = 'avg-'+type
+        if(data.media_type[type].count != 0){
+          load_avg(id,data.media_type[type],compare?.media_type[type])
+          $(id).show()
         }
-
-        $('#results #'+intv_id).text(msToHMS(data.media_type[type].interval))
-        $('#results #'+sub_id+'-count').text(data.media_type[type].count)
-
-        if(compare){
-            appendCompareInterval("#"+intv_id,data.media_type[type].interval,compare.media_type[type].interval)
-            appendCompare('#results #'+sub_id+'-count',data.media_type[type].count,compare.media_type[type].count)
-        }
-
-        for(let key of Object.keys(data.media_type[type].metrics)){
-          let li = $('<a onclick="return false;" class="list-group-item list-group-item-action data-clean"></a>')
-
-          let avg_count = Math.floor(data.media_type[type].metrics[key]/data.media_type[type].count)
-
-          let name = countToPlural(key)
-          li.text(name+" : ").prepend(icon_set[key]+' ')
-
-          let rounded
-
-          if(avg_count  < 1) rounded = "Not enough data"
-          else rounded = tweetCount(avg_count)
-
-          let span_id = sub_id+'-'+key
-          let span = $('<span id="'+span_id+'"class="text-primary data-hover data-clean">'+ rounded +'</span>')
-          span.attr({"data-real":avg_count, "data-round":rounded,"title":"Average "+name.toLowerCase()})
-          let compare_span = $('<span id="'+span_id+'-compare" class="text-primary data-hover data-clean"></span>')
-
-          li.append(span).append(compare_span)
-          $('#results #'+sub_id+' ul').append(li)
-
-          if(compare && !(avg_count<1)){
-            let avg_count_compare = Math.floor(compare.media_type[type].metrics[key]/compare.media_type[type].count)
-            appendCompare('#results #'+span_id,avg_count,avg_count_compare)
-          }
-        }
-
-        $('#'+sub_id).show()
+        else
+          $('#results #'+id).hide()
       }
     }
-
-    const load_avg_original = async ()=>{
-      let id = "avg-interactions-"
-      let type = 'original'
-      let intv_id = id+type+'-interval'
-
-      $('#results #'+intv_id).text(msToHMS(data.type[type].interval))
-      $('#results #'+id+type+'-count').text(data.type[type].count)
-
-      if(compare){
-          appendCompareInterval("#"+intv_id,data.type[type].interval,compare.type[type].interval)
-          appendCompare('#results #'+id+type+'-count',data.type[type].count,compare.type[type].count)
-      }
-
-      for(let key of Object.keys(data.type[type].metrics)){
-        let li = $('<a onclick="return false;" class="list-group-item list-group-item-action data-clean"></a>')
-
-        let avg_count = Math.floor(data.type[type].metrics[key]/data.type[type].count)
-
-        let name = countToPlural(key)
-        li.text(name+" : ").prepend(icon_set[key]+' ')
-
-        let rounded
-
-        if(avg_count  < 1) rounded = "Not enough data"
-        else rounded = tweetCount(avg_count)
-
-        let span_id = id+type+'-'+key
-        let span = $('<span id="'+span_id+'"class="text-primary data-hover data-clean">'+ rounded +'</span>')
-        span.attr({"data-real":avg_count, "data-round":rounded,"title":"Average "+name.toLowerCase()})
-        let compare_span = $('<span id="'+span_id+'-compare" class="text-primary data-hover data-clean"></span>')
-
-        li.append(span).append(compare_span)
-        $('#results #'+id+type+' ul').append(li)
-
-        if(compare && !(avg_count<1)){
-          let avg_count_compare = Math.floor(compare.type[type].metrics[key]/compare.type[type].count)
-          appendCompare('#results #'+span_id,avg_count,avg_count_compare)
-        }
-      }
-
-    }
-
 
     const load_hashtags = async () => {
       let id = "hashtags-chart-wrapper"
-      if(compare) $('#hashtags-wrapper').hide()
-      else $('#hashtags-wrapper').show()
+      if(compare) $('#results #hashtags-wrapper').hide()
+      else $('#results #hashtags-wrapper').show()
 
       if(data.hashtags){
         let hashtags = Object.entries(data.hashtags).sort((a,b)=> b[1]-a[1]).slice(0,10)
@@ -623,10 +567,23 @@ $(document).ready(async function(){
       }
     }
 
-    const load_langs_chart = async () => {
+    const load_lang_data = async (id,data,compare) =>{
+      for(let lang of Object.keys(data)){
+        build_ulElement(id,lang)
+
+        if(compare && compare[lang])
+          load_element('#results #'+id+'-'+lang,data[lang].count,compare[lang]?.count,lang,tweetCount)
+        else
+          load_element('#results #'+id+'-'+lang,data[lang].count,null,lang,tweetCount)
+      }
+    }
+
+    const load_langs = async () => {
       let id = "tweets-by-langs"
+
       let dataset = extractLangs(data.langs)
       let data_langs = {}
+
       dataset.labels.forEach((key,i)=> {
         data_langs[key] = {count:dataset.data[i]}
       })
@@ -638,15 +595,17 @@ $(document).ready(async function(){
         dataset_compare.labels.forEach((key,i)=> {
           data_langs_compare[key] = {count:dataset_compare.data[i]}
         })
-        // console.log(data_langs,data_langs_compare);
-        load_type(id+"-data",data_langs,data_langs_compare)
-        await pieCharts(dataset,dataset_compare,id,"Tweets by languages",colors_3)
+
+        await load_langs_chart(id,dataset,dataset_compare)
+        await load_lang_data(id+'-data-ul',data_langs,data_langs_compare)
       }else{
-        load_type(id+"-data",data_langs,null)
-        await pieCharts(dataset,null,id,"Tweets by languages",colors_3)
+        await load_langs_chart(id,dataset,null)
+        await load_lang_data(id+'-data-ul',data_langs,null)
       }
 
     }
+
+
 
     const load_media_type_Chart = async () => {
       let id = "tweets-by-media-type"
@@ -710,8 +669,8 @@ $(document).ready(async function(){
 
     updateProgressBar(10)
 
-    await load_sample_internal_new()
-    await load_sample_interval_old()
+    await load_sample_interval_dataset()
+    await load_sample_interval_comparing()
     await load_highlights()
 
     updateProgressBar(20)
@@ -732,7 +691,7 @@ $(document).ready(async function(){
 
     updateProgressBar(60)
 
-    await load_langs_chart()
+    await load_langs()
     await load_hashtags()
     await load_mentioned_users()
 
@@ -743,29 +702,121 @@ $(document).ready(async function(){
 
     updateProgressBar(80)
 
-    await load_avg_metrics_table()
-    await load_avg_original()
+    await load_avg_type()
+    await load_avg_media_type()
 
     updateProgressBar(100)
+  }
 
-    // Promise.all([
-    //   load_user_datails(),
-    //   load_followers(),
-    //   load_followings(),
-    //   load_sample_internal_new(),
-    //   load_sample_interval_old(),
-    //   load_highlights(),
-    //   load_avg_metrics_table(),
-    //   load_total_info(),
-    //   load_week_chart(),
-    //   load_media_type_Chart(),
-    //   load_tweets_by_media_type_data(),
-    //   load_tweets_by_type_data(),
-    //   load_type_Chart(),
-    //   load_langs_chart(),
-    //   load_hashtags(),
-    //   load_mentioned_users()
-    // ])
+  function load_subTypes(id,data,compare,dn,cn){
+    for(let type of Object.keys(data)){
+      let sub_id = id+"-"+type
+
+      if(compare)
+        load_element(sub_id,dn(data[type]),cn(compare[type]),type,tweetCount)
+      else
+        load_element(sub_id,dn(data[type]),null,type,tweetCount)
+    }
+  }
+
+  async function load_langs_chart(id,data,compare){
+    if(compare){
+      await pieCharts(data,compare,id,"Tweets by languages",colors_3)
+    }else{
+      await pieCharts(data,null,id,"Tweets by languages",colors_3)
+    }
+  }
+
+  function build_ulElement(id,type){
+    let sub_id = id+'-'+type
+
+    let span = $('<span class="text-primary data-hover"></span>')
+
+    span.attr({"id":sub_id})
+
+    let span_compare = $('<span id="'+sub_id+'-compare" class="text-primary data-hover"></span>')
+
+    let a = $('<a class="list-group-item list-group-item-action">'+toUpperFirstChar(type)+': </a>')
+    .append(span).append(span_compare)
+
+    $('#'+id).append(a)
+  }
+
+  function load_element(id,data,compare,title,round){
+    let rounded = round(data)
+
+    $(id)
+    .attr({"data-real":Number(data), "data-round":rounded,"title":title})
+    .text(rounded)
+
+    if(compare)
+      buildCompare(id,data,compare,title,round)
+  }
+
+  function load_avg(id,data,compare){
+    id = '#results #'+id
+    let count_id = id+'-count'
+    let interval_id = id+'-interval'
+    let ul_id = id+'-data'
+
+    $(count_id).text(data.count)
+    $(interval_id).text(msToHMS(data.interval))
+
+    if(compare){
+      buildCompare(count_id,data.count,compare.count,'count',tweetCount)
+      buildCompare(interval_id,data.interval,compare.interval,'interval',msToHMS,'interval')
+    }
+    const dn = (x) => Number(x/data.count).toFixed(2)
+    const cn = (x) => Number(x/compare?.count).toFixed(2)
+
+    if(compare){
+      load_subTypes(ul_id,data.metrics,compare?.metrics,dn,cn)
+    }else{
+      load_subTypes(ul_id,data.metrics,compare?.metrics,dn,null)
+    }
+
+  }
+
+  function buildCompare(id,data,compare,title,round,type = undefined){
+    if(!compare) return
+    if(data == compare) return
+
+    let diff = Number((data - compare).toFixed(3))
+
+    if(type === 'interval')
+      console.log(diff);
+
+    let rounded = round(diff)
+
+    appendDiffIcon(id,diff)
+
+    id += '-compare'
+
+    if(!type)
+      $(id).attr({"data-real":diff,"data-round":rounded,"title":"Difference of "+title})
+    else if(type === 'interval')
+      $(id).attr({"title":"Difference of "+title})
+
+    $(id).append(rounded)
+  }
+
+  function appendDiffIcon(id,diff){
+    if(diff == 0) return
+
+    let up = ["bi-caret-up-fill","text-success"]
+    let down = ["bi-caret-down-fill","text-danger"]
+    let icon = $('<i class="bi ms-1 me-1"></i>')
+
+    if(diff>0){
+      icon.addClass(up)
+      icon.attr("title","Gained")
+    }else{
+      icon.addClass(down)
+      icon.attr("title","Lost")
+    }
+
+    icon.addClass("node-clean")
+    $(id).after(icon)
   }
 
   function engagement(input){
@@ -798,40 +849,6 @@ $(document).ready(async function(){
   function updateProgressBar(n){
     let id = "#loader #progress-bar "
     $(id+' .progress-bar').addClass('w-'+n)
-  }
-
-  function load_type(id,data,compare){
-
-    for(let type of Object.keys(data)){
-      let count = data[type].count
-      let count_rounded = tweetCount(count)
-
-      let sub_id = id+"-"+type
-
-      let span = $('<span class="data-hover data-clean"></span>')
-      span.attr({"id":sub_id,"data-real":count, "data-round":count_rounded})
-      span.text(count_rounded)
-
-      let span_compare = $('<span id="'+sub_id+'-compare" class="data-hover data-clean"></span>')
-
-      let a = $('<a class="list-group-item list-group-item-action data-clean">'+toUpperFirstChar(cleanText(type))+': </a>').append(span).append(span_compare)
-      $('#results  #'+id+' ul').append(a)
-
-      if(compare && compare[type]){
-        appendCompare('#results #'+id+' #'+sub_id,count,compare[type].count)
-      }
-    }
-  }
-
-  function load_x(id,data,compare,title){
-    let rounded = tweetCount(data)
-    id = '#results '+id
-    $(id)
-    .attr({"data-real":data, "data-round":rounded,"title":title})
-    .text(rounded)
-
-    if(compare)
-      appendCompare(id,data,compare)
   }
 
   function load_dateTime(id,data){
@@ -952,263 +969,6 @@ $(document).ready(async function(){
     })
   }
 
-  async function pieChartsLang(data_1,data_2,id,title,chartType = 'pie'){
-
-    let canvas = document.createElement("canvas")
-    canvas.id = id+"-chart"
-    document.getElementById(id).appendChild(canvas)
-
-    let colors = ['#FF595E','#FFCA3A','#8AC926','#1982C4','#00B4D8','#6A4C93']
-
-    let dataset_1 = {
-      label:title,
-      labels:data_1.labels,
-      data:data_1.data,
-      backgroundColor:colors,
-      hoverOffset: 4
-    }
-    let datasets = [dataset_1]
-
-    if(data_2){
-      let dataset_2 = {
-        label:title+" compare",
-        labels:data_2.labels,
-        data:data_2.data,
-        backgroundColor:colors,
-        hoverOffset: 4
-      }
-      datasets.push(dataset_2)
-    }
-
-    new Chart(document.getElementById(canvas.id),{
-      type:chartType,
-      data:{
-        datasets:datasets,
-      },
-      options :{
-        responsive:true,
-        aspectRatio: 1,
-        maintainAspectRatio:false,
-
-        plugins:{
-          title:{
-            display:true,
-            text:title
-          },
-          legend:{
-            display:true,
-            position:"right",
-            labels: {
-              usePointStyle:true,
-              pointStyle:'rectRounded',
-              padding:20
-            }
-          },
-          datalabels:{
-            anchor:"center",
-            color:'white',
-            formatter: (value,context)=>{
-              let total = context.dataset.data.reduce((acc,v)=> acc+v,0)
-              let perc = Math.floor(value/total *100)
-              return perc>2 ? perc+"%":''
-            }
-          }
-        }
-      },
-
-    })
-  }
-
-  async function pieCharts_1(data_1,data_2,id,chartType = 'pie'){
-
-    let canvas = document.createElement("canvas")
-    canvas.id = id+"-chart"
-    document.getElementById(id).appendChild(canvas)
-
-    let colors = ['#FF595E','#FFCA3A','#8AC926','#1982C4','#00B4D8','#6A4C93']
-
-    let dataset_1 = {
-      label:cleanText(id)+" new",
-      labels:data_1.labels,
-      data:data_1.data,
-      backgroundColor:colors,
-      hoverOffset: 4
-    }
-    let datasets = [dataset_1]
-
-    if(data_2){
-      let dataset_2 = {
-        label:cleanText(id)+" old",
-        labels:data_2.labels,
-        data:data_2.data,
-        backgroundColor:colors,
-        hoverOffset: 4
-      }
-      datasets.push(dataset_2)
-    }
-
-    // const pieLabelsLine = {
-    //   id: "pieLabelsLine",
-    //   afterDraw(chart) {
-    //     const {
-    //       ctx,
-    //       chartArea: { width, height },
-    //     } = chart;
-
-    //     const cx = chart._metasets[0].data[0].x;
-    //     const cy = chart._metasets[0].data[0].y;
-
-    //     const sum = chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
-
-    //     chart.data.datasets.forEach((dataset, i) => {
-    //       chart.getDatasetMeta(i).data.forEach((datapoint, index) => {
-    //         const { x: a, y: b } = datapoint.tooltipPosition();
-
-    //         const x = 2 * a - cx;
-    //         const y = 2 * b - cy;
-
-    //         // draw line
-    //         const halfwidth = width / 2;
-    //         const halfheight = height / 2;
-    //         const xLine = x >= halfwidth ? x + 20 : x - 20;
-    //         const yLine = y >= halfheight ? y + 20 : y - 20;
-
-    //         const extraLine = x >= halfwidth ? 10 : -10;
-
-    //         ctx.beginPath();
-    //         ctx.moveTo(x, y);
-    //         ctx.arc(x, y, 2, 0, 2 * Math.PI, true);
-    //         ctx.fill();
-    //         ctx.moveTo(x, y);
-    //         ctx.lineTo(xLine, yLine);
-    //         ctx.lineTo(xLine + extraLine, yLine);
-    //         // ctx.strokeStyle = dataset.backgroundColor[index];
-    //         ctx.strokeStyle = "black";
-    //         ctx.stroke();
-
-    //         // text
-    //         const textWidth = ctx.measureText(chart.data.labels[index]).width;
-    //         ctx.font = "12px Arial";
-    //         // control the position
-    //         const textXPosition = x >= halfwidth ? "left" : "right";
-    //         const plusFivePx = x >= halfwidth ? 1 : -1;
-    //         ctx.textAlign = textXPosition;
-    //         ctx.textBaseline = "middle";
-    //         // ctx.fillStyle = dataset.backgroundColor[index];
-    //         ctx.fillStyle = "black";
-    //           ctx.fillText(chart.data.labels[index] +" : "+ (((chart.data.datasets[0].data[index] * 100) / sum)).toFixed(2) + "%",
-    //           xLine + extraLine + plusFivePx, yLine)
-    //       //   ctx.fillText(
-    //       //     ((chart.data.datasets[0].data[index] * 100) / sum).toFixed(2) +
-    //       //       "%",
-    //       //     xLine + extraLine + plusFivePx,
-    //       //     yLine
-    //       //   );
-    //       });
-    //     });
-    //   },
-    // };
-
-    // var params = {
-    //   display: true,
-    //   // text: [
-    //   // '%l (%p.3) \n VALUE: (%v.3)',
-    //   // '%l (%p) \n VALUE: (%v)',
-    //   // 'SIMPLE VALUE \n => %v',
-    //   // 'VALUE WITH PRECISION 4 \n => %v.4',
-    //   // 'SIMPLE PERCENT \n => %p',
-    //   // 'PERCENT WITH PRECISION 3 \n => %p.3',
-    //   // 'JUST LABEL \n => %l',
-    //   // 'JUST TEXT'
-    //   // ],
-    //   borderWidth: 2,
-    //   lineWidth: 2,
-    //   padding: 3,
-    //   textAlign: 'center',
-    //   stretch: 10,
-    //   font: {
-    //       resizable: true,
-    //       minSize: 12,
-    //       maxSize: 25,
-    //       family: Chart.defaults.font.family,
-    //       size: Chart.defaults.font.size,
-    //       style: Chart.defaults.font.style,
-    //       lineHeight: Chart.defaults.font.lineHeight,
-    //   },
-    //   color: "black",
-    //   valuePrecision: 1,
-    //   percentPrecision: 2
-    // };
-    // var chartOption = {
-
-    //     maintainAspectRatio: false,
-    //     layout: {
-    //         padding: 0
-    //     },
-    //     plugins: {
-    //         legend:{display:false},
-    //         outlabels: params,
-    //     }
-    // };
-
-    new Chart(document.getElementById(canvas.id),{
-      type:chartType,
-      data:{
-        datasets:datasets,
-      },
-      options : chartOption,
-      // {
-      //   responsive:true,
-      //   aspectRatio: 1,
-      //   maintainAspectRatio:false,
-
-      //   plugins:{
-          // legend:{
-          //   position:"bottom",
-          //   labels: {
-          //     boxWidth:10,
-          //     borderRadius:10,
-          //     generateLabels: (chart) => {
-          //       console.log(chart.data);
-          //       const datasets = chart.data.datasets;
-          //       let labelset_1 = datasets[0].data.map((data, i) => ({
-          //         text: `${datasets[0].labels[i]} : ${data}`,
-          //         fillStyle: datasets[0].backgroundColor[i],
-          //         index: i
-          //       }))
-          //       let labelset_2 = datasets[1].data.map((data, i) => ({
-          //         text: `compare - ${datasets[1].labels[i]} : ${data}`,
-          //         fillStyle: datasets[1].backgroundColor[i],
-          //         index: i
-          //       }))
-
-          //       return labelset_1.concat(labelset_2)
-          //     }
-          //   }
-          // },
-          // tooltip: {
-          //   callbacks: {
-          //       label: function(context) {
-          //         var index = context.dataIndex;
-          //         return context.dataset.labels[index] + ': ' + context.dataset.data[index];
-          //       }
-          //   }
-          // },
-          // datalabels:{
-          //   anchor:"center",
-          //   color:'white',
-          //   formatter: (value,context)=>{
-          //     let total = context.dataset.data.reduce((acc,v)=> acc+v,0)
-          //     let perc = Math.floor(value/total *100)
-          //     return perc>2 ? perc+"%":''
-          //   }
-          // }
-      //   }
-      // },
-
-    })
-  }
-
   function toDataset(data,label,color,stack){
     let struct = {}
     struct["data"] = data
@@ -1263,6 +1023,7 @@ $(document).ready(async function(){
 
     return output
   }
+
   function extractDailyTotal(data){
     let labels = Object.keys(data)
 
@@ -1464,80 +1225,12 @@ $(document).ready(async function(){
 
   }
 
-  function appendCompare(id,new_data,old_data){
-    if(!old_data) return
-    if(old_data == new_data) return
-
-    let diff = Number((new_data - old_data).toFixed(3))
-    let rounded_data = tweetCount(diff)
-
-    let up = ["bi-caret-up-fill","text-success"]
-    let down = ["bi-caret-down-fill","text-danger"]
-    let icon = $('<i class="bi ms-1 me-1"></i>')
-
-    if(diff>0){
-      icon.addClass(up)
-      icon.attr("title","Gained")
-    }else{
-      icon.addClass(down)
-      icon.attr("title","Lost")
-    }
-
-    icon.addClass("node-clean")
-    $(id).after(icon)
-
-    id = id+"-compare"
-    $(id).attr({"data-real":diff, "data-round":rounded_data, "title":"Difference between compared data"})
-    $(id).text(rounded_data)
-  }
-  function appendCompareInterval(id,new_data,old_data){
-
-    if(!old_data) return
-    if(old_data == new_data) return
-
-    let diff = new_data - old_data
-    if(diff<1000) return
-    let rounded_data = msToHMS(diff)
-
-
-    let up = ["bi-caret-up-fill","text-success"]
-    let down = ["bi-caret-down-fill","text-danger"]
-    let icon = $('<i class="bi ms-1 me-1"></i>')
-
-    if(diff>0){
-      icon.addClass(up)
-      icon.attr("title","Gained")
-    }else{
-      icon.addClass(down)
-      icon.attr("title","Lost")
-    }
-
-    icon.addClass("node-clean")
-    $(id).after(icon)
-
-    id = id+"-compare"
-    $(id).attr({"title":"Difference of interval"})
-    $(id).append(rounded_data)
-  }
-
   function toUpperFirstChar(str){
     return str.charAt(0).toUpperCase()+str.slice(1)
   }
 
-  function cleanText(str){
-    let regex = /[^A-Za-z0-9]/g
-    return str.replace(regex," ")
-  }
-  function normalize(data){
-    let output = []
-    let max = Math.max(...data)
-    for(let i=0;i<data.length;i++){
-      output.push(data[i]/max)
-    }
-
-    return output
-  }
-  function msToHMS(e) {
+  function msToHMS(e){
+    e = Math.abs(e)
     let s = e/1000;
     let m = s/60;
     s = s%60;
@@ -1560,7 +1253,7 @@ $(document).ready(async function(){
     if(count / 1000 >= 1 || count / 1000 <= -1)
       return Number((count / 1000).toFixed(1)) + "K"
 
-    return count
+    return Number(count)
   }
 
   function buildTwitterUrl(user){
@@ -1573,39 +1266,3 @@ $(document).ready(async function(){
 
   set_data_hover()
 })
-
-
-// $('.dashboard').click((event)=>{
-  //   event.preventDefault()
-  //   //if(localStorage.getItem('token')==null) return
-  //   $.ajax({
-    //     url:'/dashboard',
-    //     headers:{'Authorization':'Bear '+localStorage.getItem('token') },
-    //     success: (data)=>{
-      //       window.location.href = "/dashboard";
-      //     }
-      //   })
-      // })
-
-      // $('#login').click((event)=>{
-        //   event.preventDefault()
-  //   $.post("/login",$('#sign-in').serialize(),(data,status,xhr)=>{
-    //     if(xhr.status == 200){
-      //       window.location.href = '/dashboard'
-      //     }
-      //     console.log('no token received')
-      //   })
-      // })
-
-      // $.post("/twitter",$('#form-search').serialize(),(data,status,xhr)=>{
-      //   if(xhr.status == 200){
-      //     let json_data = JSON.parse(data)
-      //     build(json_data[0])
-      //     $('#loader').addClass('d-none')
-      //     $('#results').show()
-      //     $('#search-btn').removeAttr("disabled")
-      //   }else{
-      //     console.log('twitter error '+xhr.status)
-      //   }
-
-      // })
