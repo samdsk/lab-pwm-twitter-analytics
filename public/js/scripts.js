@@ -68,6 +68,23 @@ async function loadFromCache(url,id){
   return data
 }
 
+function enableBtns(){
+
+  let buttons = document.getElementsByClassName('disable-btn')
+
+  Array.prototype.slice.call(buttons).forEach(function(button){
+    button.removeAttribute("disabled")
+  })
+}
+
+function disableBtns(){
+  let buttons = document.getElementsByClassName('disable-btn')
+
+  Array.prototype.slice.call(buttons).forEach(function(button){
+    button.setAttribute("disabled",'')
+  })
+}
+
 $(document).ready(async function(){
 
   // dark-mode click activate function
@@ -204,6 +221,8 @@ $(document).ready(async function(){
     $('#error-modal').modal('show')
   }
 
+
+
   // delete a seached result
   $('.close-icon').click(async function(){
     if(!confirm("Are you sure you want to delete this record?")) return
@@ -317,12 +336,6 @@ $(document).ready(async function(){
     //       return response.json()
     // })
 
-    if(data.error) {
-      $('#search-btn').removeAttr("disabled")
-      grecaptcha.reset()
-      return errorDisplay(data)
-    }
-
     await sleep(500)
     $('#loader #spinner').addClass('d-none')
 
@@ -413,19 +426,19 @@ $(document).ready(async function(){
     }
 
     const load_followers = async () => {
-      load_element("#followers",data.followers,compare?.followers,"Total Followers",tweetCount)
+      load_element("#results #followers",data.followers,compare?.followers,"Total Followers",tweetCount)
     }
 
     const load_followings = async () => {
-      load_element('#followings',data.followings,compare?.followings,"Total Followings",tweetCount)
+      load_element('#results #followings',data.followings,compare?.followings,"Total Followings",tweetCount)
     }
 
     const load_mentions = async () =>{
-      load_element('#mentions',data.mentions,compare?.mentions,"Recent Mentions",tweetCount)
+      load_element('#results #mentions',data.mentions,compare?.mentions,"Recent Mentions",tweetCount)
     }
 
     const load_engagement = async () =>{
-      let id = '#engagement'
+      let id = '#results #engagement'
       let eng = engagement(data)
       let eng_compare = engagement(compare)
       load_element(id,eng,eng_compare,"Engagement",(x)=>x)
@@ -441,14 +454,14 @@ $(document).ready(async function(){
 
     const load_limit_data = async () => {
 
-      if(!$('#search-limit').hasClass('d-none'))
-        $('#search-limit').addClass('d-none')
+      if(!$('#results #search-limit').hasClass('d-none'))
+        $('#results #search-limit').addClass('d-none')
 
       if(data.limit){
-        $('#search-limit p span#limit').text(data.limit.limit)
-        $('#search-limit p span#remaining').text(data.limit.remaining)
-        $('#search-limit p span#reset').text(msToHMS(data.limit.reset))
-        $('#search-limit').removeClass('d-none')
+        $('#results #search-limit p span#limit').text(data.limit.limit)
+        $('#results #search-limit p span#remaining').text(data.limit.remaining)
+        $('#results #search-limit p span#reset').text(msToHMS(data.limit.reset))
+        $('#results #search-limit').removeClass('d-none')
       }
     }
 
@@ -495,15 +508,14 @@ $(document).ready(async function(){
 
     const load_tweets_by_media_type_data = async () => {
       const fn = (x)=>x.count
-      load_subTypes("#tweets-by-media-type-data",data.media_type,compare?.media_type,fn,fn)
+      load_subTypes("#results #tweets-by-media-type-data",data.media_type,compare?.media_type,fn,fn)
     }
 
     const load_tweets_by_type_data = async () => {
       const fn = (x)=>x.count
-      load_subTypes("#tweets-by-type-data",data.type,compare?.type,fn,fn)
+      load_subTypes("#results #tweets-by-type-data",data.type,compare?.type,fn,fn)
     }
 
-// FIXME refactor avg functions + load_type
     const load_avg_type = async () => {
       for(let type of Object.keys(data.type)){
         if(type == 'retweeted') continue
@@ -513,7 +525,7 @@ $(document).ready(async function(){
           $(id).show()
         }
         else
-          $('#'+id).hide()
+          $('#results #'+id).hide()
       }
     }
 
@@ -525,14 +537,14 @@ $(document).ready(async function(){
           $(id).show()
         }
         else
-          $('#'+id).hide()
+          $('#results #'+id).hide()
       }
     }
 
     const load_hashtags = async () => {
       let id = "hashtags-chart-wrapper"
-      if(compare) $('#hashtags-wrapper').hide()
-      else $('#hashtags-wrapper').show()
+      if(compare) $('#results #hashtags-wrapper').hide()
+      else $('#results #hashtags-wrapper').show()
 
       if(data.hashtags){
         let hashtags = Object.entries(data.hashtags).sort((a,b)=> b[1]-a[1]).slice(0,10)
@@ -560,9 +572,9 @@ $(document).ready(async function(){
         build_ulElement(id,lang)
 
         if(compare && compare[lang])
-          load_element('#'+id+'-'+lang,data[lang].count,compare[lang]?.count,lang,tweetCount)
+          load_element('#results #'+id+'-'+lang,data[lang].count,compare[lang]?.count,lang,tweetCount)
         else
-          load_element('#'+id+'-'+lang,data[lang].count,null,lang,tweetCount)
+          load_element('#results #'+id+'-'+lang,data[lang].count,null,lang,tweetCount)
       }
     }
 
