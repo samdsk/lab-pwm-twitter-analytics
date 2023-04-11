@@ -2,6 +2,7 @@ require('dotenv').config()
 const express = require('express')
 const app = express()
 
+// ===================== Middleware
 require('express-async-errors')
 const cookie_parser = require('cookie-parser')
 const express_session = require('express-session')
