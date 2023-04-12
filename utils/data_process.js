@@ -99,14 +99,10 @@ const collectData = async (DATA) => {
         tweets_per_day[date].media[mediaType]++
         tweets_per_day[date].type[type]++
 
-
         if(type != "retweeted"){
-            //updateInterval(TWEETS.media_type[mediaType],time,interval_start_time)
             updateMetrics(TWEETS.media_type,mediaType,e)
-
             updateMetrics(TWEETS.type,type,e)
             updateMetricsTotal(TWEETS,e)
-            //updateInterval(TWEETS.type[type],time,interval_start_time)
         }
 
         // count total posts and interval between tweets

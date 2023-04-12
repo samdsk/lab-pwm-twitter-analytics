@@ -50,6 +50,7 @@ const tweet_user_fields = [
     "withheld"
 ]
 
+// Twitter API search function
 const search = async (ID) => {
     res = await app.search(`from:${ID}`,{
         'tweet.fields':tweet_fields,
@@ -59,10 +60,12 @@ const search = async (ID) => {
     let DATA = await res.fetchLast()
 
     if(DEBUG){
-        return new Promise( (resolve,reject) => fs.writeFile(filename,JSON.stringify(DATA), (err)=>{
-            if(err) reject(err)
-            resolve(data_process(DATA))
-        }))
+        return new Promise( (resolve,reject) => {
+            // Writing received data to a file
+            fs.writeFile(filename,JSON.stringify(DATA), (err)=>{
+                resolve(data_process(DATA))
+            })
+        })
     }else{
         return new Promise( (resolve,reject) => {
             resolve(data_process(DATA))

@@ -106,7 +106,8 @@ app.set('view engine','ejs')
 
 // ===================== Handling requests
 app.get('/',function(req,res){
-    if(!req.session.username || !req.session.email) return res.render('pages/index')
+    if(!req.session.username || !req.session.email)
+        return res.render('pages/index')
     else return res.redirect('/dashboard')
 })
 
@@ -150,7 +151,8 @@ app.use(error_handler)
 const start = async (connection_url) => {
     try{
         await db_connect(connection_url)
-        app.listen(PORT,()=> console.log('OK: Server is up and running at port',PORT))
+        app.listen(PORT,
+            ()=> console.log('OK: Server is up and running at port',PORT))
     }catch(err){
         console.log(`Error: ${err}`)
     }

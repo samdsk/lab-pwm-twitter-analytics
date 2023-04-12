@@ -10,6 +10,7 @@ const createUser = async (req,res,next) => {
 
     if( !req.body.email ||
         !req.body.password ||
+        !req.body.password_confirm ||
         !req.body.name ||
         !req.body.terms) return res.json({error:"Missing fields"})
 
