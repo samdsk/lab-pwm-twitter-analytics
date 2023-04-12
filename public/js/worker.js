@@ -1,5 +1,5 @@
 self.onmessage = (event) => {
-    console.log("Worker received msg",event.data)
+    // console.log("Worker received msg",event.data)
     let method = event.data.method
     let url = event.data.url
     let data = event.data.data
