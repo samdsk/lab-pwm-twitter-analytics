@@ -3,7 +3,6 @@ self.onmessage = (event) => {
     let method = event.data.method
     let url = event.data.url
     let data = event.data.data
-    console.log(data);
     var xhr = new XMLHttpRequest
     xhr.open(method,url)
     xhr.responseType = 'json'
