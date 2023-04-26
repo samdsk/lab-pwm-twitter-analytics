@@ -4,8 +4,8 @@ const User = require("../models/User")
 const SearchResults = require('../models/SearchResults')
 const recaptcha = require('../utils/recaptcha')
 
+// render profile page
 const getProfile = async (req,res,next) => {
-
     res.render('pages/profile',{
         logout:true,
         username:req.session.username,
@@ -16,6 +16,7 @@ const getProfile = async (req,res,next) => {
     })
 }
 
+// update password
 const updateProfile = async (req,res,next) => {
     console.log("Profile: update psw request received.");
 
@@ -51,7 +52,6 @@ const deleteProfile = async (req,res,next) => {
 
     if(req.session.email){
         Auth.findOne({email:req.session.email},async function(err,auth){
-            console.log(req.body.password);
             await bcrypt.compare(req.body.password,auth.password).then(async (check)=>{
 
                 if(!check) return res.json({error:"Credentials are not valid"})
@@ -80,7 +80,6 @@ const deleteProfile = async (req,res,next) => {
                 User.findByIdAndRemove(auth._id).exec((err,data)=>{
                     if(err) {
                         return res.json({error:"Profile delete: User error"})
-
                     }
                     console.log("pass: delete user");
                 })

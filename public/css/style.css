@@ -134,11 +134,9 @@ footer #footer-2{
     }
 
     footer #footer-2{
-    border-right:none;
-    border-left:none;
-    border-top:var(--bs-border-width) var(--bs-border-style) var(--bs-border-color);
-    border-bottom:var(--bs-border-width) var(--bs-border-style) var(--bs-border-color)
-}
-
-
+        border-right:none;
+        border-left:none;
+        border-top:var(--bs-border-width) var(--bs-border-style) var(--bs-border-color);
+        border-bottom:var(--bs-border-width) var(--bs-border-style) var(--bs-border-color)
+    }
 }

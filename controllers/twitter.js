@@ -8,8 +8,10 @@ const User = require('../models/User')
 const Auth = require('../models/Auth')
 const recaptcha = require('../utils/recaptcha')
 
+const DEBUG = false
 const filename = './data.json'
 
+// tweet fields
 const tweet_fields = [
     'attachments',
     'author_id',
@@ -49,6 +51,7 @@ const tweet_user_fields = [
     "withheld"
 ]
 
+// Twitter API search function
 const search = async (ID) => {
     res = await app.search(`from:${ID}`,{
         'tweet.fields':tweet_fields,
@@ -58,10 +61,12 @@ const search = async (ID) => {
     let DATA = await res.fetchLast()
 
     if(DEBUG){
-        return new Promise( (resolve,reject) => fs.writeFile(filename,JSON.stringify(DATA), (err)=>{
-            if(err) reject(err)
-            resolve(data_process(DATA))
-        }))
+        return new Promise( (resolve,reject) => {
+            // Writing received data to a file
+            fs.writeFile(filename,JSON.stringify(DATA), (err)=>{
+                resolve(data_process(DATA))
+            })
+        })
     }else{
         return new Promise( (resolve,reject) => {
             resolve(data_process(DATA))
@@ -70,6 +75,7 @@ const search = async (ID) => {
 }
 
 // verify the search limit of an user
+// return true if limit is exceeded
 const searchLimit = async (auth)=>{
 
     let user = await User.findById(auth._id)
@@ -81,16 +87,17 @@ const searchLimit = async (auth)=>{
     return false
 }
 
+// handles the twitter search request and sends data as json obj
 const postTwitter = async(req,res,next) => {
+
     // recaptcha validation
     let catpcha = await recaptcha(req.body['g-recaptcha-response'])
     if(!catpcha) return res.json({error:"Invalid captcha!"})
 
-    //user search limit validation
-
     let auth = await Auth.findOne({email:req.session.email})
     if(!auth) return res.json({error:"Twitter: Invalid session"})
 
+    //user search limit validation
     let limit = await searchLimit(auth)
     console.log("Twitter: limit",limit);
 
@@ -101,6 +108,7 @@ const postTwitter = async(req,res,next) => {
     const user = await app.userByUsername(req.body.handler,{"user.fields":tweet_user_fields});
     if(user?.errors) return res.json({error:`Invalid user`})
 
+
     if(DEBUG)
         console.log("Twitter: request for ->",user.data)
 
@@ -110,6 +118,7 @@ const postTwitter = async(req,res,next) => {
     if(DEBUG)
         fs.writeFileSync("./output_metions.json",JSON.stringify(mentions))
 
+    // executing search for given twitter account
     search(req.body.handler)
     .then( async (data,err) => {
         if(err) return res.json({error:"Twitter search: "+err.message})
@@ -129,10 +138,12 @@ const postTwitter = async(req,res,next) => {
         // Limit display
         console.log("Twitter Limit:",data.limit.limit,data.limit.remaining,data.limit.reset)
 
+        // updating db
         console.log('Twitter: creating search results')
         await SearchResults.create(data)
         await User.findOneAndUpdate({_id:auth._id},{$push : {searched:data._id}})
 
+        // deleting object id from data
         delete(data._id)
 
         if(DEBUG){

@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 
+// Schema for Auth
 const AuthSchema = new mongoose.Schema({
     _id:{type:mongoose.Schema.Types.ObjectId},
     email: {

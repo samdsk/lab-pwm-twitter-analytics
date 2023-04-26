@@ -3,12 +3,12 @@ const jwt = require('jsonwebtoken')
 const sendEmail = require('../utils/sendEmail')
 const User = require('../models/User')
 
+// token expires in 30 minutes
 const JWT_EXP = '30m'
 
-// FIXME change the email address
-
+// sends password reset link
 const postEmail = async (req,res,next) => {
-    console.log("psw forgot request recieved");
+    console.log("Forgot Psw: request recieved");
 
     if(req.body.email){
         Auth.findOne({email:req.body.email},async (err,auth)=>{
@@ -47,7 +47,6 @@ const postEmail = async (req,res,next) => {
     }else{
         return res.sendStatus(500)
     }
-
 }
 
 module.exports = {postEmail}

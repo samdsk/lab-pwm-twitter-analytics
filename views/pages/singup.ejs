@@ -15,17 +15,17 @@
                         <div class="valid-feedback">Looks good!</div>
                     </div>
                     <div class="form-floating mb-3 has-validation">
-                        <input type="email" class="form-control" id="signup-email" name="email" autocomplete="email" placeholder="name@example.com" required>
+                        <input type="email" class="form-control email" id="signup-email" name="email" autocomplete="email" placeholder="name@example.com" required>
                         <label for="email">Email</label>
                         <div class="invalid-feedback">Please choose a valid email.</div>
                     </div>
                     <div id="signup-psw"  class="form-floating mb-3 has-validation">
-                        <input type="password" class="form-control" minlength="8" id="signup-password" name="password" autocomplete="new-password" placeholder="Password" required>
+                        <input type="password" class="form-control password" minlength="8" id="signup-password" name="password" autocomplete="new-password" placeholder="Password" required>
                         <label for="password">Password</label>
-                        <div class="valid-feedback">Looks good!</div>
+                        <div class="invalid-feedback">Password must have at least 8 characters</div>
                     </div>
                     <div id="signup-psw-confirm" class="form-floating mb-3 has-validation">
-                        <input type="password" class="form-control" minlength="8" id="signup-password-confirm" name="password_confirm" placeholder="Password" required>
+                        <input type="password" class="form-control password-confirm" minlength="8" id="signup-password-confirm" name="password_confirm" placeholder="Password" required>
                         <label for="password_confirm">Repeat Password</label>
                         <div class="invalid-feedback">Passwords must match</div>
                     </div>
