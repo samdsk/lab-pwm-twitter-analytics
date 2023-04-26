@@ -1,10 +1,11 @@
-const Auth = require('../models/Auth')
-const User = require('../models/User')
 const bcrypt = require('bcrypt')
 const mongoose = require('mongoose')
 const recaptcha = require('../utils/recaptcha')
 const sendEmail = require('../utils/sendEmail')
+const Auth = require('../models/Auth')
+const User = require('../models/User')
 
+// creating a new user (making a new db record)
 const createUser = async (req,res,next) => {
     console.log("Signup: request recieved");
 
@@ -65,6 +66,7 @@ const createUser = async (req,res,next) => {
     })
 }
 
+// render signup page
 const signupPage = async (req,res) => {
     if(!req.session.username || !req.session.email)
         res.render('pages/singup',{signup:true})

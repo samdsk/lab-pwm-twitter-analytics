@@ -1,6 +1,7 @@
 const recaptcha = require('../utils/recaptcha')
 const sendEmail = require('../utils/sendEmail')
 
+// render contact page
 const getContact = async (req,res,next) =>{
     if(!req.session.username || !req.session.email)
         res.render('pages/contact',{contact:true})
@@ -8,6 +9,7 @@ const getContact = async (req,res,next) =>{
         res.render('pages/contact',{contact:true,logout:true})
 }
 
+// post message to webmaster
 const postContact = async (req,res,next) =>{
     console.log("Contact: new message received.");
 

@@ -4,6 +4,7 @@ const User = require("../models/User")
 const SearchResults = require('../models/SearchResults')
 const recaptcha = require('../utils/recaptcha')
 
+// render profile page
 const getProfile = async (req,res,next) => {
     res.render('pages/profile',{
         logout:true,
@@ -15,6 +16,7 @@ const getProfile = async (req,res,next) => {
     })
 }
 
+// update password
 const updateProfile = async (req,res,next) => {
     console.log("Profile: update psw request received.");
 

@@ -1,8 +1,10 @@
 const mongoose = require('mongoose')
+
 const Auth = require('../models/Auth')
 const User = require('../models/User')
 const SearchResults = require('../models/SearchResults')
 
+// returns true if id belongs to this user
 async function validateID(id,email){
     if(!mongoose.isValidObjectId(id)) return false
 
@@ -16,7 +18,7 @@ async function validateID(id,email){
     return true
 }
 
-
+// sends search record data as json obj
 const getResults = async (req,res,next) => {
 
     let email = req.session.email
@@ -33,8 +35,7 @@ const getResults = async (req,res,next) => {
     }else{
         console.log("Results: new compare request received.");
 
-        if(!req.query.id.length) return res.json({error:"Must provide two ids"})
-        if(req.query.id.length != 2) return res.json({error:"Must provide two ids"})
+        if(!req.query.id.length || req.query.id.length != 2) return res.json({error:"Must provide two ids"})
 
         if(!(await validateID(req.query.id[0],email)
             && await validateID(req.query.id[1],email)))
@@ -48,7 +49,7 @@ const getResults = async (req,res,next) => {
     }
 }
 
-
+// removes/deletes the given search record from this user
 const removeResult = async (req,res,next) => {
     console.log("Results: delete request received.");
     if(!req.body.id) return res.json({error:"Missing id"})
