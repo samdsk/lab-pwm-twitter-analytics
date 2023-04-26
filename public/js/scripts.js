@@ -16,8 +16,6 @@
     })
 })()
 
-
-
 // ! enable boostrap tooltips
 const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
 const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
@@ -65,18 +63,17 @@ const validateEmail = (email) => {
 const sleep = ms => new Promise(r => setTimeout(r,ms))
 
 // Caching previous search record requests
+/* async function loadFromCache(url,id){
+  let data
+  if(localStorage.getItem("dataCache-"+id)){
+    data = JSON.parse(localStorage.getItem("dataCache-"+id))
+  }else{
+    data = await postViaWorker(null,'GET',url+id)
+    localStorage.setItem("dataCache-"+id,JSON.stringify(data))
+  }
 
-// async function loadFromCache(url,id){
-//   let data
-//   if(localStorage.getItem("dataCache-"+id)){
-//     data = JSON.parse(localStorage.getItem("dataCache-"+id))
-//   }else{
-//     data = await postViaWorker(null,'GET',url+id)
-//     localStorage.setItem("dataCache-"+id,JSON.stringify(data))
-//   }
-
-//   return data
-// }
+  return data
+} */
 
 // g-captcha callback enable
 function enableBtns(){
