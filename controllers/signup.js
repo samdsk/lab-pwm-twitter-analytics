@@ -1,15 +1,17 @@
-const Auth = require('../models/Auth')
-const User = require('../models/User')
 const bcrypt = require('bcrypt')
 const mongoose = require('mongoose')
 const recaptcha = require('../utils/recaptcha')
 const sendEmail = require('../utils/sendEmail')
+const Auth = require('../models/Auth')
+const User = require('../models/User')
 
+// creating a new user (making a new db record)
 const createUser = async (req,res,next) => {
     console.log("Signup: request recieved");
-
+    // console.log(req.body);
     if( !req.body.email ||
         !req.body.password ||
+        !req.body.password_confirm ||
         !req.body.name ||
         !req.body.terms) return res.json({error:"Missing fields"})
 
@@ -49,8 +51,8 @@ const createUser = async (req,res,next) => {
             html:`
                 <h4 class="h4">Welcome ${req.body.name}</h4>
                 <p>You've successfully created an account!</p>
-                <p>Email ${req.body.email}</p>
-                <p>Password ${req.body.password}</p>
+                <p>Email: ${req.body.email}</p>
+                <p>Password: ${req.body.password}</p>
                 `
         }
 
@@ -64,6 +66,7 @@ const createUser = async (req,res,next) => {
     })
 }
 
+// render signup page
 const signupPage = async (req,res) => {
     if(!req.session.username || !req.session.email)
         res.render('pages/singup',{signup:true})

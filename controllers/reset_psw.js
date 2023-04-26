@@ -5,6 +5,7 @@ const recaptcha = require('../utils/recaptcha')
 const sendEmail = require('../utils/sendEmail')
 const JWT_EXP = '30m'
 
+// render reset password page
 const getReset = async (req,res,next) => {
     const {email,token} = req.params
 
@@ -27,14 +28,13 @@ const getReset = async (req,res,next) => {
 
 }
 
-
+// resetting password
 const putReset = async (req,res,next) =>{
-    console.log("reset request recieved");
+    console.log("Reset Psw: request recieved");
     const {email,password,password_confirm} = req.body
 
     let catpcha = await recaptcha(req.body['g-recaptcha-response'])
     if(!catpcha) return res.json({error:"Invalid captcha!"})
-
 
     if(!email || !password || !password_confirm) return res.json({error:"Invalid request"})
     if(password !== password_confirm) return res.json({error:"Passwords don't match"})

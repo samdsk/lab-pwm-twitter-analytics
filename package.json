@@ -1,6 +1,6 @@
 {
   "name": "twitter_analytics",
-  "version": "0.7.0",
+  "version": "1.0.0",
   "description": "pwm-project-2022",
   "main": "index.js",
   "scripts": {
@@ -45,6 +45,6 @@
   },
   "devDependencies": {
     "dotenv": "^16.0.3",
-    "nodemon": "^2.0.20"
+    "nodemon": "^2.0.22"
   }
 }

@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 
+//Schema for search record
 const SeachResultsSchema = new mongoose.Schema({
     _id:{type:mongoose.Schema.Types.ObjectId},
     date : {type:Date,required:true},
@@ -28,7 +29,7 @@ const SeachResultsSchema = new mongoose.Schema({
                 quote_count:{type:Number,default:0},
                 impression_count:{type:Number,default:0}
             }
-        }, // original posts
+        },
         video : {
             count : {type:Number,default:0},
             interval : {type:Number,default:0},
@@ -39,7 +40,7 @@ const SeachResultsSchema = new mongoose.Schema({
                 quote_count:{type:Number,default:0},
                 impression_count:{type:Number,default:0}
             }
-        }, // original posts
+        },
         photo : {
             count : {type:Number,default:0},
             interval : {type:Number,default:0},
@@ -50,7 +51,7 @@ const SeachResultsSchema = new mongoose.Schema({
                 quote_count:{type:Number,default:0},
                 impression_count:{type:Number,default:0}
             }
-        }, // original posts
+        },
         link : {
             count : {type:Number,default:0},
             interval : {type:Number,default:0},
@@ -61,7 +62,7 @@ const SeachResultsSchema = new mongoose.Schema({
                 quote_count:{type:Number,default:0},
                 impression_count:{type:Number,default:0}
             }
-        }, // original posts
+        },
         polls : {
             count : {type:Number,default:0},
             interval : {type:Number,default:0},
@@ -72,7 +73,7 @@ const SeachResultsSchema = new mongoose.Schema({
                 quote_count:{type:Number,default:0},
                 impression_count:{type:Number,default:0}
             }
-        }, // original posts
+        },
         animated_gif : {
             count : {type:Number,default:0},
             interval : {type:Number,default:0},
@@ -83,7 +84,7 @@ const SeachResultsSchema = new mongoose.Schema({
                 quote_count:{type:Number,default:0},
                 impression_count:{type:Number,default:0}
             }
-        } // gif tweets count
+        }
     },
     highlights : {
         retweet_count : {
@@ -97,11 +98,11 @@ const SeachResultsSchema = new mongoose.Schema({
         like_count : {
             id : {type:String,default:""},
             count : {type:String},
-        },
+        },// tweet with most likes
         quote_count : {
             id : {type:String,default:""},
             count : {type:String},
-        }, // tweet with most likes
+        }, // tweet with most quotes
         impression_count : {
             id : {type:String,default:""},
             count : {type:String},
@@ -160,7 +161,5 @@ const SeachResultsSchema = new mongoose.Schema({
     }
 
 })
-
-let counts
 
 module.exports = mongoose.model('SearchResults',SeachResultsSchema)

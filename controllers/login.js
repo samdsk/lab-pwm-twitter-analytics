@@ -1,10 +1,13 @@
 const Auth = require('../models/Auth')
-const bcrypt = require('bcrypt')
-
 const User = require('../models/User')
-const SessionDuration = 1000 * 60 * 60 * 60
+
+const bcrypt = require('bcrypt')
 const md5 = require('md5')
 
+// Remember me session duration
+const SessionDuration = 1000 * 60 * 60 * 48 // ms s m h 48hours
+
+// login process
 const login = async (req,res,next) => {
     const {email, password, remember} = req.body
     console.log("Login: new request received for:",email);

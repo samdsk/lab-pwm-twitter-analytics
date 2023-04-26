@@ -26,3 +26,5 @@ credentials.txt
 *.log
 *.sql
 *.sqlite
+
+.DS_Store

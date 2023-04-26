@@ -9,13 +9,11 @@
     <main class="container mt-5 mb-5" id="index">
       <div class="row align-items-center justify-content-center">
         <div class="col-sm-12 col-md-8 pt-3 pb-3 rounded border">
-
           <p class="container-fluid text-center">
               Welcome to <strong><i class="bi bi-twitter"></i> Analytics</strong>
               <br>
-              This is a Twitter analytics application which let you have insights about public profiles
+              This is a Twitter analytics application which let you analyze public profiles.
           </p>
-
           <form id="login-form" class="container-sm p-3 needs-validation" action="/login" method="POST" novalidate>
               <h4 class="text-star">Log in</h4>
               <div class="form-floating mb-3">
@@ -39,9 +37,7 @@
                       <svg class="col d-inline " viewBox="0 0 300 1" xmlns="http://www.w3.org/2000/svg">
                           <line x1="0" y1="0" x2="300" y2="0" stroke="#aaaaaa" />
                       </svg>
-
                       <p class="col-1 d-inline pt-2">or</p>
-
                       <svg class="col d-inline " viewBox="0 0 300 1" xmlns="http://www.w3.org/2000/svg">
                           <line x1="0" y1="0" x2="300" y2="0" stroke="#aaaaaa" />
                       </svg>
@@ -49,7 +45,6 @@
                   <p class="">Don't have an account? <a href="/signup">Sign up for free</a></p>
               </div>
           </form>
-
           <div id="forgot-psw-modal" class="modal" tabindex="-1">
               <div class="modal-dialog">
                 <div class="modal-content">
@@ -61,7 +56,7 @@
                       <form id="forgot-psw-form" class="form-controll needs-validation" action="/forgot-password" method="POST">
                           <label>Please insert the email</label>
                           <div class="form-floating mb-3 has-validation">
-                              <input id="forgot-email" name="email" type="email" class="form-control form-control-sm" required>
+                              <input id="forgot-email" name="email" type="email" class="form-control form-control-sm email" required>
                               <label for="forgot-email">email</label>
                               <div class="valid-feedback">Looks good!</div>
                           </div>
@@ -73,10 +68,8 @@
                 </div>
               </div>
           </div>
-
         </div>
       </div>
-
     </main>
     <!--footer-->
     <%- include('../partials/footer') %>

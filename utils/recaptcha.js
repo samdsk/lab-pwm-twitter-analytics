@@ -1,6 +1,7 @@
 const fetch = require('node-fetch')
 
-
+// recaptcher validation
+// returns true if captcha string is valid
 const recaptcha = async(captcha)=>{
     if(!captcha || captcha == '') return false
 

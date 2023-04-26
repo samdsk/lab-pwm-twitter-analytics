@@ -1,5 +1,7 @@
 const nodemailer = require('nodemailer')
 
+// sends email using nodemailer
+// requires: mail_option object
 module.exports = async function (mail_opt){
     return new Promise((resolve,reject)=>{
         const transporter = nodemailer.createTransport({

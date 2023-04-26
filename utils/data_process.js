@@ -1,6 +1,7 @@
 const fs = require('fs')
 const pathToJsonObj = "./tweets_data.json"
 
+// Parse data received from Twitter API and returns a JSON obj
 const collectData = async (DATA) => {
 
     let jsonObj = fs.readFileSync(require.resolve(pathToJsonObj),"utf-8")
@@ -29,7 +30,6 @@ const collectData = async (DATA) => {
 
     temp_date.setDate(temp_end.getDate()-7)
     temp_end.setDate(temp_end.getDate())
-    // console.log(temp_date,temp_end);
     TWEETS.interval = temp_end.getTime() - temp_date.getTime()
 
     while(temp_date<=temp_end){
@@ -60,9 +60,11 @@ const collectData = async (DATA) => {
 
     // collect metioned users
     const mentioned_users = {}
+
     // collect used hashtags
     const hashtags = {}
 
+    // collect used langs
     const lang = {}
 
     data.forEach(e => {
@@ -98,21 +100,16 @@ const collectData = async (DATA) => {
         tweets_per_day[date].media[mediaType]++
         tweets_per_day[date].type[type]++
 
-
         if(type != "retweeted"){
-            //updateInterval(TWEETS.media_type[mediaType],time,interval_start_time)
             updateMetrics(TWEETS.media_type,mediaType,e)
-
             updateMetrics(TWEETS.type,type,e)
             updateMetricsTotal(TWEETS,e)
-            //updateInterval(TWEETS.type[type],time,interval_start_time)
         }
 
         // count total posts and interval between tweets
         updateInterval(TWEETS.total,time,interval_start_time)
-        // console.log(e.id,mediaType,type);
     });
-    // console.log(hashtags_count);
+
     TWEETS.tweets_per_day = tweets_per_day
     TWEETS.mentioned_users  = mentioned_users
     TWEETS.hashtags = hashtags
@@ -121,6 +118,7 @@ const collectData = async (DATA) => {
     return TWEETS
 }
 
+// returns the Type of the given tweet data
 function findTweetType(e){
     let type = undefined
     if(e?.referenced_tweets){
@@ -131,6 +129,8 @@ function findTweetType(e){
     }
     return type
 }
+
+// returns the Media Type of the given tweet data
 function findMediaType(media,e){
     let mediaType = undefined
     if(media && e.attachments?.media_keys){
@@ -145,6 +145,7 @@ function findMediaType(media,e){
 
     return mediaType
 }
+
 // calculate intervals by dividing the accumulated interval by count for each subtype
 // requires TWEETS data type
 function avgInterval(data,interval){
@@ -153,14 +154,19 @@ function avgInterval(data,interval){
     })
     delete data.last
 }
+
+// calculate the average interval of total tweets
 function avgIntervalTotal(data,interval){
     data.interval = calcAvg(data.count,interval)
     delete data.last
 }
+
+// returns 0 if count == 0 otherwise returns sum / count
 function calcAvg(count,sum) {
     if(count == 0) return 0
     return Math.floor(sum/count)
 }
+
 // accumulate public metrics for each type
 function updateMetrics(data,type,e){
     Object.keys(data[type].metrics).forEach(key => {
@@ -168,6 +174,7 @@ function updateMetrics(data,type,e){
     })
 }
 
+// update metrics for total tweets
 function updateMetricsTotal(data,e){
     let total = data.total.metrics
     Object.keys(total).forEach(key => {
@@ -177,6 +184,7 @@ function updateMetricsTotal(data,e){
 }
 
 // compare current post with new post for most retweets, replies, likes, impressions
+// updates if this tweet metrics >= old metrics update otherwise not
 function updateHighlights(data,key,e){
     if(data.highlights[key].count == 0)
         data.highlights[key] = {id:e.id,count:e.public_metrics[key]}
@@ -184,7 +192,7 @@ function updateHighlights(data,key,e){
         data.highlights[key] = {id:e.id,count:e.public_metrics[key]}
 }
 
-// accumulate interval for the given type
+// update interval for the given type
 function updateInterval(data,time,interval_start_time){
     if(data.last == 0){
         data.interval = time - interval_start_time
@@ -195,14 +203,14 @@ function updateInterval(data,time,interval_start_time){
 }
 
 // converts from miliseconds to H:m:s
-function msToHMS(e) {
+/* function msToHMS(e) {
     let s = e/1000;
     let m = s/60;
     s = s%60;
     let h = m/60;
     m = m%60;
     return [Math.floor(h),Math.floor(m),Math.floor(s)]
-}
+} */
 
 const process_data = (async (DATA) => {
 
@@ -216,16 +224,16 @@ const process_data = (async (DATA) => {
     return data
 })
 
-// async function test(){
-//     let FILE = fs.readFileSync('../data.json')
-//     let data =  await collectData(JSON.parse(FILE)).then( data => {
-//         avgInterval(data.media_type,data.interval)
-//         avgInterval(data.type,data.interval)
-//         avgIntervalTotal(data.total,data.interval)
-//         return data
-//     })
-//     console.log(data);
-// }
+/* async function test(){
+    let FILE = fs.readFileSync('../data.json')
+    let data =  await collectData(JSON.parse(FILE)).then( data => {
+        avgInterval(data.media_type,data.interval)
+        avgInterval(data.type,data.interval)
+        avgIntervalTotal(data.total,data.interval)
+        return data
+    })
+    console.log(data);
+} */
 
 // test()
 

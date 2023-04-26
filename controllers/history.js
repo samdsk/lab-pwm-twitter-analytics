@@ -2,24 +2,26 @@ const Auth = require('../models/Auth')
 const User = require('../models/User')
 const SearchResults = require('../models/SearchResults')
 
+// return search records of given email
 const getSearchedResults = async (email) => {
     let user = await Auth.findOne({email:email})
     let searched = await User.findOne({_id:user._id},'searched')
     searched = searched.searched
-    const search_ids = []
+    const results = []
     const projections = `_id date name user_img username
     start_date end_date followings followers total_tweets total.count`;
 
     await Promise.all(
         searched.map( async (id) => {
             let temp = await SearchResults.findById(id,projections)
-            search_ids.push(temp)
+            results.push(temp)
         })
     )
 
-    return search_ids
+    return results
 }
 
+// render history page
 const getHistory = async (req,res,next) => {
 
     let results = await getSearchedResults(req.session.email)
