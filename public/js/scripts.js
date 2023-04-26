@@ -137,7 +137,7 @@ $(document).ready(async function(){
 
   // Submit form via web worker
   $('.form-submit').click(async function(event){
-
+    event.preventDefault()
     const form_id = $(this).attr('data-form')
     const form = $('#'+form_id)
     if(!form) return errorDisplay({error:"Frontend error: Form must be specified"})
@@ -154,7 +154,8 @@ $(document).ready(async function(){
 
     const email = form.find('input.email')
 
-    if(!validateEmail(email[0].value)){
+    if(email.length==1 && !validateEmail(email[0].value)){
+      console.log("email failed");
       $(email[0]).parent().find('.invalid-feedback').show()
       return
     }
@@ -168,17 +169,14 @@ $(document).ready(async function(){
       const input_confirm = psw_confirm[0]
 
       if(input.value !== input_confirm.value) {
+        console.log("psw failed");
         input_confirm.setCustomValidity("Passwords don't match")
         $(input_confirm).parent().find('.invalid-feedback').show()
-
         return
       }
       input_confirm.setCustomValidity("")
       $(input_confirm).parent().find('.invalid-feedback').hide()
     }
-
-    event.preventDefault()
-    event.stopPropagation()
 
     const method = form.attr('method')
     if(!method) return errorDisplay({error:"Must specify method in form"})
@@ -349,6 +347,7 @@ $(document).ready(async function(){
 
     $('#search-btn').removeAttr("disabled")
 
+    disableBtns()
     grecaptcha.reset()
   })
 

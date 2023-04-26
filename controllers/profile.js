@@ -52,7 +52,6 @@ const deleteProfile = async (req,res,next) => {
 
     if(req.session.email){
         Auth.findOne({email:req.session.email},async function(err,auth){
-            console.log(req.body.password);
             await bcrypt.compare(req.body.password,auth.password).then(async (check)=>{
 
                 if(!check) return res.json({error:"Credentials are not valid"})
