@@ -16,20 +16,35 @@
     })
 })()
 
+
+
 // ! enable boostrap tooltips
 const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
 const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
 
+// Chart colors
 const colors_1 = ['#6a4c93','#1982c4','#8ac926','#ffca3a','#ff595e','#778da9']
 const colors_2 = ['#26547c','#ef476f','#ffd166','#06d6a0','#FAA307','#7d8597']
 const colors_3 = ['#33a8c7','#52e3e1','#a0e426','#00a878','#f77976','#d883ff','#d883ff','#147DF5','#9336fd','#BE0AFF']
 
-// ! chartsjs plugins
+// set theme on page load
+document.getElementsByTagName('html')[0].setAttribute("data-bs-theme",localStorage.getItem("theme") || 'light')
+
+if(document.getElementsByTagName('html')[0].getAttribute('data-bs-theme')=='light'){
+  document.querySelector('#dark-mode i').classList.add('bi-sun-fill')
+}else{
+  document.querySelector('#dark-mode i').classList.add('bi-moon-stars-fill')
+}
+
+// ! registring chartsjs plugins
 Chart.register(ChartDataLabels)
 
+// web worker for sending ajax requests
 function postViaWorker(data,method,url){
   return new Promise((resolve,reject) => {
+
     let worker = new Worker('/js/worker.js')
+
     worker.postMessage({data:data,method:method,url:url})
     worker.onmessage = (event) => {
       resolve(event.data)
@@ -37,14 +52,7 @@ function postViaWorker(data,method,url){
   })
 }
 
-// set theme on page load
-document.getElementsByTagName('html')[0].setAttribute("data-bs-theme",localStorage.getItem("theme") || 'light')
-if(document.getElementsByTagName('html')[0].getAttribute('data-bs-theme')=='light'){
-  document.querySelector('#dark-mode i').classList.add('bi-sun-fill')
-}else{
-  document.querySelector('#dark-mode i').classList.add('bi-moon-stars-fill')
-}
-
+// email validation with regex
 const validateEmail = (email) => {
   return String(email)
     .toLowerCase()
@@ -53,20 +61,23 @@ const validateEmail = (email) => {
     );
 };
 
-
+// sleep/waiting function
 const sleep = ms => new Promise(r => setTimeout(r,ms))
 
-async function loadFromCache(url,id){
-  let data
-  if(localStorage.getItem("dataCache-"+id)){
-    data = JSON.parse(localStorage.getItem("dataCache-"+id))
-  }else{
-    data = await postViaWorker(null,'GET',url+id)
-    localStorage.setItem("dataCache-"+id,JSON.stringify(data))
-  }
+// Caching previous search record requests
 
-  return data
-}
+// async function loadFromCache(url,id){
+//   let data
+//   if(localStorage.getItem("dataCache-"+id)){
+//     data = JSON.parse(localStorage.getItem("dataCache-"+id))
+//   }else{
+//     data = await postViaWorker(null,'GET',url+id)
+//     localStorage.setItem("dataCache-"+id,JSON.stringify(data))
+//   }
+
+//   return data
+// }
+
 // g-captcha callback enable
 function enableBtns(){
 
@@ -76,6 +87,7 @@ function enableBtns(){
     button.removeAttribute("disabled")
   })
 }
+
 // g-captcha callback disable
 function disableBtns(){
   let buttons = document.getElementsByClassName('disable-btn')
@@ -86,6 +98,7 @@ function disableBtns(){
 }
 
 $(document).ready(async function(){
+
 
   // dark-mode click activate function
   $('#dark-mode').click(function(){
@@ -114,12 +127,18 @@ $(document).ready(async function(){
       $('i',this).addClass('bi-sun-fill').removeClass('bi-moon-stars-fill')
   })
 
-  // forgot psw
+  // Show Modal
   $('.show-modal-btn').click(function(){
     let modal = $(this).attr('data-modal')
     $('#'+modal).modal('show')
   })
 
+  // reset checkboxes on page ready
+  $('.form-check-input:checked').each(function(i,e){
+    $(this).click()
+  })
+
+  // Submit form via web worker
   $('.form-submit').click(async function(event){
 
     const form_id = $(this).attr('data-form')
@@ -176,17 +195,10 @@ $(document).ready(async function(){
 
     if(data.error || data.success)
       return errorDisplay(data)
-
-    // if(data.redirect)
-    //   return window.location.href = data.redirect
-
   })
 
-  // reset checkboxes on page ready
-  $('.form-check-input:checked').each(function(i,e){
-    $(this).click()
-  })
 
+  // Display Error/Success message from URL Params
   function errorParamDisplay(){
     const params = new URLSearchParams(document.location.search)
 
@@ -197,10 +209,10 @@ $(document).ready(async function(){
     if(params.get('success')){
       errorDisplay({success:params.get('success')})
     }
+
     var newURL = location.href.split("?")[0];
     window.history.pushState('object', document.title, newURL);
   }
-  errorParamDisplay()
 
   // ! error display function
   function errorDisplay(data){
@@ -221,9 +233,7 @@ $(document).ready(async function(){
     $('#error-modal').modal('show')
   }
 
-
-
-  // delete a seached result
+  // removing deleted search record
   $('.close-icon').click(async function(){
     if(!confirm("Are you sure you want to delete this record?")) return
 
@@ -241,7 +251,7 @@ $(document).ready(async function(){
 
   })
 
-  // show detailed clicked result
+  // show detailed view of clicked search record
   $('.searched-entry').click(async function(){
     let id = $(this).attr('id')
     let url = '/results?id='
@@ -251,7 +261,7 @@ $(document).ready(async function(){
     $('#results-modal').removeClass('d-none').modal('toggle')
     $('#loader #spinner').removeClass('d-none')
 
-    let data = await loadFromCache(url,id)
+    let data = await postViaWorker(null,'GET',url+id)
 
     await sleep(500)
     $('#loader #spinner').addClass('d-none')
@@ -261,7 +271,7 @@ $(document).ready(async function(){
 
   })
 
-  // search history close button icon hovering effect
+  // search history close button / icon hovering effect
   $('.close-icon').hover(function(){
     $(this).removeClass('bi-x-square')
     $(this).addClass('bi-x-square-fill')
@@ -275,7 +285,7 @@ $(document).ready(async function(){
     $('.modal').modal('hide')
   })
 
-  // show detailed comparing results
+  // show detailed view of comparing results
   $('.compare-btn').click(async function(event){
     const id_1 =  $('.form-check-input:checked').attr('data-id')
     const id_2 =  $(this).parent().find('.form-check-input').attr('data-id')
@@ -286,8 +296,8 @@ $(document).ready(async function(){
     $('#results-modal').removeClass('d-none').modal('toggle')
     $('#loader #spinner').removeClass('d-none')
 
-    let data_1 = await loadFromCache(url,id_1)
-    let data_2 = await loadFromCache(url,id_2)
+    let data_1 = await postViaWorker(null,'GET',url+id_1)
+    let data_2 = await postViaWorker(null,'GET',url+id_2)
 
     await sleep(500)
     $('#loader #spinner').addClass('d-none')
@@ -295,10 +305,8 @@ $(document).ready(async function(){
     await genSearchResults([data_1,data_2])
   })
 
-  // disable checkboxes of other usernames
+  // disables checkboxes of other usernames
   // and re-enable checkboxes if there is no checkboxes checked
-
-  //FIXME to test with more results per username
   $('.form-check-input').click(function(event){
 
     let username = $(this).attr('data-username')
@@ -332,6 +340,7 @@ $(document).ready(async function(){
     $('#search-btn').prop("disabled",true)
 
     let data = await postViaWorker($('#form-search').serialize(),'POST','/twitter')
+
     // let data  = await fetch('../js/output_data_compare.json').then( response => {
     //       return response.json()
     // })
@@ -346,11 +355,27 @@ $(document).ready(async function(){
     grecaptcha.reset()
   })
 
+  // resets the search results area progress bar
+  function resetProgressBar() {
+    let id = "#loader #progress-bar "
+    $(id+' .progress-bar').removeClass(function (index, className) {
+      return (className.match(new RegExp("\\S*w-\\S*", 'g')) || []).join(' ')
+    })
+  }
+
+  // update the search results area progress bar
+  function updateProgressBar(n){
+    let id = "#loader #progress-bar "
+    $(id+' .progress-bar').addClass('w-'+n)
+  }
+
+  // resetting/cleaning search results area
   function cleanResults(){
     $('#results #user-info #user-profile img').remove()
     $('#results .data-clean').each((i,obj) => $(obj).empty())
     $('#results .node-clean').each((i,obj) => $(obj).remove())
   }
+
   // ! populate with seach results + charts
   async function genSearchResults(data){
     if(data.error) return errorDisplay(data)
@@ -373,8 +398,10 @@ $(document).ready(async function(){
 
   }
 
+  // building search area
   async function build(INPUT){
 
+    // set chart colors for according to theme
     if(localStorage.getItem('theme') == 'dark'){
       Chart.defaults.color = "#bbb"
       Chart.defaults.borderColor = "rgba(256, 255, 255, 0.1)"
@@ -605,8 +632,6 @@ $(document).ready(async function(){
 
     }
 
-
-
     const load_media_type_Chart = async () => {
       let id = "tweets-by-media-type"
       let labels = ["Text","Video","Photo","Link","Poll","Gif"]
@@ -706,8 +731,11 @@ $(document).ready(async function(){
     await load_avg_media_type()
 
     updateProgressBar(100)
+
+    sleep(200)
   }
 
+  // generate/append subtypes of MEDIA_TYPE or TYPE json objs
   function load_subTypes(id,data,compare,dn,cn){
     for(let type of Object.keys(data)){
       let sub_id = id+"-"+type
@@ -719,6 +747,7 @@ $(document).ready(async function(){
     }
   }
 
+  // generate language chart
   async function load_langs_chart(id,data,compare){
     if(compare){
       await pieCharts(data,compare,id,"Tweets by languages",colors_3)
@@ -727,6 +756,7 @@ $(document).ready(async function(){
     }
   }
 
+  // append new element (<a>) to given list
   function build_ulElement(id,type){
     let sub_id = id+'-'+type
 
@@ -742,6 +772,8 @@ $(document).ready(async function(){
     $('#'+id).append(a)
   }
 
+  // insert apply round function to data and compare and insert it to given id
+  // requires: round function : (a) => b
   function load_element(id,data,compare,title,round){
     let rounded = round(data)
 
@@ -753,6 +785,7 @@ $(document).ready(async function(){
       buildCompare(id,data,compare,title,round)
   }
 
+  // builds Average area of MEDIA_TYPE or TYPE
   function load_avg(id,data,compare){
     id = '#results #'+id
     let count_id = id+'-count'
@@ -777,14 +810,18 @@ $(document).ready(async function(){
 
   }
 
+  // if compare value is present appends an icon and the difference between comparing value,
+  // the value is rounded by the given round function
+  // if type is NOT equal to 'interval' it will set data-round and data-real
+  // requires: round function : (a) => b
   function buildCompare(id,data,compare,title,round,type = undefined){
     if(!compare) return
     if(data == compare) return
 
     let diff = Number((data - compare).toFixed(3))
 
-    if(type === 'interval')
-      console.log(diff);
+    // if(type === 'interval')
+    //   console.log(diff);
 
     let rounded = round(diff)
 
@@ -801,6 +838,7 @@ $(document).ready(async function(){
     $(id).append(rounded)
   }
 
+  // append comparing icon: if diff is negative red arrow pointing downwards otherwise green upwards
   function appendDiffIcon(id,diff){
     if(diff == 0) return
 
@@ -820,12 +858,14 @@ $(document).ready(async function(){
     $(id).after(icon)
   }
 
+  // calcuate the engament of tweet account within the given data
+  // Formula: (Likes + Retweets + Quotes + Replies) divided by the number of tweets,
+  // then by the total number of followers, then multiplied by 100.
   function engagement(input){
     if(!input) return undefined
 
     let result = 0
     let metrics = input.total.metrics
-
 
     for(let type of Object.keys(metrics)){
       if(type == 'impression_count') continue
@@ -840,18 +880,7 @@ $(document).ready(async function(){
 
   }
 
-  function resetProgressBar() {
-    let id = "#loader #progress-bar "
-    $(id+' .progress-bar').removeClass(function (index, className) {
-      return (className.match(new RegExp("\\S*w-\\S*", 'g')) || []).join(' ')
-    })
-  }
-
-  function updateProgressBar(n){
-    let id = "#loader #progress-bar "
-    $(id+' .progress-bar').addClass('w-'+n)
-  }
-
+  // appends date-time of search record
   function load_dateTime(id,data){
     let date = data.date
     $(id+" #search-date .date").text(date.slice(0,10))
@@ -873,6 +902,7 @@ $(document).ready(async function(){
     $(id+" #sample span").text(data.total.count)
   }
 
+  // extracts and returns languages and counts from given json obj
   function extractLangs(langs) {
     let labels = []
     let dataset = []
@@ -896,6 +926,8 @@ $(document).ready(async function(){
 
     return {data:dataset,labels:labels}
   }
+
+  // extract  and returns counts of given json obj
   function extractCounts(data){
     let dataset = []
     Object.keys(data).forEach( key => {
@@ -904,6 +936,7 @@ $(document).ready(async function(){
 
     return dataset
   }
+
   // draw pie charts
   async function pieCharts(data_1,data_2,id,title,colors,chartType = 'pie'){
 
@@ -970,6 +1003,7 @@ $(document).ready(async function(){
     })
   }
 
+  // builds dataset element required by chartsjs dataset obj
   function toDataset(data,label,color,stack){
     let struct = {}
     struct["data"] = data
@@ -980,6 +1014,8 @@ $(document).ready(async function(){
     return struct
   }
 
+  // extracts media and type and their respective counts
+  // output is an array of dataset obj of chartsjs
   function extractMediaAndType(data,colors_1,colors_2){
     let labels = Object.keys(data)
     let count = 0
@@ -1025,6 +1061,7 @@ $(document).ready(async function(){
     return output
   }
 
+  // returns total of tweets per day
   function extractDailyTotal(data){
     let labels = Object.keys(data)
 
@@ -1042,6 +1079,7 @@ $(document).ready(async function(){
     return output
   }
 
+  // generates daily chart
   async function dailyChartByType(datasets,labels,id,title){
     let canvas = document.createElement("canvas")
     canvas.id = id+"-chart"
@@ -1089,6 +1127,7 @@ $(document).ready(async function(){
 
   }
 
+  // gengerates top 10 mentions/hashtags charts
   async function top10Chart(data,id,title){
 
     let canvas = document.createElement("canvas")
@@ -1137,6 +1176,7 @@ $(document).ready(async function(){
     })
   }
 
+  // generates daily line chart
   async function lineChart(data_1,labels,data_2,id,type,title){
     let canvas = document.createElement("canvas")
     canvas.id = type+"-chart"
@@ -1188,6 +1228,9 @@ $(document).ready(async function(){
     })
   }
 
+  // returns the plural of given string *_count
+  // required string formatted like: something_count
+  // supported words are: retweet_count, reply_count, impression_count, like_count, quote_count
   function countToPlural(key){
     if(key == 'reply_count')
       return  "Replies"
@@ -1195,6 +1238,8 @@ $(document).ready(async function(){
       return key.charAt(0).toUpperCase()+key.slice(1,-6)+"s"
   }
 
+  // set hover to elements which have the class name data-hover
+  // requires: element must have data-real and data-round attibutes
   function set_data_hover(){
     $(document).on("mouseover ",'.data-hover',function(){
       $(this).text($(this).attr("data-real"))
@@ -1226,10 +1271,16 @@ $(document).ready(async function(){
 
   }
 
+  // return string with letter converted to uppercase
   function toUpperFirstChar(str){
     return str.charAt(0).toUpperCase()+str.slice(1)
   }
 
+  // returns the string obtained by converting the given number in days, hours, minuts, seconds
+  // example: 10D 3H 23m 45s
+  // example: 3H 23m 45s if H == 0
+  // example: 23m 45s if D and H == 0
+  // example: 45s if D and H and m == 0
   function msToHMS(e){
     e = Math.abs(e)
     let s = e/1000;
@@ -1247,6 +1298,11 @@ $(document).ready(async function(){
 
     return Math.floor(d) +"D "+ Math.floor(h)+"H "+Math.floor(m)+"m "+Math.floor(s)+"s"
   }
+
+  // round the given number if >=million with 2 decimals
+  // if < million and >= 1000 with 3 decimals
+  // example: 140_683 -> 140.68K
+  // example: 140_600_456 -> 140.6M
   function tweetCount(count){
     if (count / 1000000 >= 1 || count / 1000000 <= -1)
       return Number((count / 1000000).toFixed(2)) + "M"
@@ -1257,13 +1313,19 @@ $(document).ready(async function(){
     return Number(count)
   }
 
+  // appends the given string to "https://twitter.com/"
+  // twitter account link
   function buildTwitterUrl(user){
     return "https://twitter.com/"+user
   }
 
+  // appends the given string to "https://twitter.com/status/"
+  // twitter post link
   function buildTwitterPostUrl(user,id){
     return buildTwitterUrl(user)+"/status/"+id
   }
 
+  // calling functions
+  errorParamDisplay()
   set_data_hover()
 })
