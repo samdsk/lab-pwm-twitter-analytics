@@ -1,9 +1,12 @@
+
+// worker for sending ajax requests
 self.onmessage = (event) => {
     // console.log("Worker received msg",event.data)
     let method = event.data.method
     let url = event.data.url
     let data = event.data.data
     var xhr = new XMLHttpRequest
+
     xhr.open(method,url)
     xhr.responseType = 'json'
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
