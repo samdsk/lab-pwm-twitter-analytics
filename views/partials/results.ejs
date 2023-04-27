@@ -193,7 +193,7 @@
                     <a href="#" class="active text-decoration-none" aria-current="true" href="#tweets-by-media-type-h">Tweets By Media Type</a>
                 </h5>
                 <div id="tweets-by-media-type-data" class="col-sm-12 col-md-8 col-lg-4">
-                    <ul id="tweets-by-media-type-data-ul" class="list-group">
+                    <div id="tweets-by-media-type-data-ul" class="list-group">
                         <a class="list-group-item list-group-item-action" onclick="return false;" >
                             <i class="bi bi-chat-right-text-fill"></i>
                             Text:
@@ -224,7 +224,7 @@
                             Gif:
                             <span id="tweets-by-media-type-data-animated_gif" class="data-clean text-primary data-hover"></span><span id="tweets-by-media-type-data-animated_gif-compare"  class="data-clean text-primary data-hover"></span>
                         </a>
-                    </ul>
+                    </div>
                 </div>
                 <div id="tweets-by-media-type" class="col-8 pie-chart-container data-clean">
                 </div>
@@ -234,7 +234,7 @@
                     <a class="text-decoration-none" href="#tweets-by-type-h">Tweets By Type</a>
                 </h5>
                 <div id="tweets-by-type-data"  class="col-sm-12 col-md-8 col-lg-4">
-                    <ul id="tweets-by-type-data-ul" class="list-group">
+                    <div id="tweets-by-type-data-ul" class="list-group">
                         <a class="list-group-item list-group-item-action" onclick="return false;" >
                             <i class="bi bi-repeat"></i>
                             Retweets:
@@ -255,7 +255,7 @@
                             Original
                             <span id="tweets-by-type-data-original" class="data-clean text-primary data-hover"></span><span id="tweets-by-type-data-original-compare"  class="data-clean text-primary data-hover"></span>
                         </a>
-                    </ul>
+                    </div>
                 </div>
                 <div id="tweets-by-type"  class="col-8 pie-chart-container data-clean">
                 </div>
@@ -264,8 +264,8 @@
                 <h5 id="tweets-by-language-h" class="col-md-6 col-lg-12 sector-title">
                     <a class="text-decoration-none" href="#tweets-by-language-h">Tweets By Language</a></h5>
                 <div id="tweets-by-langs-data"  class="col-sm-12 col-md-8 col-lg-4">
-                    <ul id="tweets-by-langs-data-ul" class="list-group data-clean">
-                    </ul>
+                    <div id="tweets-by-langs-data-ul" class="list-group data-clean">
+                    </div>
                 </div>
                 <div id="tweets-by-langs"  class="col-8 pie-chart-container data-clean">
                 </div>
@@ -299,7 +299,7 @@
                     <i class="bi bi-stopwatch" title="interval"></i>
                     <span id="avg-text-interval" class="data-clean" title="Average interval between text posts"></span><span id="avg-text-interval-compare"  class="data-clean" title="Average interval between text posts"></span>
 
-                    <ul id="avg-text-data" class="list-group">
+                    <div id="avg-text-data" class="list-group">
                         <a class="list-group-item list-group-item-action" onclick="return false;" >
                             <i class="bi bi-repeat text-primary"></i>
                             Retweets:
@@ -325,7 +325,7 @@
                             Impressions:
                             <span id="avg-text-data-impression_count" class="text-primary data-hover data-clean"></span><span id="avg-text-data-impression_count-compare" class="text-primary data-hover data-clean"></span>
                         </a>
-                    </ul>
+                    </div>
                 </div>
                 <div id="avg-video" class="col-sm-12 col-md-12 col-lg-6 col-xl-4 pb-3">
                     <i class="bi bi-camera-reels-fill"></i>
@@ -334,7 +334,7 @@
                     <i class="bi bi-stopwatch" title="interval"></i>
                     <span id="avg-video-interval" class="data-clean" title="Average interval between video posts"></span><span id="avg-video-interval-compare" class="data-clean" title="Average interval between video posts"></span>
 
-                    <ul id="avg-video-data" class="list-group">
+                    <div id="avg-video-data" class="list-group">
                         <a class="list-group-item list-group-item-action" onclick="return false;" >
                             <i class="bi bi-repeat text-primary"></i>
                             Retweets:
@@ -360,7 +360,7 @@
                             Impressions:
                             <span id="avg-video-data-impression_count" class="text-primary data-hover data-clean"></span><span id="avg-video-data-impression_count-compare" class="text-primary data-hover data-clean"></span>
                         </a>
-                    </ul>
+                    </div>
                 </div>
                 <div id="avg-photo" class="col-sm-12 col-md-12 col-lg-6 col-xl-4 pb-3">
                     <i class="bi bi-camera-fill"></i>
@@ -369,7 +369,7 @@
                     <i class="bi bi-stopwatch" title="interval"></i>
                     <span id="avg-photo-interval" class="data-clean" title="Average interval between photo posts"></span><span id="avg-photo-interval-compare" class="data-clean" title="Average interval between photo posts"></span>
 
-                    <ul id="avg-photo-data" class="list-group">
+                    <div id="avg-photo-data" class="list-group">
                         <a class="list-group-item list-group-item-action" onclick="return false;" >
                             <i class="bi bi-repeat text-primary"></i>
                             Retweets:
@@ -395,7 +395,7 @@
                             Impressions:
                             <span id="avg-photo-data-impression_count" class="text-primary data-hover data-clean"></span><span id="avg-photo-data-impression_count-compare" class="text-primary data-hover data-clean"></span>
                         </a>
-                    </ul>
+                    </div>
                 </div>
                 <div id="avg-link" class="col-sm-12 col-md-12 col-lg-6 col-xl-4 pb-3">
                     <i class="bi bi-link-45deg"></i>
@@ -404,7 +404,7 @@
                     <i class="bi bi-stopwatch" title="interval"></i>
                     <span id="avg-link-interval" class="data-clean" title="Average interval between link posts"></span><span id="avg-link-interval-compare" class="data-clean" title="Average interval between link posts"></span>
 
-                    <ul id="avg-link-data" class="list-group">
+                    <div id="avg-link-data" class="list-group">
                         <a class="list-group-item list-group-item-action" onclick="return false;" >
                             <i class="bi bi-repeat text-primary"></i>
                             Retweets:
@@ -430,7 +430,7 @@
                             Impressions:
                             <span id="avg-link-data-impression_count" class="text-primary data-hover data-clean"></span><span id="avg-link-data-impression_count-compare" class="text-primary data-hover data-clean"></span>
                         </a>
-                    </ul>
+                    </div>
                 </div>
                 <div id="avg-polls" class="col-sm-12 col-md-12 col-lg-6 col-xl-4 pb-3">
                     <i class="bi bi-clipboard-data-fill"></i>
@@ -439,7 +439,7 @@
                     <i class="bi bi-stopwatch" title="interval"></i>
                     <span id="avg-polls-interval" class="data-clean" title="Average interval between poll posts"></span><span id="avg-polls-interval-compare" class="data-clean" title="Average interval between poll posts"></span>
 
-                    <ul id="avg-polls-data" class="list-group">
+                    <div id="avg-polls-data" class="list-group">
                         <a class="list-group-item list-group-item-action" onclick="return false;" >
                             <i class="bi bi-repeat text-primary"></i>
                             Retweets:
@@ -465,7 +465,7 @@
                             Impressions:
                             <span id="avg-polls-data-impression_count" class="text-primary data-hover data-clean"></span><span id="avg-polls-data-impression_count-compare" class="text-primary data-hover data-clean"></span>
                         </a>
-                    </ul>
+                    </div>
                 </div>
                 <div id="avg-animated_gif" class="col-sm-12 col-md-12 col-lg-6 col-xl-4 pb-3">
                     <i class="bi bi-filetype-gif"></i>
@@ -473,7 +473,7 @@
                     <i class="bi bi-stopwatch" title="interval"></i>
                     <span id="avg-animated_gif-interval" class="data-clean" title="Average interval between animated_gif posts"></span><span id="avg-animated_gif-interval-compare" class="data-clean" title="Average interval between animated_gif posts"></span>
 
-                    <ul id="avg-animated_gif-data" class="list-group">
+                    <div id="avg-animated_gif-data" class="list-group">
                         <a class="list-group-item list-group-item-action" onclick="return false;" >
                             <i class="bi bi-repeat text-primary"></i>
                             Retweets:
@@ -499,7 +499,7 @@
                             Impressions:
                             <span id="avg-animated_gif-data-impression_count" class="text-primary data-hover data-clean"></span><span id="avg-animated_gif-data-impression_count-compare" class="text-primary data-hover data-clean"></span>
                         </a>
-                    </ul>
+                    </div>
                 </div>
             </div>
         </div>
@@ -515,7 +515,7 @@
                     <i class="bi bi-stopwatch" title="interval"></i>
                     <span id="avg-replied_to-interval" class="data-clean" title="Average interval between replied_to posts"></span><span id="avg-replied_to-interval-compare" class="data-clean" title="Average interval between replied_to posts"></span>
 
-                    <ul id="avg-replied_to-data" class="list-group">
+                    <div id="avg-replied_to-data" class="list-group">
                         <a class="list-group-item list-group-item-action" onclick="return false;" >
                             <i class="bi bi-repeat text-primary"></i>
                             Retweets:
@@ -541,7 +541,7 @@
                             Impressions:
                             <span id="avg-replied_to-data-impression_count" class="text-primary data-hover data-clean"></span><span id="avg-replied_to-data-impression_count-compare" class="text-primary data-hover data-clean"></span>
                         </a>
-                    </ul>
+                    </div>
                 </div>
                 <div id="avg-quoted" class="col-sm-12 col-md-12 col-lg-6 col-xl-4 pb-3">
                     <i class="bi bi-chat-right-quote-fill"></i>
@@ -550,7 +550,7 @@
                     <i class="bi bi-stopwatch" title="interval"></i>
                     <span id="avg-quoted-interval" class="data-clean" title="Average interval between quoted posts"></span><span id="avg-quoted-interval-compare" class="data-clean" title="Average interval between quoted posts"></span>
 
-                    <ul id="avg-quoted-data" class="list-group">
+                    <div id="avg-quoted-data" class="list-group">
                         <a class="list-group-item list-group-item-action" onclick="return false;" >
                             <i class="bi bi-repeat text-primary"></i>
                             Retweets:
@@ -576,7 +576,7 @@
                             Impressions:
                             <span id="avg-quoted-data-impression_count" class="text-primary data-hover data-clean"></span><span id="avg-quoted-data-impression_count-compare" class="text-primary data-hover data-clean"></span>
                         </a>
-                    </ul>
+                    </div>
                 </div>
                 <div id="avg-original" class="col-sm-12 col-md-12 col-lg-6 col-xl-4 pb-3">
                     <i class="bi bi-postcard-fill"></i>
@@ -585,7 +585,7 @@
                     <i class="bi bi-stopwatch" title="interval"></i>
                     <span id="avg-original-interval" class="data-clean" title="Average interval between original posts"></span><span id="avg-original-interval-compare" class="data-clean" title="Average interval between original posts"></span>
 
-                    <ul id="avg-original-data" class="list-group">
+                    <div id="avg-original-data" class="list-group">
                         <a class="list-group-item list-group-item-action" onclick="return false;" >
                             <i class="bi bi-repeat text-primary"></i>
                             Retweets:
@@ -611,7 +611,7 @@
                             Impressions:
                             <span id="avg-original-data-impression_count" class="text-primary data-hover data-clean"></span><span id="avg-original-data-impression_count-compare" class="text-primary data-hover data-clean"></span>
                         </a>
-                    </ul>
+                    </div>
                 </div>
             </div>
         </div>
