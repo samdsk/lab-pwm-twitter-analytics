@@ -17,17 +17,17 @@
           <form id="login-form" class="container-sm p-3 needs-validation" action="/login" method="POST" novalidate>
               <h4 class="text-star">Log in</h4>
               <div class="form-floating mb-3">
-                  <input type="email" class="form-control" id="floatingInput" name="email" autocomplete="email" placeholder="name@example.com" required>
+                  <input id="email" type="email" class="form-control" name="email" autocomplete="email" placeholder="name@example.com" required>
                   <label for="email">Email address</label>
                   <div class="invalid-feedback">Please choose a valid email.</div>
               </div>
               <div class="form-floating mb-3">
-                  <input type="password" class="form-control" name="password" autocomplete="current-password" id="floatingPassword" placeholder="Password" required>
+                  <input id="password" type="password" class="form-control" name="password" autocomplete="current-password" placeholder="Password" required>
                   <label for="password">Password</label>
               </div>
               <div id="errors" class="alert alert-danger d-none"></div>
               <div class="form-check mb-3">
-                  <input class="form-check-input" name="remember" type="checkbox">
+                  <input id="remember" class="form-check-input" name="remember" type="checkbox">
                   <label class="remember">Remember me!</label>
                   <a id="forgot-psw-modal-btn" class="show-modal-btn" data-modal="forgot-psw-modal" href="#">Forgot your passoword?</a>
               </div>
