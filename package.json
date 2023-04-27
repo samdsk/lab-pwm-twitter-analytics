@@ -1,6 +1,6 @@
 {
   "name": "twitter_analytics",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "pwm-project-2022",
   "main": "index.js",
   "scripts": {
