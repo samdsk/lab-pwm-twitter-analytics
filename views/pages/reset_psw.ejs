@@ -14,20 +14,20 @@
                 <form id="reset-psw-form" class="container-sm p-3 needs-validation" action="/reset-password" method="PUT" novalidate>
                     <h4 class="text-star">Enter a new password</h4>
                     <div class="form-floating mb-3">
-                        <input type="email" class="form-control" id="floatingInput" name="email"
+                        <input type="email" class="form-control" id="email" name="email"
                         value="
                             <%if(locals.email) {%>
                             <%= email %>
                             <% } %>" readonly required>
-                        <label for="floatingInput">Email address</label>
+                        <label for="email">Email address</label>
 
                     </div>
                     <div class="form-floating mb-3">
-                        <input type="password" class="form-control passoword" name="password" id="floatingPassword" placeholder="Password" required>
+                        <input type="password" class="form-control passoword" name="password" id="password" placeholder="Password" required>
                         <label for="password">Password</label>
                     </div>
                     <div class="form-floating mb-3 has-validation">
-                        <input type="password" class="form-control password-confirm" name="password_confirm" id="floatingPassword" placeholder="Password" required>
+                        <input type="password" class="form-control password-confirm" name="password_confirm" id="password_confirm" placeholder="Password" required>
                         <label for="password_confirm">Repeat Password</label>
                     </div>
                     <div class="row justify-content-center align-items-center">
