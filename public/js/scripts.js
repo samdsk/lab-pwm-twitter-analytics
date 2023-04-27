@@ -16,17 +16,18 @@
     })
 })()
 
-// ! enable boostrap tooltips
-const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
-
 // Chart colors
 const colors_1 = ['#6a4c93','#1982c4','#8ac926','#ffca3a','#ff595e','#778da9']
 const colors_2 = ['#26547c','#ef476f','#ffd166','#06d6a0','#FAA307','#7d8597']
 const colors_3 = ['#33a8c7','#52e3e1','#a0e426','#00a878','#f77976','#d883ff','#d883ff','#147DF5','#9336fd','#BE0AFF']
 
+// ! enable boostrap tooltips
+const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+
 // set theme on page load
-document.getElementsByTagName('html')[0].setAttribute("data-bs-theme",localStorage.getItem("theme") || 'light')
+document.getElementsByTagName('html')[0]
+.setAttribute("data-bs-theme",localStorage.getItem("theme") || 'light')
 
 if(document.getElementsByTagName('html')[0].getAttribute('data-bs-theme')=='light'){
   document.querySelector('#dark-mode i').classList.add('bi-sun-fill')
@@ -50,14 +51,21 @@ function postViaWorker(data,method,url){
   })
 }
 
-// email validation with regex
-const validateEmail = (email) => {
-  return String(email)
-    .toLowerCase()
-    .match(
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-    );
-};
+// g-captcha callback enable
+function enableBtns(){
+  let buttons = document.getElementsByClassName('disable-btn')
+  Array.prototype.slice.call(buttons).forEach(function(button){
+    button.removeAttribute("disabled")
+  })
+}
+
+// g-captcha callback disable
+function disableBtns(){
+  let buttons = document.getElementsByClassName('disable-btn')
+  Array.prototype.slice.call(buttons).forEach(function(button){
+    button.setAttribute("disabled",'')
+  })
+}
 
 // sleep/waiting function
 const sleep = ms => new Promise(r => setTimeout(r,ms))
@@ -75,28 +83,17 @@ const sleep = ms => new Promise(r => setTimeout(r,ms))
   return data
 } */
 
-// g-captcha callback enable
-function enableBtns(){
 
-  let buttons = document.getElementsByClassName('disable-btn')
-
-  Array.prototype.slice.call(buttons).forEach(function(button){
-    button.removeAttribute("disabled")
-  })
-}
-
-// g-captcha callback disable
-function disableBtns(){
-  let buttons = document.getElementsByClassName('disable-btn')
-
-  Array.prototype.slice.call(buttons).forEach(function(button){
-    button.setAttribute("disabled",'')
-  })
-}
+// email validation with regex
+const validateEmail = (email) => {
+  return String(email)
+    .toLowerCase()
+    .match(
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    );
+};
 
 $(document).ready(async function(){
-
-
   // dark-mode click activate function
   $('#dark-mode').click(function(){
     if($('html').attr('data-bs-theme') == 'light'){
@@ -134,7 +131,6 @@ $(document).ready(async function(){
   $('.form-check-input:checked').each(function(i,e){
     $(this).click()
   })
-
   // Submit form via web worker
   $('.form-submit').click(async function(event){
     event.preventDefault()
