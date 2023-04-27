@@ -91,6 +91,8 @@ footer #footer-2{
 
 .modal-xl {
     max-width: 80% !important;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .searched-entry-container{
