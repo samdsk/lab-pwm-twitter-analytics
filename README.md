@@ -5,6 +5,7 @@ Live version deployed on Render.com [https://my-twitter-analytics-app.onrender.c
 
 Main libraries/technologies used
 * Nodejs
+* Expressjs
 * Bootstrap
 * MongoDB
 * WebWorkers
