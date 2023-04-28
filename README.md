@@ -1,4 +1,17 @@
-# lab-pwm
+# lab-pwm @ Unimi
 
-### Progetto di Progettazione Web e Mobile - Twitter Analytics App
-Live version deployed to Render.com [here](https://my-twitter-analytics-app.onrender.com)
+### Web and Mobile Design - Project - Twitter Analytics App
+Live version deployed on Render.com [https://my-twitter-analytics-app.onrender.com](https://my-twitter-analytics-app.onrender.com)
+
+Main libraries/technologies used
+* Nodejs
+* Bootstrap
+* MongoDB
+* WebWorkers
+* Google reCaptcha
+* Gravatar
+* Nodemailer
+* Twitter API v2
+* Chartjs
+* JWT
+* Mongoose
